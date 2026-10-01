@@ -1,0 +1,301 @@
+# DESIGN.md — Contrato visual
+
+Este documento es el contrato visual del proyecto. Toda pantalla, componente y pieza 3D se
+deriva de acá. No es una sugerencia de estilo: si algo no está definido, se define acá
+primero y después se implementa.
+
+- **Parte A:** la interfaz (pantallas, tipografía, color, componentes).
+- **Parte B:** la escena 3D (cámara, piezas isométricas flotantes, estados).
+
+## Dirección
+
+**La interfaz se aparta; la maqueta y las explicaciones son protagonistas.**
+
+- **Limpia:** fondos lisos, mucho espacio, bordes finos, sin sombras pesadas ni degradados.
+- **La maqueta flota:** piezas isométricas low-poly en pastel suave, flotando sobre el
+  fondo, sin suelo infinito ni cielo.
+- **Todo texto apunta al código:** cada explicación referencia una línea; cada pieza
+  también.
+- **El estado se lee de un vistazo:** ✅ 🚧 ❌ siempre con la misma forma, color e ícono,
+  en la maqueta y en la bitácora.
+
+---
+
+# Parte A · Interfaz
+
+## A1. Tokens
+
+Todo color, tipografía, espaciado, radio y duración sale de una variable CSS definida en
+`apps/web/src/styles/tokens.css`. **Nunca** se escribe un color hex, una fuente o un valor
+que ya tenga token.
+
+### Color — tema claro
+
+```
+--color-bg            #F6F5F1   fondo de página
+--color-surface       #FFFFFF   paneles, editor, tarjetas
+--color-surface-2     #EFEDE7   barras, pestañas inactivas, chips
+--color-border        #E2DFD7   bordes de 1px
+--color-text          #1D1E22   texto principal
+--color-text-muted    #62666E   texto secundario (cumple 4.5:1 sobre bg y surface)
+--color-accent        #4458D6   acción principal, foco, enlaces
+--color-accent-soft   #E6E9FB   fondo de elementos activos
+--color-success       #23855A   ✅
+--color-warning       #A86A00   🚧 (texto); relleno: --color-warning-soft
+--color-danger        #C23B3B   ❌
+--color-success-soft  #E3F3EA
+--color-warning-soft  #FBF0D9
+--color-danger-soft   #F9E3E3
+--color-code-line     #FFF6D6   línea de código resaltada
+```
+
+### Color — tema oscuro
+
+```
+--color-bg            #121318
+--color-surface       #1A1B21
+--color-surface-2     #23252D
+--color-border        #2E3039
+--color-text          #ECEDF0
+--color-text-muted    #A0A4AD
+--color-accent        #8C9BFF
+--color-accent-soft   #262B4A
+--color-success       #5CC796
+--color-warning       #E8B24A
+--color-danger        #F07C7C
+--color-success-soft  #18322A
+--color-warning-soft  #3A2E14
+--color-danger-soft   #3D1E20
+--color-code-line     #3A3420
+```
+
+El tema sigue `prefers-color-scheme` y se puede forzar con `data-theme="light|dark"` en
+`<html>`; la elección manual se recuerda en `localStorage`.
+
+**Contraste:** todo texto cumple WCAG 2.2 AA (4.5:1; 3:1 para texto ≥ 24px). Los colores
+de estado nunca van solos: siempre con ícono y texto.
+
+### Tipografía
+
+```
+--font-ui      "Inter Variable", system-ui, sans-serif
+--font-display "Space Grotesk Variable", "Inter Variable", sans-serif
+--font-code    "JetBrains Mono Variable", ui-monospace, monospace
+```
+
+Fuentes open source, autoalojadas con `@fontsource-variable/*` (sin pedidos a terceros).
+
+| Token | Tamaño / interlineado | Uso |
+|---|---|---|
+| `--text-xs` | 12 / 16 | chips de línea, metadatos |
+| `--text-sm` | 14 / 20 | bitácora, botones |
+| `--text-md` | 16 / 24 | cuerpo, pedido de obra |
+| `--text-lg` | 20 / 28 | títulos de panel |
+| `--text-xl` | 28 / 34 | título de desafío (display) |
+| `--text-2xl` | 40 / 46 | portada (display) |
+
+El editor usa `--font-code` a 14px.
+
+### Espaciado, radios, bordes, movimiento
+
+```
+--space-1 4px   --space-2 8px   --space-3 12px   --space-4 16px
+--space-5 24px  --space-6 32px  --space-7 48px   --space-8 64px
+
+--radius-sm 6px    chips, inputs
+--radius-md 10px   botones, tarjetas
+--radius-lg 16px   paneles
+
+--border    1px solid var(--color-border)
+--shadow-float 0 8px 24px rgb(0 0 0 / 0.06)   solo para elementos flotantes (popovers)
+
+--duration-fast 120ms   --duration-base 200ms   --duration-slow 400ms
+--ease-out cubic-bezier(0.2, 0.8, 0.2, 1)
+```
+
+Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena no anima
+(ver B6).
+
+## A2. Layout
+
+### Vista de desafío (editor)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ ◂ Módulo 1 · Clases y objetos          2 / 5        ◐ tema      │  barra (56px)
+├──────────────────────────┬──────────────────────────────────────┤
+│ PEDIDO DE OBRA           │ Main.java │ FacultadRegional.java    │
+│ Título (display)         │──────────────────────────────────────│
+│ Consigna en prosa corta  │                                      │
+│                          │  editor Monaco                       │
+│ Lo que tenés que lograr  │                                      │
+│ ☐ criterio 1             │                                      │
+│ ☐ criterio 2             │                                      │
+│                          │                                      │
+│ [ Pedir pista ]          │                     [ Ejecutar ▶ ]   │
+└──────────────────────────┴──────────────────────────────────────┘
+   ~ 34%                       ~ 66%
+```
+
+### Vista de resultado
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ ◂ Volver al código     Resultado: 🚧 Incompleto (3/5)     ◐     │
+├───────────────────────────────────────────┬─────────────────────┤
+│                                           │ BITÁCORA            │
+│        maqueta 3D (fondo liso,            │ ✅ FR creada  L5    │
+│        piezas flotando)                   │ 🚧 Sin decano L5    │
+│                                           │ ❌ NullPointer L12  │
+│                                           │                     │
+│                                           │ [mini código con    │
+│                                           │  la línea elegida]  │
+├───────────────────────────────────────────┴─────────────────────┤
+│ ◀  ━━━━━━━━━●━━━━━━━━━━━━  ▶   Paso 4 / 9 · Main.java:7          │
+└─────────────────────────────────────────────────────────────────┘
+   ~ 68%                                         ~ 32%
+```
+
+- **Ancho mínimo soportado:** 360px. Por debajo de 960px los paneles se apilan
+  (pedido → editor; maqueta → bitácora) y el editor es de solo lectura cómoda.
+- Márgenes laterales: `--space-5` en escritorio, `--space-4` en móvil.
+- Sin scroll horizontal de página.
+
+## A3. Componentes
+
+| Componente | Reglas |
+|---|---|
+| **Botón primario** (`Ejecutar`) | Fondo `--color-accent`, texto blanco, `--radius-md`, alto 40px. Uno solo por vista. |
+| **Botón secundario** | Fondo `--color-surface-2`, texto `--color-text`. |
+| **Pestañas de archivo** | Texto `--font-code` 13px; activa con borde inferior de 2px `--color-accent`. |
+| **Entrada de bitácora** | Ícono de estado + título (1 línea, `--text-sm` semibold) + chip de línea + explicación (máx. 3 líneas) + pista opcional. Fondo `--color-*-soft` solo en la entrada seleccionada. |
+| **Chip de línea** | `L12` en `--font-code` `--text-xs`, fondo `--color-surface-2`; al hacer clic resalta la línea y la pieza. |
+| **Criterio del pedido** | Casilla que se marca sola cuando la verificación correspondiente pasa. |
+| **Línea de tiempo** | Pista de 4px, cursor de 14px, botones paso anterior/siguiente, texto `Paso n / N · Archivo:línea`. |
+| **Pista** | Panel desplegable debajo del pedido; nivel 1, 2, 3 y "Ver solución" (este último con confirmación). |
+
+Íconos: **Lucide** (licencia ISC), trazo 1.75px, 18px. Estados:
+`circle-check` ✅ · `construction` 🚧 · `circle-x` ❌.
+
+## A4. Escritura en la interfaz
+
+- Español rioplatense con **voseo** ("Ejecutá", "Te falta…"), tono cercano y directo.
+- Títulos en oración, no en mayúsculas.
+- Cero jerga sin explicar; los términos de Java van en `código`.
+- Las reglas de los mensajes de error están en [`docs/FEEDBACK.md`](docs/FEEDBACK.md).
+
+## A5. Accesibilidad
+
+- WCAG 2.2 AA.
+- La **bitácora es el equivalente textual de la maqueta**: todo lo que muestra la escena
+  está también en texto. El `<canvas>` tiene `aria-label` con el resumen del resultado.
+- Todo es operable con teclado; foco visible (`outline: 2px solid var(--color-accent)`,
+  separado 2px).
+- Atajos: `Ctrl/Cmd + Enter` ejecuta; `←` `→` mueven la línea de tiempo cuando tiene foco.
+
+---
+
+# Parte B · Escena 3D
+
+## B1. Cámara
+
+- **Ortográfica isométrica fija:** rotación Y 45°, inclinación X ≈ 35.264°
+  (`atan(1/√2)`). Sin perspectiva.
+- Se permite **zoom** (0.6×–2×) y **desplazamiento** dentro de los límites de la escena.
+- **No se permite rotación libre.** Opcional: girar en pasos de 90° con botones.
+- Al cargar un resultado, la cámara encuadra todas las piezas con margen del 15%.
+
+## B2. Unidad y grilla
+
+- 1 unidad del mundo = 1 módulo de grilla.
+- Cada pieza se apoya sobre su propia **isla flotante**: una losa de 0.3 de alto con
+  bordes biselados.
+- Separación mínima entre islas: 1 unidad.
+- Distribución automática: el Rectorado al centro; Facultades Regionales en anillo
+  alrededor; lo que pertenece a una FR (departamentos, carreras, personas) sobre o junto a
+  la isla de su FR.
+
+## B3. Estilo low-poly pastel
+
+- Geometría con caras planas (`flatShading`), polígonos mínimos, bordes ligeramente
+  biselados.
+- Materiales `MeshStandardMaterial` mates (`roughness 0.9`, `metalness 0`). Sin texturas.
+- Sin contorno negro; la forma se lee por la luz.
+
+### Paleta de la escena
+
+| Token | Claro | Oscuro | Uso |
+|---|---|---|---|
+| `scene-island` | `#EAE5DA` | `#3A3C46` | losa de las islas |
+| `scene-island-top` | `#C9DDC0` | `#4F6656` | césped de la isla |
+| `scene-wall` | `#F5EFE4` | `#D9D3C8` | paredes de edificios |
+| `scene-rectorate` | `#A9C4EB` | `#7F9CC8` | techo / acento del Rectorado |
+| `scene-faculty` | `#F2B8A9` | `#CF8E80` | Facultades Regionales |
+| `scene-department` | `#C9B8E4` | `#A08DC2` | departamentos |
+| `scene-career` | `#F4D68F` | `#CDAE66` | carreras |
+| `scene-person` | `#F3C7A3` | `#C99D7C` | personas (figuras) |
+| `scene-link` | `#7C8190` | `#B4B8C4` | cables de referencias |
+| `scene-ghost` | blanco 22% | blanco 12% | silueta de la UTN real |
+
+La escena no tiene fondo propio: es transparente sobre `--color-bg`.
+
+### Iluminación
+
+- `HemisphereLight` (cielo cálido / suelo frío) intensidad 0.9.
+- Una `DirectionalLight` desde arriba a la izquierda, sombras suaves (mapa 1024).
+- **Sombras de contacto** difusas bajo cada isla, sobre un plano invisible, para reforzar
+  que flota.
+
+## B4. Arquetipos
+
+Todas las piezas se **generan por código** desde un catálogo en
+`apps/web/src/scene/archetypes/`. Ningún archivo de modelo externo en la v1.
+
+| Arquetipo | Representa | Forma | Parámetros |
+|---|---|---|---|
+| `rectorate` | Rectorado | edificio ancho de 3 pisos con frontón | cartel |
+| `regional-faculty` | Facultad Regional | edificio de 2×2 con techo a dos aguas | cartel, cantidad de pisos |
+| `department` | Departamento | pabellón bajo | cartel |
+| `career` | Carrera | bloque con banderín | cartel |
+| `person` | Persona y subtipos | figura low-poly (cápsula + cabeza) | color de rol, accesorio |
+| `inheritance-floors` | Objeto con herencia | edificio de **pisos apilados**: planta baja = superclase, pisos superiores = subclases | un piso por nivel de la jerarquía, cada uno con su nombre de clase |
+| `slot` | Atributo de composición | pedestal o hueco junto a la pieza dueña | ocupado / vacío |
+| `variable-sign` | Variable o referencia | cartel en un poste fuera de las islas | nombre de la variable |
+| `reference-link` | Referencia | cable curvo del cartel a la pieza | — |
+| `interface-badge` | Interfaz implementada | insignia sobre el techo | nombre de la interfaz |
+| `generic-block` | Tipo sin binding | cubo con cartel | nombre de la clase |
+
+Los carteles son **texto HTML superpuesto** (drei `<Html>`) en `--font-ui`, no texto 3D: se
+leen nítidos, se traducen y son accesibles.
+
+## B5. Estados de una pieza
+
+| Estado | Aspecto | Ícono flotante |
+|---|---|---|
+| ✅ **correcto** | color pleno, opaca | `circle-check` en `--color-success` |
+| 🚧 **incompleto** | color pleno; las partes faltantes se ven como **andamio** (aristas en `--color-warning`, caras al 15%) | `construction` |
+| ❌ **falló** | desaturada 70%, con una grieta y detenida a media construcción | `circle-x` en `--color-danger` |
+| **silueta real** | volumen translúcido `scene-ghost` donde debería haber algo según la UTN real | — |
+| **seleccionada** | aro en el suelo de la isla en `--color-accent`, elevación +0.15 | — |
+
+Una referencia `null` se dibuja como cable que termina suelto en el aire.
+
+## B6. Animación
+
+| Animación | Detalle |
+|---|---|
+| Flotación | Cada isla sube y baja 0.05 unidades, período 6 s, con desfase aleatorio estable |
+| Construcción | Al reproducir un paso, la pieza crece desde la isla (escala Y 0→1) en `--duration-slow` con `--ease-out` |
+| Herencia | Los pisos se construyen **de abajo hacia arriba**, en el orden real de los constructores (`super()` primero) |
+| Referencia | El cable se "dibuja" del cartel a la pieza en `--duration-base` |
+| Selección | Elevación suave en `--duration-fast` |
+
+Con `prefers-reduced-motion: reduce`: sin flotación, sin crecimiento; los cambios de paso
+son instantáneos.
+
+## B7. Rendimiento
+
+- Objetivo: 60 fps con 150 piezas en una notebook integrada; mínimo aceptable 30 fps.
+- Geometrías y materiales compartidos por arquetipo; instancias cuando hay repetición.
+- `dpr` máximo 2; sombras solo de la luz direccional.
+- La escena se carga de forma diferida (`lazy`) para no frenar la carga del editor.
