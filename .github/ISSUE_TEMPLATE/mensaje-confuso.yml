@@ -1,0 +1,30 @@
+name: Mensaje confuso
+description: Un mensaje de la bitácora no se entendió o dice algo incorrecto.
+labels: [feedback, content]
+body:
+  - type: input
+    id: challenge
+    attributes:
+      label: Desafío
+      description: Por ejemplo "1.3 La facultad donde estudiás".
+    validations:
+      required: true
+  - type: textarea
+    id: message
+    attributes:
+      label: Mensaje que viste
+      description: Copiá el texto del mensaje.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Qué te confundió o qué está mal
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Tu código (opcional)
+      description: Solo si querés compartirlo. No incluyas datos personales.
+      render: java

@@ -1,0 +1,30 @@
+name: Propuesta de desafío
+description: Proponer un desafío nuevo antes de escribirlo.
+labels: [content, proposal]
+body:
+  - type: input
+    id: module
+    attributes:
+      label: Módulo
+    validations:
+      required: true
+  - type: textarea
+    id: brief
+    attributes:
+      label: Pedido de obra
+      description: Qué tiene que modelar el alumno.
+    validations:
+      required: true
+  - type: input
+    id: concept
+    attributes:
+      label: Concepto de Java que enseña
+    validations:
+      required: true
+  - type: textarea
+    id: rules
+    attributes:
+      label: Reglas reales de la UTN que usa
+      description: IDs de docs/DOMAIN.md o fuente oficial nueva.
+    validations:
+      required: true
