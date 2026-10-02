@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage';
 import { ModulePage } from './pages/ModulePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ResultPage } from './pages/ResultPage';
+import { DevScenePage } from './pages/DevScenePage';
 import styles from './App.module.css';
 
 /** The routes of docs/ARCHITECTURE.md §8. */
@@ -20,6 +21,8 @@ export function App() {
         <Route path="/modulos/:moduleId" element={<ModulePage />} />
         <Route path="/desafios/:challengeId" element={<ChallengePage />} />
         <Route path="/desafios/:challengeId/resultado" element={<ResultPage />} />
+        {/* Only while developing: a synthetic scene to measure the frame rate (DESIGN.md §B7). */}
+        {import.meta.env.DEV && <Route path="/dev/escena" element={<DevScenePage />} />}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
