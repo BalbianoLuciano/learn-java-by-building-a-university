@@ -36,8 +36,11 @@ Run the checks of every component you touched; CI runs the same ones.
 
 - After changing a schema in `packages/contracts`, run
   `pnpm --filter @ljbu/contracts generate` and commit `src/generated/`.
-- Without a local JDK, run Maven inside Docker:
-  `docker run --rm -v "$PWD":/work -w /work eclipse-temurin:25-jdk ./mvnw verify`.
+- Without a local JDK, run Maven inside Docker from the repository root (the runner tests
+  read the schemas in `packages/contracts`):
+  `docker run --rm -v "$PWD":/repo -w /repo/services/runner eclipse-temurin:25-jdk ./mvnw verify`.
+- The runner tests launch real child JVMs; the security suite lives in
+  `services/runner/src/test/java/…/execution/security/`.
 - `docker compose up --build` starts web, api and runner.
 
 ## Language policy (ADR 0009)
