@@ -1,0 +1,150 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect changed components
+    runs-on: ubuntu-latest
+    outputs:
+      contracts: ${{ steps.filter.outputs.contracts }}
+      web: ${{ steps.filter.outputs.web }}
+      api: ${{ steps.filter.outputs.api }}
+      runner: ${{ steps.filter.outputs.runner }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - id: filter
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            files=$(git diff --name-only "origin/$BASE_REF...HEAD")
+          else
+            files=".github/workflows/ci.yml"
+          fi
+          echo "$files"
+
+          changed() { echo "$files" | grep -qE "$1" && echo true || echo false; }
+          ci='^\.github/workflows/'
+          js='^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|\.prettierrc\.json|\.nvmrc)$'
+          {
+            echo "contracts=$(changed "$ci|$js|^packages/contracts/|^docs/specs/challenge-format\.md$")"
+            echo "web=$(changed "$ci|$js|^apps/web/|^packages/contracts/|^content/i18n/")"
+            echo "api=$(changed "$ci|^services/api/")"
+            echo "runner=$(changed "$ci|^services/runner/")"
+          } >> "$GITHUB_OUTPUT"
+
+  contracts:
+    name: contracts
+    needs: changes
+    if: needs.changes.outputs.contracts == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format
+        run: pnpm --filter @ljbu/contracts format:check
+      - name: Generated types are up to date
+        run: pnpm --filter @ljbu/contracts generate:check
+      - name: Typecheck
+        run: pnpm --filter @ljbu/contracts typecheck
+      - name: Test
+        run: pnpm --filter @ljbu/contracts test
+
+  web:
+    name: web
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Format
+        run: pnpm --filter @ljbu/web format:check
+      - name: Lint
+        run: pnpm --filter @ljbu/web lint
+      - name: Typecheck
+        run: pnpm --filter @ljbu/web typecheck
+      - name: Test
+        run: pnpm --filter @ljbu/web test
+      - name: Build
+        run: pnpm --filter @ljbu/web build
+
+  api:
+    name: api
+    needs: changes
+    if: needs.changes.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/api
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Format
+        run: ./mvnw -B spotless:check
+      - name: Test and build
+        run: ./mvnw -B verify
+
+  runner:
+    name: runner
+    needs: changes
+    if: needs.changes.outputs.runner == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/runner
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Format
+        run: ./mvnw -B spotless:check
+      - name: Test and build
+        run: ./mvnw -B verify
+
+  # Single status to require in branch protection: it passes when every
+  # component job passed or was skipped because its paths did not change.
+  ci:
+    name: CI
+    needs: [changes, contracts, web, api, runner]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "$RESULTS"
+          case "$RESULTS" in
+            *failure*|*cancelled*) exit 1 ;;
+          esac
