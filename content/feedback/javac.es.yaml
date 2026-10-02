@@ -1,0 +1,158 @@
+# Compilation errors, by javac diagnostic code (docs/FEEDBACK.md §4).
+#
+# match: regular expression applied to the original javac message; its named groups fill the
+#        {placeholders} of what. Group names are ASCII.
+# whatWithoutMatch: used when match does not apply to the message.
+# same: reuse the entry of another code.
+default:
+  what: "Java no pudo compilar esta línea."
+  why: "El compilador revisa todo el programa antes de ejecutarlo. Abajo está su mensaje original, en inglés."
+  hint: "El mensaje original suele nombrar qué esperaba encontrar el compilador."
+
+entries:
+  compiler.err.cant.resolve.location:
+    match: 'symbol:\s+\w+\s+(?<simbolo>[^\s(]+)'
+    what: "Java no conoce `{simbolo}`."
+    whatWithoutMatch: "Java no conoce un nombre que usaste en esta línea."
+    why: "Todo nombre tiene que estar declarado antes de usarse y escrito igual: Java distingue mayúsculas de minúsculas."
+    hint: "¿Está declarado? ¿Coinciden las mayúsculas?"
+  compiler.err.cant.resolve:
+    same: compiler.err.cant.resolve.location
+  compiler.err.cant.resolve.location.args:
+    same: compiler.err.cant.resolve.location
+  compiler.err.cant.resolve.args:
+    same: compiler.err.cant.resolve.location
+
+  compiler.err.expected:
+    match: "'(?<token>[^']+)' expected"
+    what: "Falta un `{token}` cerca de acá."
+    whatWithoutMatch: "A esta línea le falta algo para estar completa."
+    why: "Java necesita esa marca para saber dónde termina cada parte del código."
+    hint: "Mirá también el final de la línea anterior."
+  compiler.err.expected2:
+    same: compiler.err.expected
+  compiler.err.expected3:
+    same: compiler.err.expected
+
+  compiler.err.prob.found.req:
+    match: 'incompatible types: (?:java\.lang\.)?(?<encontrado>\S+) cannot be converted to (?:java\.lang\.)?(?<requerido>\S+)'
+    what: "Acá va un `{requerido}` y recibió un `{encontrado}`."
+    whatWithoutMatch: "El valor no es del tipo que esta línea necesita."
+    why: "Cada variable acepta solo valores de su tipo."
+    hint: "Compará el tipo declarado con el valor que le estás dando."
+
+  compiler.err.cant.apply.symbol:
+    match: '(?:method|constructor) (?<metodo>\w+) in'
+    what: "`{metodo}` no recibe esos argumentos."
+    whatWithoutMatch: "Esa llamada no recibe esos argumentos."
+    why: "Los argumentos tienen que coincidir en cantidad, orden y tipo con los parámetros declarados."
+    hint: "Contá los parámetros de la declaración y comparalos con los de la llamada."
+  compiler.err.cant.apply.symbols:
+    match: 'no suitable \w+ found for (?<metodo>\w+)'
+    what: "`{metodo}` no recibe esos argumentos."
+    whatWithoutMatch: "Esa llamada no recibe esos argumentos."
+    why: "Los argumentos tienen que coincidir en cantidad, orden y tipo con los parámetros declarados."
+    hint: "Contá los parámetros de la declaración y comparalos con los de la llamada."
+
+  compiler.err.report.access:
+    match: '(?<miembro>\S+) has private access in (?<clase>\S+)'
+    what: "`{miembro}` es privado de `{clase}`."
+    whatWithoutMatch: "Ese atributo o método no se puede usar desde acá."
+    why: "Encapsulamiento: lo privado solo se usa dentro de su propia clase. Desde afuera se usan sus métodos públicos."
+    hint: "¿Qué método público de la clase te da lo que necesitás?"
+
+  compiler.err.does.not.override.abstract:
+    match: '(?<clase>\S+) is not abstract and does not override abstract method (?<metodo>\w+)'
+    what: "`{clase}` no implementa `{metodo}`."
+    whatWithoutMatch: "A esta clase le falta implementar un método abstracto."
+    why: "Al extender una clase abstracta o implementar una interfaz, la clase se compromete a escribir ese método."
+    hint: "Agregá el método con la misma firma que tiene en la superclase o en la interfaz."
+
+  compiler.err.abstract.cant.be.instantiated:
+    match: '(?<clase>\S+) is abstract'
+    what: "No se puede crear un objeto de `{clase}` con `new`."
+    whatWithoutMatch: "No se puede crear un objeto de una clase abstracta."
+    why: "Una clase abstracta es un molde incompleto: se crean objetos de sus subclases."
+    hint: "¿Qué subclase concreta necesitás?"
+
+  compiler.err.cant.assign.val.to.var:
+    match: 'variable (?<campo>\w+)\s*$'
+    what: "`{campo}` es `final`: no se le puede volver a asignar."
+    whatWithoutMatch: "Esa variable es `final`: no se le puede volver a asignar."
+    why: "Una variable `final` recibe su valor una sola vez."
+    hint: "¿Hace falta cambiarla, o el valor se puede dar una sola vez?"
+
+  compiler.err.missing.ret.stmt:
+    what: "A este método le falta un `return`."
+    why: "Si un método declara que devuelve un valor, todos sus caminos tienen que terminar en un `return`."
+    hint: "¿Qué devuelve cuando ningún `if` se cumple?"
+
+  compiler.err.cant.ref.before.ctor.called:
+    match: 'cannot reference (?<miembro>\w+)'
+    what: "Usaste `{miembro}` antes de llamar al constructor de la superclase."
+    whatWithoutMatch: "Usaste el objeto antes de llamar al constructor de la superclase."
+    why: "La parte de la superclase se construye primero: hasta que `super(...)` termina, el objeto todavía no se puede usar."
+    hint: "Mové esa línea después de `super(...)`."
+
+  compiler.err.non-static.cant.be.ref:
+    match: 'non-static \w+ (?<miembro>\w+)'
+    what: "`{miembro}` necesita un objeto."
+    whatWithoutMatch: "Eso necesita un objeto."
+    why: "En un método `static` no hay `this`: los atributos y métodos de instancia se usan a través de un objeto."
+    hint: "¿Sobre qué objeto querías usarlo?"
+
+  compiler.err.var.might.not.have.been.initialized:
+    match: 'variable (?<variable>\w+) might'
+    what: "`{variable}` puede no tener valor todavía."
+    whatWithoutMatch: "Una variable puede no tener valor todavía."
+    why: "Las variables locales no tienen valor por defecto: hay que asignarles uno antes de usarlas."
+    hint: "Si es un objeto, ¿lo creaste con `new`?"
+
+  compiler.err.class.public.should.be.in.file:
+    match: 'class (?<clase>\w+) is public'
+    what: "La clase `{clase}` tiene que estar en `{clase}.java`."
+    whatWithoutMatch: "El nombre de la clase pública no coincide con el del archivo."
+    why: "Una clase pública va en un archivo con su mismo nombre."
+    hint: "Revisá el nombre de la clase y el de la pestaña."
+
+  compiler.err.already.defined:
+    match: '\w+ (?<nombre>\w+) is already defined'
+    what: "`{nombre}` ya está declarado."
+    whatWithoutMatch: "Ese nombre ya está declarado."
+    why: "Dentro de un mismo ámbito, cada nombre se declara una sola vez."
+    hint: "Si querés cambiar su valor, asignale sin volver a escribir el tipo."
+
+  compiler.err.premature.eof:
+    what: "El archivo termina antes de lo esperado."
+    why: "A cada `{` le corresponde una `}`: falta cerrar alguna."
+    hint: "Contá las llaves que abren y las que cierran."
+
+  compiler.err.unclosed.str.lit:
+    what: "Hay un texto sin cerrar."
+    why: "Un texto que abre con una comilla doble tiene que cerrar con otra en la misma línea."
+    hint: "Buscá la comilla que falta."
+
+  compiler.err.illegal.start.of.expr:
+    what: "Acá falta un valor o sobra un símbolo."
+    why: "En este lugar Java espera una expresión: un valor, una variable o una llamada a un método."
+    hint: "Mirá qué hay justo antes y justo después del lugar señalado."
+
+  compiler.err.not.stmt:
+    what: "Esta línea no es una instrucción completa."
+    why: "Una instrucción hace algo: declara, asigna o llama a un método. Un valor suelto no alcanza."
+    hint: "¿Te faltó asignarlo a una variable o llamar a un método?"
+
+  ljbu.err.package.not.allowed:
+    what: "En este curso los archivos no llevan `package`."
+    why: "Todas las clases de un desafío viven juntas, sin paquete, y así se encuentran entre sí sin `import`."
+    hint: "Borrá la línea que empieza con `package`."
+
+  ljbu.err.main.not.found:
+    what: "`Main` necesita el método `public static void main(String[] args)`."
+    why: "El programa empieza a ejecutarse por ese método, y acá lo pedimos escrito exactamente así."
+    hint: "Revisá que no se haya borrado ni cambiado su firma."
+
+  ljbu.err.compilation.timed.out:
+    what: "El código tardó demasiado en compilar."
+    why: "Hay un tiempo máximo para compilar, y un programa de este curso usa muy poco."
+    hint: "Probá de nuevo. Si se repite, partí las expresiones muy largas en varias líneas."

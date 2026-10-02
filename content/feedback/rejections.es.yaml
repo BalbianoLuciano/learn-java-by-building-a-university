@@ -1,0 +1,49 @@
+# Code rejected by the bytecode allowlist (docs/SECURITY.md §3, layer 3). The first rule that
+# matches the forbidden symbol explains it; {symbol} is that symbol.
+#
+# classes: the symbol is one of these classes or a member of one of them.
+# prefixes / suffixes: the symbol starts or ends with one of these texts.
+default:
+  what: "`{symbol}` no está disponible en este curso."
+  why: "Para que ejecutar código sea seguro, solo se puede usar una lista corta de clases de Java: las que el curso necesita."
+  hint: "Fijate si lo podés resolver con `String`, `Math`, listas o tus propias clases."
+
+rules:
+  - suffixes: [".printStackTrace"]
+    what: "`printStackTrace()` no está disponible."
+    why: "Escribe en la salida de errores, que este entorno no muestra."
+    hint: "Podés imprimir `e.getMessage()` con `System.out.println`."
+  - prefixes: ["java.io.", "java.nio."]
+    what: "En este curso no hace falta leer ni escribir archivos: `{symbol}` no está disponible."
+    why: "Tu programa corre en un espacio aislado, sin acceso a los archivos de la máquina."
+    hint: "Los datos que necesitás se escriben en el mismo código."
+  - prefixes: ["java.net."]
+    what: "En este curso no hace falta conectarse a la red: `{symbol}` no está disponible."
+    why: "Tu programa corre en un espacio aislado, sin acceso a internet."
+    hint: "Los datos que necesitás se escriben en el mismo código."
+  - classes: ["java.lang.Thread", "java.lang.Runnable"]
+    prefixes: ["java.util.concurrent."]
+    what: "En este curso el programa hace una cosa por vez: `{symbol}` no está disponible."
+    why: "Los hilos permiten hacer varias cosas a la vez, y eso queda fuera de lo que este curso enseña."
+    hint: "Resolvelo con llamadas a métodos, una después de la otra."
+  - classes: ["java.lang.Runtime", "java.lang.ProcessBuilder", "java.lang.Process"]
+    what: "Desde acá no se pueden ejecutar otros programas: `{symbol}` no está disponible."
+    why: "Tu programa corre en un espacio aislado del resto de la máquina."
+    hint: "Lo que pide el desafío se resuelve dentro de tu propio código."
+  - classes: ["java.lang.System.exit"]
+    what: "`System.exit` no está disponible."
+    why: "El programa termina solo cuando `main` llega al final."
+    hint: "Si querés cortar antes, usá `return` dentro de `main`."
+  - classes: ["java.lang.System.in", "java.util.Scanner"]
+    what: "En este curso el programa no lee datos del teclado: `{symbol}` no está disponible."
+    why: "Los pedidos de obra se resuelven con datos escritos en el código, así el resultado es siempre el mismo."
+    hint: "Guardá el dato en una variable en lugar de leerlo."
+  - classes: ["java.lang.Class", "java.lang.ClassLoader"]
+    prefixes: ["java.lang.reflect.", "java.lang.invoke."]
+    what: "`{symbol}` no está disponible en este curso."
+    why: "Inspeccionar clases desde el propio programa queda fuera de lo que este curso enseña."
+    hint: "Si querés el nombre de una clase, escribilo en un método de la clase."
+  - prefixes: ["native "]
+    what: "Los métodos `native` no están disponibles."
+    why: "Un método `native` se implementa fuera de Java, y acá solo corre código Java."
+    hint: "Escribí el cuerpo del método en Java."

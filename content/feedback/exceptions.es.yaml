@@ -1,0 +1,67 @@
+# Uncaught exceptions, by exception class (docs/FEEDBACK.md §5).
+#
+# match: regular expression applied to the message of the exception.
+# Besides the named groups, {type} is the simple name of the class and {message} its message.
+default:
+  what: "El programa se frenó con `{type}`."
+  why: "Una excepción que nadie atrapa termina el programa en la línea donde se lanzó."
+  hint: "Mirá qué valores tenían las variables de esa línea en la línea de tiempo."
+
+entries:
+  java.lang.NullPointerException:
+    match: 'because "(?<expresion>[^"]+)" is null'
+    what: "Usaste `{expresion}`, pero apunta a `null`."
+    whatWithoutMatch: "Usaste una variable que apunta a `null`."
+    why: "Una variable sin objeto es un cable que no llega a ninguna pieza: no hay a quién pedirle nada."
+    hint: "¿En qué línea tendría que haberse creado o asignado ese objeto?"
+
+  java.lang.ArithmeticException:
+    match: '/ by zero'
+    what: "Una división por cero frenó la obra."
+    whatWithoutMatch: "Una cuenta no se pudo hacer."
+    why: "Los enteros no se pueden dividir por cero."
+    hint: "¿Qué valor tenía el divisor en esa línea?"
+
+  java.lang.ArrayIndexOutOfBoundsException:
+    match: 'Index (?<indice>-?\d+) out of bounds for length (?<tamano>\d+)'
+    what: "Pediste la posición `{indice}` y solo hay `{tamano}`."
+    whatWithoutMatch: "Pediste una posición que no existe."
+    why: "Las posiciones van de 0 al tamaño menos 1."
+    hint: "¿Hasta qué valor llega el índice en la última vuelta?"
+  java.lang.IndexOutOfBoundsException:
+    same: java.lang.ArrayIndexOutOfBoundsException
+  java.lang.StringIndexOutOfBoundsException:
+    same: java.lang.ArrayIndexOutOfBoundsException
+
+  java.lang.ClassCastException:
+    match: 'class (?:java\.lang\.)?(?<real>[\w.$]+) cannot be cast to class (?:java\.lang\.)?(?<pedido>[\w.$]+)'
+    what: "Un `{real}` no es un `{pedido}`."
+    whatWithoutMatch: "Ese objeto no es del tipo al que lo quisiste convertir."
+    why: "Un objeto es de su clase y de sus superclases, no de sus hermanas."
+    hint: "¿De qué clase se creó ese objeto con `new`?"
+
+  java.lang.IllegalArgumentException:
+    match: '(?<mensaje>.+)'
+    what: "{mensaje}"
+    whatWithoutMatch: "El programa se frenó con `IllegalArgumentException`."
+    why: "Esta excepción avisa que un valor no cumple una regla, y nadie la atrapó."
+    hint: "¿Qué regla revisa el código que la lanzó, y qué valor recibió?"
+  java.lang.IllegalStateException:
+    same: java.lang.IllegalArgumentException
+
+  java.lang.NumberFormatException:
+    match: 'For input string: "(?<texto>[^"]*)"'
+    what: "`\"{texto}\"` no se puede convertir a número."
+    whatWithoutMatch: "Un texto no se pudo convertir a número."
+    why: "Para convertir un texto a número, el texto tiene que tener solo los caracteres de un número."
+    hint: "¿Qué texto llegó a la conversión?"
+
+  java.lang.StackOverflowError:
+    what: "Un método se llamó a sí mismo sin parar."
+    why: "Cada llamada ocupa lugar en la pila hasta que termina; si ninguna termina, la pila se llena."
+    hint: "¿En qué caso el método deja de llamarse a sí mismo?"
+
+  java.lang.OutOfMemoryError:
+    what: "Se pidió más memoria de la que el programa tiene."
+    why: "La memoria del programa tiene un límite, y los objetos y arreglos la ocupan."
+    hint: "¿Hay un `new` dentro de un bucle que no termina, o un arreglo enorme?"

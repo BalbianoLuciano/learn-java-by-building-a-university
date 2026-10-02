@@ -1,0 +1,32 @@
+[
+  {
+    "id": "resistencia",
+    "name": "Facultad Regional Resistencia",
+    "city": "Resistencia",
+    "province": "Chaco",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.argentina.gob.ar/chaco"
+    ]
+  },
+  {
+    "id": "cordoba",
+    "name": "Facultad Regional Córdoba",
+    "city": "Córdoba",
+    "province": "Córdoba",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.argentina.gob.ar/cordoba"
+    ]
+  },
+  {
+    "id": "mendoza",
+    "name": "Facultad Regional Mendoza",
+    "city": "Mendoza",
+    "province": "Mendoza",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.argentina.gob.ar/mendoza"
+    ]
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "id": "R-UNI-01",
+    "statement": "La universidad tiene un único Rectorado",
+    "source": "Estatuto Universitario, art. 5",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-UNI-02",
+    "statement": "Hay 30 Facultades Regionales, cada una con nombre, ciudad y provincia",
+    "source": "Sedes de la UTN",
+    "url": "https://www.utn.edu.ar/es/la-universidad/sedes"
+  },
+  {
+    "id": "R-RECT-01",
+    "statement": "Rector y Vicerrector: argentinos, ≥ 30 años, profesores o ex profesores",
+    "source": "Estatuto Universitario, art. 66",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-RECT-02",
+    "statement": "Mandato de Rector y Vicerrector: 4 años",
+    "source": "Estatuto Universitario, art. 67",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-FR-01",
+    "statement": "Cada FR tiene Decano y Vicedecano",
+    "source": "Estatuto Universitario, art. 78",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-FR-02",
+    "statement": "Decano y Vicedecano: profesores con ≥ 3 años de antigüedad docente; 4 años de mandato",
+    "source": "Estatuto Universitario, art. 86",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-FR-03",
+    "statement": "Una FR se organiza en Departamentos de Enseñanza, incluido Materias Básicas",
+    "source": "Estatuto Universitario, art. 92",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-FR-04",
+    "statement": "Una Regional Académica depende de una FR y no tiene gobierno propio",
+    "source": "Estatuto Universitario, arts. 5, 112",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-DEP-01",
+    "statement": "El Director de Departamento es profesor del departamento, dura 4 años",
+    "source": "Estatuto Universitario, art. 95",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-DEP-02",
+    "statement": "Consejo Departamental: Director + 5 docentes + 3 estudiantes + 2 graduados",
+    "source": "Estatuto Universitario, art. 110",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-CS-01",
+    "statement": "Consejo Superior: Rector, Decanos de todas las FR, 15 docentes, 5 graduados, 5 estudiantes, 5 no docentes",
+    "source": "Estatuto Universitario, art. 105",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-GOB-01",
+    "statement": "Órganos de gobierno: Asamblea Universitaria, Consejo Superior, Rector, Asambleas de FR, Consejos Directivos, Decanos, Consejos Departamentales, Directores",
+    "source": "Estatuto Universitario, art. 45",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-CLA-01",
+    "statement": "Cuatro claustros: docentes, graduados, estudiantes, no docentes",
+    "source": "Estatuto Universitario, art. 44",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-CLA-02",
+    "statement": "Profesores: Titular, Asociado, Adjunto; auxiliares: JTP, Ayudante 1ª, Ayudante 2ª (para alumnos)",
+    "source": "Estatuto Universitario, arts. 18, 36",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-ROL-01",
+    "statement": "Una persona puede tener varios roles (alumno y Ayudante de 2ª; profesor y Decano)",
+    "source": "Estatuto Universitario, arts. 30, 36, 66, 86",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-ROL-02",
+    "statement": "Una persona vota en un solo claustro",
+    "source": "Estatuto Universitario, art. 114 d",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-CAR-01",
+    "statement": "No todas las FR dictan todas las carreras",
+    "source": "Estatuto Universitario, art. 53 j",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "R-MAT-01",
+    "statement": "Cada materia tiene correlativas \"cursadas\" y \"aprobadas\"",
+    "source": "Planes de estudio 2023 (correlatividades)",
+    "url": "https://sanfrancisco.utn.edu.ar/carreras/ingenieria-en-sistemas-de-informacion/plan-2023/sistemas_correlativas_plan2023.pdf"
+  }
+]
