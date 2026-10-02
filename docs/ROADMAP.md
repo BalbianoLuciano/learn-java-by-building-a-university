@@ -69,7 +69,7 @@ cumple WCAG 2.2 AA.
 > Hacer la bitácora antes que el 3D garantiza que el feedback enseña por sí solo y que la
 > maqueta es el complemento, no la única fuente de información.
 
-## M5 · Maqueta 3D
+## M5 · Maqueta 3D ✅
 
 **Objetivo:** la vista de resultado muestra la escena según [`DESIGN.md`](../DESIGN.md)
 Parte B.
@@ -83,6 +83,12 @@ Parte B.
 
 **Aceptación:** 60 fps con la escena del desafío 1.5 en una notebook con gráficos
 integrados; clic en pieza ↔ línea funciona en ambos sentidos.
+
+Medido en `/dev/escena` (Chrome, Apple M4): 150 piezas a 58–60 fps; con la CPU limitada a
+¼ para simular una notebook floja, 45 piezas a 53–60 fps y 150 piezas a 21–44 fps.
+Queda para M6, con el contenido que los usa: las formas propias de `department`, `career`
+y `person` (hoy se dibujan como `generic-block`), `interface-badge`, la silueta real desde
+`content/domain/` y la animación del cable al dibujarse.
 
 ## M6 · Contenido: módulos 1 y 2
 

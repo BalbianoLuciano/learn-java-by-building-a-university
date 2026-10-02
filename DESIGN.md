@@ -216,8 +216,9 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
   bordes biselados.
 - Separación mínima entre islas: 1 unidad.
 - Distribución automática: el Rectorado al centro; Facultades Regionales en anillo
-  alrededor; lo que pertenece a una FR (departamentos, carreras, personas) sobre o junto a
-  la isla de su FR.
+  alrededor (anillos concéntricos cuando no entran en uno); lo que pertenece a una FR
+  (departamentos, carreras, personas) junto a la isla de su FR; las variables en una fila
+  al frente.
 
 ## B3. Estilo low-poly pastel
 
@@ -269,8 +270,11 @@ Todas las piezas se **generan por código** desde un catálogo en
 | `interface-badge` | Interfaz implementada | insignia sobre el techo | nombre de la interfaz |
 | `generic-block` | Tipo sin binding | cubo con cartel | nombre de la clase |
 
-Los carteles son **texto HTML superpuesto** (drei `<Html>`) en `--font-ui`, no texto 3D: se
-leen nítidos, se traducen y son accesibles.
+Los carteles son **texto HTML superpuesto** en `--font-ui`, no texto 3D: se leen nítidos,
+se traducen y siguen el tema. Van en una sola capa sobre el canvas (`scene/overlay.tsx`):
+cada cartel se ancla a un objeto de la escena y un único bucle los reposiciona por cuadro.
+No se usa `<Html>` de drei: crea un root de React por cartel y, con React 19, desmontarlos
+durante un render deja carteles vacíos.
 
 ## B5. Estados de una pieza
 

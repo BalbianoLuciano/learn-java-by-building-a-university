@@ -6,8 +6,9 @@ tu programa, qué le falta y por qué algo falló, con cada explicación ligada 
 código.
 
 > 🚧 **Estado:** en construcción. Ya se pueden resolver los tres primeros desafíos de
-> punta a punta: editor, ejecución y bitácora con la explicación de cada resultado (hito
-> M4). Falta la maqueta 3D, que es el próximo hito ([roadmap](docs/ROADMAP.md)).
+> punta a punta: editor, ejecución, bitácora con la explicación de cada resultado y la
+> maqueta 3D con reproducción paso a paso (hito M5). Siguen los módulos 1 y 2 completos
+> ([roadmap](docs/ROADMAP.md)).
 
 *English: an open source course to learn Java OOP by modeling the real structure of the
 Universidad Tecnológica Nacional (Argentina). Write real Java, run it, and see what your
