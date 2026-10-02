@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -96,6 +97,16 @@ final class ChildJvm implements AutoCloseable {
 
   InputStream stdout() {
     return process.getInputStream();
+  }
+
+  /** Whether the JVM has ended with exit code 0, waiting a moment for it to finish closing. */
+  boolean exitedNormally() {
+    try {
+      return process.waitFor(2, TimeUnit.SECONDS) && process.exitValue() == 0;
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      return false;
+    }
   }
 
   /** Kills the process and anything it may have started. */

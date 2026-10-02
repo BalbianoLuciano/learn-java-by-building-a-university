@@ -17,28 +17,58 @@ class TraceTest {
 
   @Test
   void showsAliasingAsTwoVariablesPointingToOneObject() {
-    Trace.Executed trace = Traces.runToTheEnd(Programs.named("aliasing"));
+    Trace.Executed trace = Traces.runToTheEnd(Programs.aliasingSolution());
 
     assertThat(trace.executionStatus()).isEqualTo(Trace.Status.COMPLETED);
     assertThat(steps(trace, Step.ObjectCreated.class)).hasSize(1);
     assertThat(localsOf(trace, "Main.main"))
         .containsEntry("resistencia", new Value.RefValue("o1"))
         .containsEntry("miFacultad", new Value.RefValue("o1"));
-    assertThat(fields(trace, "o1"))
-        .containsEntry("ciudad", new Value.StringValue("Resistencia, Chaco"));
-    assertThat(trace.stdout()).isEqualTo("Resistencia, Chaco\n");
+    assertThat(fields(trace, "o1")).containsEntry("provincia", new Value.StringValue("Chaco"));
+  }
+
+  @Test
+  void runsAMainThatDoesNothing() {
+    Trace.Executed trace = Traces.runToTheEnd(Programs.mainWithBody("// Nada todavía."));
+
+    // The JVM skips the call to an empty method: there is nothing to trace.
+    assertThat(trace.executionStatus()).as(Traces.toJson(trace)).isEqualTo(Trace.Status.COMPLETED);
+    assertThat(trace.steps()).isEmpty();
+    assertThat(trace.limits().truncated()).isFalse();
+  }
+
+  @Test
+  void tracesTheStaticInitializerOfAMainThatDoesNothing() {
+    Trace.Executed trace =
+        Traces.runToTheEnd(
+            Programs.main(
+                """
+                public class Main {
+                  static int cupos = 40;
+
+                  static {
+                    System.out.println("cupos: " + cupos);
+                  }
+
+                  public static void main(String[] args) {}
+                }
+                """));
+
+    assertThat(trace.executionStatus()).isEqualTo(Trace.Status.COMPLETED);
+    assertThat(trace.stdout()).isEqualTo("cupos: 40\n");
+    assertThat(steps(trace, Step.FieldSet.class)).hasSize(1);
   }
 
   @Test
   void placesAFieldWriteOnTheLineThatMadeIt() {
-    Trace.Executed trace = Traces.runToTheEnd(Programs.named("aliasing"));
+    Trace.Executed trace = Traces.runToTheEnd(Programs.aliasingSolution());
 
     Step.FieldSet lastWrite = steps(trace, Step.FieldSet.class).getLast();
 
     assertThat(lastWrite.file()).isEqualTo("Main.java");
-    assertThat(lastWrite.line()).isEqualTo(9);
+    assertThat(lastWrite.line()).isEqualTo(8);
     assertThat(lastWrite.target()).isEqualTo("o1");
-    assertThat(lastWrite.field()).isEqualTo("ciudad");
+    assertThat(lastWrite.field()).isEqualTo("provincia");
   }
 
   @Test

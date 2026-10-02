@@ -11,8 +11,8 @@ import tools.jackson.databind.json.JsonMapper;
 
 /**
  * The trace shown in the contract and in docs/ARCHITECTURE.md §5.2 is what the runner really
- * produces for the aliasing program. If the trace changes on purpose, regenerate the example with
- * {@code -Dljbu.updateExamples=true}.
+ * produces for the solution of challenge 1.3. If the trace changes on purpose, regenerate the
+ * example with {@code -Dljbu.updateExamples=true}.
  */
 class ContractExampleTest {
 
@@ -22,7 +22,7 @@ class ContractExampleTest {
 
   @Test
   void producesTheExampleTraceOfTheContract() throws Exception {
-    String produced = Traces.toJson(Traces.run(Programs.named("aliasing")));
+    String produced = Traces.toJson(Traces.run(Programs.aliasingSolution()));
 
     if (Boolean.getBoolean("ljbu.updateExamples")) {
       Files.writeString(
