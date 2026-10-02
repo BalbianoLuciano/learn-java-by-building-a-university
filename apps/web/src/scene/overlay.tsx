@@ -1,0 +1,137 @@
+import type { State } from '@ljbu/contracts';
+import { useFrame, useThree } from '@react-three/fiber';
+import { CircleCheck, CircleX, Construction } from 'lucide-react';
+import { useContext, useLayoutEffect, useRef, type RefObject } from 'react';
+import * as THREE from 'three';
+import { useStore } from 'zustand';
+import styles from './overlay.module.css';
+import { OverlayContext, type AnchorContent, type OverlayStore } from './overlayStore';
+
+function useOverlayStore(): OverlayStore {
+  const store = useContext(OverlayContext);
+  if (!store) {
+    throw new Error('Anchors need an OverlayContext');
+  }
+  return store;
+}
+
+function useAnchor(id: string, content: AnchorContent): RefObject<THREE.Group | null> {
+  const store = useOverlayStore();
+  const invalidate = useThree((state) => state.invalidate);
+  const ref = useRef<THREE.Group>(null);
+  const { kind } = content;
+  const text = content.kind === 'label' ? content.text : content.state;
+  const ghost = content.kind === 'label' && content.ghost;
+  useLayoutEffect(() => {
+    const object = ref.current;
+    if (!object) {
+      return;
+    }
+    store
+      .getState()
+      .set(
+        id,
+        kind === 'label'
+          ? { object, content: { kind, text, ghost } }
+          : { object, content: { kind, state: text as State } },
+      );
+    invalidate();
+    return () => {
+      store.getState().remove(id);
+    };
+  }, [store, invalidate, id, kind, text, ghost]);
+  return ref;
+}
+
+/** A text sign anchored this high above the current group. */
+export function Label({
+  id,
+  text,
+  y,
+  ghost = false,
+}: {
+  id: string;
+  text: string;
+  y: number;
+  ghost?: boolean;
+}) {
+  const ref = useAnchor(id, { kind: 'label', text, ghost });
+  return <group ref={ref} position={[0, y, 0]} />;
+}
+
+/** The floating state icon of a piece (DESIGN.md §B5). Decorative: the log carries the text. */
+export function StateBadge({ id, state, y }: { id: string; state: State; y: number }) {
+  const ref = useAnchor(id, { kind: 'badge', state });
+  return <group ref={ref} position={[0, y, 0]} />;
+}
+
+const projected = new THREE.Vector3();
+
+/** Inside the canvas: projects every anchor and moves its element. */
+export function OverlayDriver() {
+  const store = useOverlayStore();
+  useFrame(({ camera, size }) => {
+    const { anchors, elements } = store.getState();
+    for (const [id, anchor] of anchors) {
+      const element = elements.get(id);
+      if (!element) {
+        continue;
+      }
+      anchor.object.getWorldPosition(projected).project(camera);
+      const x = ((projected.x + 1) / 2) * size.width;
+      const y = ((1 - projected.y) / 2) * size.height;
+      const transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`;
+      if (element.style.transform !== transform) {
+        element.style.transform = transform;
+      }
+      const zIndex = String(Math.round((1 - projected.z) * 500));
+      if (element.style.zIndex !== zIndex) {
+        element.style.zIndex = zIndex;
+      }
+      if (element.style.visibility !== 'visible') {
+        element.style.visibility = 'visible';
+      }
+    }
+  });
+  return null;
+}
+
+/** Outside the canvas: the elements of the anchors, as the store lists them. */
+export function OverlayLayer({ store }: { store: OverlayStore }) {
+  const anchors = useStore(store, (state) => state.anchors);
+  const elements = store.getState().elements;
+  return (
+    <div className={styles.layer} aria-hidden>
+      {[...anchors].map(([id, anchor]) => (
+        <div
+          key={id}
+          className={styles.anchor}
+          ref={(element) => {
+            if (element) {
+              elements.set(id, element);
+            } else {
+              elements.delete(id);
+            }
+          }}
+        >
+          {anchor.content.kind === 'label' ? (
+            <span className={styles.label} data-ghost={anchor.content.ghost}>
+              {anchor.content.text}
+            </span>
+          ) : (
+            <Badge state={anchor.content.state} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Badge({ state }: { state: State }) {
+  const Icon = state === 'passed' ? CircleCheck : state === 'incomplete' ? Construction : CircleX;
+  return (
+    <span className={styles.badge} data-state={state}>
+      <Icon size={18} strokeWidth={1.75} />
+    </span>
+  );
+}

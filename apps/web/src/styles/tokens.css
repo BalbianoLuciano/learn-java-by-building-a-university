@@ -22,6 +22,18 @@
   --color-danger-soft: light-dark(#f9e3e3, #3d1e20);
   --color-code-line: light-dark(#fff6d6, #3a3420);
 
+  /* Scene palette (DESIGN.md §B3); read by the 3D model through the color property. */
+  --scene-island: light-dark(#eae5da, #3a3c46);
+  --scene-island-top: light-dark(#c9ddc0, #4f6656);
+  --scene-wall: light-dark(#f5efe4, #d9d3c8);
+  --scene-rectorate: light-dark(#a9c4eb, #7f9cc8);
+  --scene-faculty: light-dark(#f2b8a9, #cf8e80);
+  --scene-department: light-dark(#c9b8e4, #a08dc2);
+  --scene-career: light-dark(#f4d68f, #cdae66);
+  --scene-person: light-dark(#f3c7a3, #c99d7c);
+  --scene-link: light-dark(#7c8190, #b4b8c4);
+  --scene-ghost: light-dark(rgb(255 255 255 / 0.22), rgb(255 255 255 / 0.12));
+
   --font-ui: 'Inter Variable', system-ui, sans-serif;
   --font-display: 'Space Grotesk Variable', 'Inter Variable', sans-serif;
   --font-code: 'JetBrains Mono Variable', ui-monospace, monospace;
