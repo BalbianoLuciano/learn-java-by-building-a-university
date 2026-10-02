@@ -85,7 +85,9 @@
     "code": "Código",
     "codeHint": "Elegí una entrada de la bitácora o un paso para ver su línea.",
     "stdout": "Salida del programa",
-    "stdoutEmpty": "El programa no imprimió nada."
+    "stdoutEmpty": "El programa no imprimió nada.",
+    "sceneLabel": "Maqueta del resultado: {{headline}}. {{count}} piezas. La bitácora describe cada una.",
+    "piecesList": "Lista de piezas"
   },
   "timeline": {
     "title": "Línea de tiempo",
@@ -109,5 +111,9 @@
     "passed": "Correcto",
     "incomplete": "Incompleto",
     "failed": "Falló"
+  },
+  "dev": {
+    "fps": "{{fps}} fps · {{pieces}} piezas",
+    "pieces": "Piezas"
   }
 }

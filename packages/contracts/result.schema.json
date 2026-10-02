@@ -7,22 +7,50 @@
   "additionalProperties": false,
   "required": ["runId", "outcome", "progress", "pieces", "log", "timeline", "stdout"],
   "properties": {
-    "runId": { "type": "string", "minLength": 1 },
-    "outcome": { "$ref": "#/$defs/state" },
+    "runId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outcome": {
+      "$ref": "#/$defs/state"
+    },
     "progress": {
       "description": "Checks of the challenge that pass, out of all of them.",
       "type": "object",
       "additionalProperties": false,
       "required": ["passed", "total"],
       "properties": {
-        "passed": { "type": "integer", "minimum": 0 },
-        "total": { "type": "integer", "minimum": 0 }
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     },
-    "pieces": { "type": "array", "items": { "$ref": "#/$defs/piece" } },
-    "log": { "type": "array", "items": { "$ref": "#/$defs/logEntry" } },
-    "timeline": { "type": "array", "items": { "$ref": "#/$defs/timelineStep" } },
-    "stdout": { "type": "string" }
+    "pieces": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/piece"
+      }
+    },
+    "log": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/logEntry"
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/timelineStep"
+      }
+    },
+    "stdout": {
+      "type": "string"
+    }
   },
   "$defs": {
     "state": {
@@ -54,8 +82,13 @@
       "additionalProperties": false,
       "required": ["file", "line"],
       "properties": {
-        "file": { "type": "string" },
-        "line": { "type": "integer", "minimum": 1 }
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        }
       }
     },
     "piece": {
@@ -65,14 +98,23 @@
       "additionalProperties": false,
       "required": ["id", "archetype", "state", "built", "label"],
       "properties": {
-        "id": { "type": "string", "minLength": 1 },
-        "archetype": { "$ref": "#/$defs/archetype" },
-        "state": { "$ref": "#/$defs/state" },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "archetype": {
+          "$ref": "#/$defs/archetype"
+        },
+        "state": {
+          "$ref": "#/$defs/state"
+        },
         "built": {
           "description": "False when the brief asks for the piece and the code did not create it.",
           "type": "boolean"
         },
-        "label": { "type": "string" },
+        "label": {
+          "type": "string"
+        },
         "sourceRef": {
           "description": "Where the code created it.",
           "$ref": "#/$defs/sourceRef"
@@ -80,11 +122,21 @@
         "slots": {
           "description": "Composition slots of the piece, keyed by slot name.",
           "type": "object",
-          "additionalProperties": { "$ref": "#/$defs/slot" }
+          "additionalProperties": {
+            "$ref": "#/$defs/slot"
+          }
         },
         "target": {
           "description": "For a variable: the piece it points to. Absent when it points to nothing.",
           "type": "string"
+        },
+        "floors": {
+          "description": "For inheritance-floors: the classes of the object from the top of its hierarchy down to its own class, one floor each.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -94,11 +146,15 @@
       "additionalProperties": false,
       "required": ["state", "pieceIds"],
       "properties": {
-        "state": { "enum": ["filled", "missing"] },
+        "state": {
+          "enum": ["filled", "missing"]
+        },
         "pieceIds": {
           "description": "Pieces that occupy the slot.",
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -109,12 +165,30 @@
       "additionalProperties": false,
       "required": ["state", "title", "why"],
       "properties": {
-        "state": { "$ref": "#/$defs/state" },
-        "title": { "description": "What happened.", "type": "string", "minLength": 1 },
-        "why": { "description": "The Java concept involved.", "type": "string", "minLength": 1 },
-        "sourceRef": { "$ref": "#/$defs/sourceRef" },
-        "hint": { "type": "string", "minLength": 1 },
-        "pieceId": { "type": "string", "minLength": 1 },
+        "state": {
+          "$ref": "#/$defs/state"
+        },
+        "title": {
+          "description": "What happened.",
+          "type": "string",
+          "minLength": 1
+        },
+        "why": {
+          "description": "The Java concept involved.",
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceRef": {
+          "$ref": "#/$defs/sourceRef"
+        },
+        "hint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pieceId": {
+          "type": "string",
+          "minLength": 1
+        },
         "checkId": {
           "description": "The check of the challenge this entry reports, if any.",
           "type": "string",
@@ -134,7 +208,11 @@
           "type": "object",
           "additionalProperties": false,
           "required": ["int"],
-          "properties": { "int": { "type": "integer" } }
+          "properties": {
+            "int": {
+              "type": "integer"
+            }
+          }
         },
         {
           "type": "object",
@@ -142,7 +220,14 @@
           "required": ["double"],
           "properties": {
             "double": {
-              "oneOf": [{ "type": "number" }, { "enum": ["NaN", "Infinity", "-Infinity"] }]
+              "oneOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "enum": ["NaN", "Infinity", "-Infinity"]
+                }
+              ]
             }
           }
         },
@@ -150,31 +235,53 @@
           "type": "object",
           "additionalProperties": false,
           "required": ["boolean"],
-          "properties": { "boolean": { "type": "boolean" } }
+          "properties": {
+            "boolean": {
+              "type": "boolean"
+            }
+          }
         },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["char"],
-          "properties": { "char": { "type": "string", "minLength": 1, "maxLength": 1 } }
+          "properties": {
+            "char": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1
+            }
+          }
         },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["string"],
-          "properties": { "string": { "type": "string" } }
+          "properties": {
+            "string": {
+              "type": "string"
+            }
+          }
         },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["ref"],
-          "properties": { "ref": { "type": "string" } }
+          "properties": {
+            "ref": {
+              "type": "string"
+            }
+          }
         },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["null"],
-          "properties": { "null": { "const": true } }
+          "properties": {
+            "null": {
+              "const": true
+            }
+          }
         }
       ]
     },
@@ -185,8 +292,13 @@
       "additionalProperties": false,
       "required": ["index", "sourceRef", "event"],
       "properties": {
-        "index": { "type": "integer", "minimum": 0 },
-        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceRef": {
+          "$ref": "#/$defs/sourceRef"
+        },
         "event": {
           "enum": [
             "object_created",
@@ -208,9 +320,16 @@
           "type": "string",
           "minLength": 1
         },
-        "name": { "type": "string" },
-        "value": { "$ref": "#/$defs/value" },
-        "text": { "description": "Output written, or message of the exception.", "type": "string" },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/value"
+        },
+        "text": {
+          "description": "Output written, or message of the exception.",
+          "type": "string"
+        },
         "caught": {
           "description": "For an exception: whether the code catches it.",
           "type": "boolean"

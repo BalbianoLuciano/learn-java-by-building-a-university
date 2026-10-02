@@ -49,6 +49,7 @@ class ResultBuilderTest {
                 "Resistencia",
                 new SourceRef("Main.java", 3),
                 null,
+                null,
                 null));
     assertThat(result.log())
         .extracting(LogEntry::checkId)
@@ -134,6 +135,7 @@ class ResultBuilderTest {
                 RunResult.INCOMPLETE,
                 false,
                 "FR Resistencia",
+                null,
                 null,
                 null,
                 null));
@@ -228,6 +230,15 @@ class ResultBuilderTest {
     assertThat(piece(result, "fr-resistencia").label()).isEqualTo("Resistencia");
     assertThat(piece(result, "departamento-1").label()).isEqualTo("Materias Básicas");
     assertThat(piece(result, "departamento-1").archetype()).isEqualTo("department");
+  }
+
+  @Test
+  void aPieceDrawnWithFloorsListsItsClassesFromTheTopOfTheHierarchy() {
+    RunResult result = runSolution(fixtures, "m9-02");
+
+    assertThat(piece(result, "fr-resistencia").floors())
+        .containsExactly("UnidadAcademica", "FacultadRegional");
+    assertThat(piece(runSolution(content, ALIASING), "fr-resistencia").floors()).isNull();
   }
 
   @Test

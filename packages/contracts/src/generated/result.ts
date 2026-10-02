@@ -86,6 +86,12 @@ export interface Piece {
    * For a variable: the piece it points to. Absent when it points to nothing.
    */
   target?: string;
+  /**
+   * For inheritance-floors: the classes of the object from the top of its hierarchy down to its own class, one floor each.
+   *
+   * @minItems 1
+   */
+  floors?: string[];
 }
 /**
  * Where the code created it.

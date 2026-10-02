@@ -1,0 +1,52 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  will-change: transform;
+}
+
+.label {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  white-space: nowrap;
+}
+
+.label[data-ghost='true'] {
+  border-style: dashed;
+  color: var(--color-text-muted);
+  opacity: 0.8;
+}
+
+.badge {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 50%;
+  background: var(--color-surface);
+}
+
+.badge[data-state='passed'] {
+  color: var(--color-success);
+}
+
+.badge[data-state='incomplete'] {
+  color: var(--color-warning);
+}
+
+.badge[data-state='failed'] {
+  color: var(--color-danger);
+}

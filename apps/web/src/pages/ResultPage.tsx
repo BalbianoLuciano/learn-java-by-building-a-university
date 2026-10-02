@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router';
 import { LogList } from '../components/result/LogList';
@@ -9,7 +9,10 @@ import { Timeline } from '../components/result/Timeline';
 import { StateIcon } from '../components/StateIcon';
 import { TopBar } from '../components/TopBar';
 import { useResults } from '../state/results';
+import { Loading } from '../components/Notice';
 import styles from './ResultPage.module.css';
+
+const SceneView = lazy(() => import('../scene/SceneView'));
 
 export function ResultPage() {
   const { t } = useTranslation();
@@ -42,10 +45,23 @@ export function ResultPage() {
       />
       <main id="content" className={styles.layout}>
         <section className={styles.model} aria-labelledby="pieces-title">
-          <h1 id="pieces-title" className={styles.sectionTitle}>
+          <h1 id="pieces-title" className={styles.visuallyHidden}>
             {t('result.pieces')}
           </h1>
-          <PiecesList pieces={result.pieces} selection={selection} onSelect={setSelection} />
+          <div className={styles.scene}>
+            <Suspense fallback={<Loading />}>
+              <SceneView
+                result={result}
+                selection={selection}
+                onSelect={setSelection}
+                label={t('result.sceneLabel', { headline, count: result.pieces.length })}
+              />
+            </Suspense>
+          </div>
+          <details className={styles.piecesDetails}>
+            <summary className={styles.summary}>{t('result.piecesList')}</summary>
+            <PiecesList pieces={result.pieces} selection={selection} onSelect={setSelection} />
+          </details>
           <h2 className={styles.sectionTitle}>{t('result.stdout')}</h2>
           {result.stdout ? (
             <pre className={styles.stdout}>{result.stdout}</pre>

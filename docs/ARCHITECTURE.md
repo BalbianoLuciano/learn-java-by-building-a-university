@@ -334,7 +334,15 @@ frenado una excepción o un límite: lo construido hasta ahí también recibe su
 - Los arquetipos son modelos **generados por código** en `apps/web/src/scene/archetypes/`
   ([`DESIGN.md`](../DESIGN.md) §B).
 - Tipos sin binding se dibujan con el arquetipo genérico `generic-block`.
+- Para `inheritance-floors` la api agrega `floors`: las clases del objeto desde la cima de
+  la jerarquía hasta la propia, un piso cada una.
 - La **silueta real** se arma con datos de `content/domain/`.
+- En la web (`apps/web/src/scene/`): `layout.ts` ubica las piezas (Rectorado al centro,
+  anillos, ocupantes de slots junto a su dueño, variables al frente); `replay.ts` deriva
+  de la línea de tiempo qué existe en cada paso (objetos creados, a qué apunta cada
+  variable, qué slots se llenaron, cuántos pisos construyeron los constructores);
+  `overlay.tsx` dibuja carteles e íconos como HTML anclado a la escena; `SceneView.tsx`
+  arma el canvas y se carga de forma diferida.
 
 ## 8. Frontend
 
@@ -344,6 +352,7 @@ frenado una excepción o un límite: lo construido hasta ahí también recibe su
 | `/modulos/:moduleId` | Lista de desafíos del módulo |
 | `/desafios/:challengeId` | Pedido de obra + editor |
 | `/desafios/:challengeId/resultado` | Vista de resultado del último intento |
+| `/dev/escena` | Solo en desarrollo: escena sintética de hasta 150 piezas con contador de fps (`?piezas=N`) |
 
 - **Progreso**: `localStorage`, clave versionada `ljbu.progress.v1` (estado, ejecuciones,
   pistas vistas y si se vio la solución, por desafío); lectura y escritura siempre en
@@ -356,6 +365,8 @@ frenado una excepción o un límite: lo construido hasta ahí también recibe su
   los de solo lectura.
 - Monaco se empaqueta con la app (solo el editor y el lenguaje Java): no se carga desde una
   CDN.
+- La maqueta es un `role="img"` con una descripción; su equivalente textual es la bitácora y
+  la lista de piezas que queda bajo ella (`<details>`), usable con teclado.
 - Todos los textos de interfaz salen de `content/i18n/<lang>.json`; ningún texto visible
   queda escrito en componentes. Los mensajes de la bitácora pueden citar código del
   alumno: se muestran como texto, nunca como HTML.
