@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: ljbu-runner
+
+server:
+  port: ${PORT:8081}
