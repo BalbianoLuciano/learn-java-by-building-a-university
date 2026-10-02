@@ -47,8 +47,11 @@ CI corre lo mismo en cada PR, un job por componente y solo si cambió.
 - Sin JDK instalado, los comandos de Maven corren igual dentro de Docker. Desde la raíz del
   repo (los tests del runner leen los schemas de `packages/contracts`):
   `docker run --rm -v "$PWD":/repo -w /repo/services/runner eclipse-temurin:25-jdk ./mvnw verify`.
-- El runner no arranca sin `RUNNER_TOKEN`; para levantarlo solo:
+- El runner y la api no arrancan sin `RUNNER_TOKEN`; para levantar uno solo:
   `RUNNER_TOKEN=local ./mvnw spring-boot:run`.
+- Los tests de la api usan el runner de verdad: antes de `./mvnw verify` en
+  `services/api` hay que tener el jar del runner
+  (`./mvnw -DskipTests package` en `services/runner`).
 - Si cambia la traza que produce el runner, el ejemplo del contrato se regenera con
   `./mvnw test -Dtest=ContractExampleTest -Dljbu.updateExamples=true`.
 - Todo junto: `docker compose up --build`.
@@ -62,6 +65,11 @@ CI corre lo mismo en cada PR, un job por componente y solo si cambió.
 Detalle en [ADR 0009](docs/adr/0009-politica-de-idiomas.md).
 
 ## Contenido
+
+Los tests de contenido corren con los de la api (`ContentTest`): para cada desafío
+comprueban que la solución pasa, que el código base no, y que cada variante de `tests/`
+recibe el mensaje que espera. Si un desafío es inválido, la api no arranca y el error dice
+qué archivo y qué regla.
 
 Un desafío nuevo tiene que cumplir los criterios de "listo" de
 [`docs/CURRICULUM.md`](docs/CURRICULUM.md), respetar el formato de

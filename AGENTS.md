@@ -41,6 +41,9 @@ Run the checks of every component you touched; CI runs the same ones.
   `docker run --rm -v "$PWD":/repo -w /repo/services/runner eclipse-temurin:25-jdk ./mvnw verify`.
 - The runner tests launch real child JVMs; the security suite lives in
   `services/runner/src/test/java/…/execution/security/`.
+- The api tests start the real runner from `services/runner/target/ljbu-runner.jar`: build
+  it first with `./mvnw -DskipTests package` in `services/runner`. They include the content
+  tests (`ContentTest`) and check every catalog entry against real javac and JVM messages.
 - `docker compose up --build` starts web, api and runner.
 
 ## Language policy (ADR 0009)
