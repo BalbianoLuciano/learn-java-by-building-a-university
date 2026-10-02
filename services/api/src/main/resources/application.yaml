@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: ljbu-api
+
+server:
+  port: ${PORT:8080}

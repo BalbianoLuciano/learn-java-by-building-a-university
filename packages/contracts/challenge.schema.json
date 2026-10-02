@@ -1,0 +1,378 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/BalbianoLuciano/learn-java-by-building-a-university/main/packages/contracts/challenge.schema.json",
+  "title": "Challenge",
+  "description": "A challenge.yaml file (docs/specs/challenge-format.md).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "module",
+    "order",
+    "title",
+    "concept",
+    "rules",
+    "brief",
+    "criteria",
+    "editable",
+    "scene",
+    "checks",
+    "hints"
+  ],
+  "properties": {
+    "id": {
+      "description": "Unique and stable; never reused.",
+      "type": "string",
+      "pattern": "^m[1-9][0-9]*-[0-9]{2}$"
+    },
+    "module": {
+      "type": "string",
+      "pattern": "^m[1-9][0-9]*$"
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "title": {
+      "$ref": "#/$defs/localizedText"
+    },
+    "concept": {
+      "description": "Tag of the main concept.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "rules": {
+      "description": "Rule ids from docs/DOMAIN.md.",
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^R-[A-Z]+-[0-9]{2}$"
+      }
+    },
+    "brief": {
+      "description": "The brief shown to the learner (short Markdown).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["es"],
+      "properties": {
+        "es": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "en": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        }
+      }
+    },
+    "criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/criterion"
+      }
+    },
+    "editable": {
+      "description": "Files the learner can edit; the rest are read-only.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/javaFileName"
+      }
+    },
+    "limits": {
+      "description": "Overrides of the docs/SECURITY.md limits; they can only be lowered.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000
+        }
+      }
+    },
+    "scene": {
+      "$ref": "#/$defs/scene"
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "hints": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/localizedText"
+      }
+    }
+  },
+  "$defs": {
+    "localizedText": {
+      "title": "LocalizedText",
+      "description": "Learner-facing text by language; es is mandatory.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["es"],
+      "properties": {
+        "es": {
+          "type": "string",
+          "minLength": 1
+        },
+        "en": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "javaFileName": {
+      "title": "JavaFileName",
+      "type": "string",
+      "pattern": "^[A-Z][A-Za-z0-9_]*\\.java$"
+    },
+    "checkId": {
+      "title": "CheckId",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "checkType": {
+      "title": "CheckType",
+      "description": "Check types of docs/ARCHITECTURE.md §6. Adding one requires an ADR.",
+      "enum": [
+        "class_exists",
+        "extends",
+        "implements",
+        "is_abstract",
+        "field",
+        "constructor",
+        "method",
+        "object_count",
+        "object_field",
+        "shared_reference",
+        "call_dispatch",
+        "stdout_contains",
+        "no_exception",
+        "throws"
+      ]
+    },
+    "archetype": {
+      "title": "Archetype",
+      "description": "Scene archetype from DESIGN.md §B4.",
+      "enum": [
+        "rectorate",
+        "regional-faculty",
+        "department",
+        "career",
+        "person",
+        "inheritance-floors",
+        "slot",
+        "variable-sign",
+        "reference-link",
+        "interface-badge",
+        "generic-block"
+      ]
+    },
+    "criterion": {
+      "title": "Criterion",
+      "description": "An item of the learner's goal list, ticked when its check passes.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["check", "es"],
+      "properties": {
+        "check": {
+          "$ref": "#/$defs/checkId"
+        },
+        "es": {
+          "type": "string",
+          "minLength": 1
+        },
+        "en": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "scene": {
+      "title": "Scene",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bindings"],
+      "properties": {
+        "bindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/binding"
+          }
+        },
+        "showVariables": {
+          "description": "Draws signs for the local variables of main.",
+          "type": "boolean"
+        },
+        "context": {
+          "description": "Challenges whose pieces appear as context.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^m[1-9][0-9]*-[0-9]{2}$"
+          }
+        },
+        "realReference": {
+          "description": "Silhouette of the real UTN, from content/domain/.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "regionalFaculties": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "binding": {
+      "title": "Binding",
+      "description": "Maps a learner type to the archetype that draws it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "archetype"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9_]*$"
+        },
+        "archetype": {
+          "$ref": "#/$defs/archetype"
+        },
+        "label": {
+          "description": "Field shown on the sign.",
+          "type": "string"
+        },
+        "slots": {
+          "description": "Composition fields drawn as slots: field name to slot style.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          }
+        }
+      }
+    },
+    "check": {
+      "title": "Check",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "piece", "feedback"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/checkId"
+        },
+        "type": {
+          "$ref": "#/$defs/checkType"
+        },
+        "params": {
+          "description": "Parameters; their shape depends on type.",
+          "type": "object"
+        },
+        "piece": {
+          "description": "Piece affected by the check.",
+          "type": "string",
+          "minLength": 1
+        },
+        "slot": {
+          "description": "Slot of the piece affected by the check.",
+          "type": "string"
+        },
+        "highlight": {
+          "description": "Which line to highlight.",
+          "enum": ["object_creation", "declaration", "last_write"]
+        },
+        "feedback": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pass", "fail"],
+          "properties": {
+            "pass": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["what", "why"],
+              "properties": {
+                "what": {
+                  "$ref": "#/$defs/localizedText"
+                },
+                "why": {
+                  "$ref": "#/$defs/localizedText"
+                }
+              }
+            },
+            "fail": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["what", "why", "hint"],
+              "properties": {
+                "what": {
+                  "$ref": "#/$defs/localizedText"
+                },
+                "why": {
+                  "$ref": "#/$defs/localizedText"
+                },
+                "hint": {
+                  "$ref": "#/$defs/localizedText"
+                }
+              }
+            }
+          }
+        },
+        "traps": {
+          "description": "Specific detections of common mistakes.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trap"
+          }
+        }
+      }
+    },
+    "trap": {
+      "title": "Trap",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["when", "what", "why"],
+      "properties": {
+        "when": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "$ref": "#/$defs/checkType"
+            },
+            "params": {
+              "type": "object"
+            }
+          }
+        },
+        "what": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "why": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "hint": {
+          "$ref": "#/$defs/localizedText"
+        }
+      }
+    }
+  }
+}

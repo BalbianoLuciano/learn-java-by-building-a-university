@@ -91,24 +91,26 @@ excepción.
 
 ## 6. Verificaciones
 
-Cada verificación del `challenge.yaml` trae sus propios textos para cada resultado:
+Cada verificación del `challenge.yaml` trae sus propios textos para cada resultado (formato
+completo en [`specs/challenge-format.md`](specs/challenge-format.md)):
 
 ```yaml
 - id: dean-assigned
   type: object_field
+  params:
+    where: { type: FacultadRegional, field: nombre, equals: "Resistencia" }
+    expect: { field: decano, notNull: true }
   piece: fr-resistencia
   slot: dean
-  where: { type: FacultadRegional, field: nombre, equals: "Resistencia" }
-  expect: { field: decano, notNull: true }
+  highlight: object_creation   # qué línea resaltar: object_creation | declaration | last_write
   feedback:
     pass:
-      what: "La FR Resistencia tiene su decano."
-      why: "Guardaste un objeto `Decano` en un atributo: eso es composición."
+      what: { es: "La FR Resistencia tiene su decano." }
+      why: { es: "Guardaste un objeto `Decano` en un atributo: eso es composición." }
     fail:
-      what: "La FR Resistencia está sin decano."
-      why: "Una facultad **tiene** un decano: es composición, no herencia."
-      hint: "¿Qué atributo de `FacultadRegional` está quedando en `null`?"
-  highlight: object_creation   # qué línea resaltar: object_creation | declaration | last_write
+      what: { es: "La FR Resistencia está sin decano." }
+      why: { es: "Una facultad **tiene** un decano: es composición, no herencia." }
+      hint: { es: "¿Qué atributo de `FacultadRegional` está quedando en `null`?" }
 ```
 
 ## 7. Pistas y solución

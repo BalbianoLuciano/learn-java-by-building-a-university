@@ -1,0 +1,14 @@
+{
+  "name": "ljbu",
+  "private": true,
+  "description": "Learn Java by Building a University: JS workspace (web app and contracts).",
+  "license": "MIT",
+  "packageManager": "pnpm@10.20.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "format": "pnpm -r run format",
+    "check": "pnpm -r run check"
+  }
+}

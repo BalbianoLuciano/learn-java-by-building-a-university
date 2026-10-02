@@ -1,0 +1,98 @@
+{
+  "status": "completed",
+  "structure": {
+    "classes": [
+      {
+        "name": "Main",
+        "kind": "class",
+        "abstract": false,
+        "superclass": null,
+        "interfaces": [],
+        "file": "Main.java",
+        "line": 1,
+        "fields": [],
+        "constructors": [{ "parameterTypes": [], "visibility": "public", "line": 1 }],
+        "methods": [
+          {
+            "name": "main",
+            "returnType": "void",
+            "parameterTypes": ["String[]"],
+            "visibility": "public",
+            "static": true,
+            "abstract": false,
+            "line": 3
+          }
+        ]
+      },
+      {
+        "name": "FacultadRegional",
+        "kind": "class",
+        "abstract": false,
+        "superclass": null,
+        "interfaces": [],
+        "file": "FacultadRegional.java",
+        "line": 1,
+        "fields": [
+          {
+            "name": "nombre",
+            "type": "String",
+            "visibility": "private",
+            "final": false,
+            "static": false,
+            "line": 3
+          },
+          {
+            "name": "decano",
+            "type": "Decano",
+            "visibility": "private",
+            "final": false,
+            "static": false,
+            "line": 4
+          }
+        ],
+        "constructors": [{ "parameterTypes": ["String"], "visibility": "public", "line": 8 }],
+        "methods": []
+      },
+      {
+        "name": "Decano",
+        "kind": "class",
+        "abstract": false,
+        "superclass": null,
+        "interfaces": [],
+        "file": "Decano.java",
+        "line": 1,
+        "fields": [],
+        "constructors": [{ "parameterTypes": [], "visibility": "public", "line": 1 }],
+        "methods": []
+      }
+    ]
+  },
+  "stdout": "",
+  "steps": [
+    {
+      "index": 0,
+      "file": "Main.java",
+      "line": 5,
+      "event": "object_created",
+      "object": { "id": "o1", "type": "FacultadRegional" },
+      "frames": [{ "method": "Main.main", "locals": { "fr": { "ref": "o1" } } }]
+    },
+    {
+      "index": 1,
+      "file": "FacultadRegional.java",
+      "line": 9,
+      "event": "field_set",
+      "target": "o1",
+      "field": "nombre",
+      "value": { "string": "Resistencia" }
+    }
+  ],
+  "heap": {
+    "o1": {
+      "type": "FacultadRegional",
+      "fields": { "nombre": { "string": "Resistencia" }, "decano": { "null": true } }
+    }
+  },
+  "exception": null,
+  "limits": { "steps": 2, "truncated": false }
+}

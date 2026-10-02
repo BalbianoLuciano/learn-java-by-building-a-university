@@ -1,0 +1,47 @@
+# Local environment: `docker compose up --build`.
+#   web → http://localhost:5173
+#   api → http://localhost:8080/api/v1/health
+# As in production, the runner has no published port: only the api reaches it.
+# If a port is taken: `WEB_PORT=5174 API_PORT=8090 docker compose up --build`.
+services:
+  api:
+    build: services/api
+    ports:
+      - '${API_PORT:-8080}:8080'
+    healthcheck:
+      # The Temurin images ship without curl or wget; bash opens the socket itself.
+      test:
+        - CMD
+        - bash
+        - -c
+        - exec 3<>/dev/tcp/localhost/8080 && printf 'GET /api/v1/health HTTP/1.0\r\n\r\n' >&3 && head -n 1 <&3 | grep -q ' 200'
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+  runner:
+    build: services/runner
+    healthcheck:
+      # The Temurin images ship without curl or wget; bash opens the socket itself.
+      test:
+        - CMD
+        - bash
+        - -c
+        - exec 3<>/dev/tcp/localhost/8081 && printf 'GET /health HTTP/1.0\r\n\r\n' >&3 && head -n 1 <&3 | grep -q ' 200'
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - '${WEB_PORT:-5173}:8080'
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--spider', 'http://127.0.0.1:8080/']
+      interval: 5s
+      timeout: 3s
+      retries: 12

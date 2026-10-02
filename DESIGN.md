@@ -39,6 +39,7 @@ que ya tenga token.
 --color-text          #1D1E22   texto principal
 --color-text-muted    #62666E   texto secundario (cumple 4.5:1 sobre bg y surface)
 --color-accent        #4458D6   acción principal, foco, enlaces
+--color-on-accent     #FFFFFF   texto sobre --color-accent
 --color-accent-soft   #E6E9FB   fondo de elementos activos
 --color-success       #23855A   ✅
 --color-warning       #A86A00   🚧 (texto); relleno: --color-warning-soft
@@ -59,6 +60,7 @@ que ya tenga token.
 --color-text          #ECEDF0
 --color-text-muted    #A0A4AD
 --color-accent        #8C9BFF
+--color-on-accent     #121318
 --color-accent-soft   #262B4A
 --color-success       #5CC796
 --color-warning       #E8B24A
@@ -165,7 +167,7 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
 
 | Componente | Reglas |
 |---|---|
-| **Botón primario** (`Ejecutar`) | Fondo `--color-accent`, texto blanco, `--radius-md`, alto 40px. Uno solo por vista. |
+| **Botón primario** (`Ejecutar`) | Fondo `--color-accent`, texto `--color-on-accent`, `--radius-md`, alto 40px. Uno solo por vista. |
 | **Botón secundario** | Fondo `--color-surface-2`, texto `--color-text`. |
 | **Pestañas de archivo** | Texto `--font-code` 13px; activa con borde inferior de 2px `--color-accent`. |
 | **Entrada de bitácora** | Ícono de estado + título (1 línea, `--text-sm` semibold) + chip de línea + explicación (máx. 3 líneas) + pista opcional. Fondo `--color-*-soft` solo en la entrada seleccionada. |

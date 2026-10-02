@@ -1,0 +1,31 @@
+{
+  "app": {
+    "name": "Learn Java by Building a University"
+  },
+  "theme": {
+    "switchToDark": "Cambiar a tema oscuro",
+    "switchToLight": "Cambiar a tema claro"
+  },
+  "home": {
+    "title": "Aprendé Java construyendo una universidad",
+    "lead": "Escribís Java de verdad, lo ejecutás y ves en una maqueta 3D qué construyó tu código, qué le falta y por qué algo falló.",
+    "notice": "La plataforma está en construcción: todavía no hay desafíos para resolver.",
+    "statesTitle": "Así vas a leer cada resultado",
+    "repoLink": "Ver el proyecto en GitHub",
+    "disclaimer": "Proyecto independiente y de código abierto. No es un sitio oficial de la UTN."
+  },
+  "state": {
+    "passed": {
+      "title": "¡Obra terminada!",
+      "description": "Tu código compila, corre y cumple todo el pedido."
+    },
+    "incomplete": {
+      "title": "Obra en construcción",
+      "description": "Tu código compila y corre, pero todavía le falta algo del pedido."
+    },
+    "failed": {
+      "title": "La obra se frenó",
+      "description": "Tu código no compila, lanza una excepción inesperada o supera un límite."
+    }
+  }
+}

@@ -5,8 +5,8 @@ Escribís código Java de verdad, lo ejecutás y ves en una maqueta 3D isométri
 tu programa, qué le falta y por qué algo falló, con cada explicación ligada a tus líneas de
 código.
 
-> 🚧 **Estado:** en diseño. Las especificaciones están listas; la implementación empieza en
-> el hito M1 ([roadmap](docs/ROADMAP.md)).
+> 🚧 **Estado:** en construcción. Ya está el esqueleto del monorepo (hito M1); todavía no
+> hay desafíos para resolver. El próximo hito es el runner ([roadmap](docs/ROADMAP.md)).
 
 *English: an open source course to learn Java OOP by modeling the real structure of the
 Universidad Tecnológica Nacional (Argentina). Write real Java, run it, and see what your
@@ -57,6 +57,23 @@ UTN**.
 
 Java 25 · Spring Boot 4 · JDI · React · TypeScript · Vite · Three.js (React Three Fiber) ·
 Monaco · Railway · Cloudflare Pages.
+
+## Desarrollo local
+
+Con Docker alcanza para levantar todo:
+
+```bash
+docker compose up --build
+```
+
+| Qué | Dónde |
+|---|---|
+| Web | <http://localhost:5173> |
+| Api | <http://localhost:8080/api/v1/health> |
+| Runner | sin puerto publicado, igual que en producción: `docker compose ps` muestra su estado |
+
+Para trabajar en un componente hacen falta Node 24 con pnpm (web y contratos) y un JDK 25
+(api y runner). Los comandos de cada uno están en [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Contribuir
 
