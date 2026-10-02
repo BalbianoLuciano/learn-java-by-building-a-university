@@ -6,6 +6,17 @@
 export type Trace = CompileErrorTrace | RejectedTrace | ExecutedTrace;
 export type Visibility = 'public' | 'protected' | 'package' | 'private';
 /**
+ * One traced event in learner code. file and line say where it happened.
+ */
+export type Step =
+  | ObjectCreatedStep
+  | FieldSetStep
+  | LocalSetStep
+  | CallStep
+  | ReturnStep
+  | OutputStep
+  | ExceptionStep;
+/**
  * Identifier of a traced object, stable within one trace.
  */
 export type ObjectId = string;
@@ -14,10 +25,16 @@ export type ObjectId = string;
  */
 export type Value =
   | {
+      /**
+       * byte, short, int or long.
+       */
       int: number;
     }
   | {
-      double: number;
+      /**
+       * float or double; the non-finite values travel as strings.
+       */
+      double: number | ('NaN' | 'Infinity' | '-Infinity');
     }
   | {
       boolean: boolean;
@@ -26,6 +43,9 @@ export type Value =
       char: string;
     }
   | {
+      /**
+       * Cut at 1000 characters.
+       */
       string: string;
     }
   | {
@@ -34,6 +54,11 @@ export type Value =
   | {
       null: true;
     };
+/**
+ * Class and method joined by a dot, e.g. Main.main; constructors are Class.<init>.
+ */
+export type MethodName = string;
+export type HeapObject = InstanceObject | SequenceObject | MapObject;
 
 /**
  * The code did not compile; nothing was executed.
@@ -46,7 +71,7 @@ export interface CompileErrorTrace {
   diagnostics: [Diagnostic, ...Diagnostic[]];
 }
 /**
- * A javac error.
+ * A compilation error: a javac diagnostic, or a runner rule reported with an ljbu.err.* code.
  */
 export interface Diagnostic {
   file: string;
@@ -78,12 +103,15 @@ export interface RejectedTrace {
 export interface Structure {
   classes: ClassInfo[];
 }
+/**
+ * Types are written with simple names and their type arguments, e.g. List<Departamento>.
+ */
 export interface ClassInfo {
   name: string;
   kind: 'class' | 'interface' | 'enum' | 'record';
   abstract: boolean;
   /**
-   * Null when the class extends java.lang.Object directly.
+   * Null when the class has no explicit superclass.
    */
   superclass: string | null;
   interfaces: string[];
@@ -104,6 +132,9 @@ export interface FieldInfo {
 export interface ConstructorInfo {
   parameterTypes: string[];
   visibility: Visibility;
+  /**
+   * Line of the declaration; the line of the class for an implicit constructor.
+   */
   line: number;
 }
 export interface MethodInfo {
@@ -113,6 +144,10 @@ export interface MethodInfo {
   visibility: Visibility;
   static: boolean;
   abstract: boolean;
+  /**
+   * True when the method is annotated with @Override in the source.
+   */
+  override: boolean;
   line: number;
 }
 /**
@@ -133,16 +168,27 @@ export interface ExecutedTrace {
   status: 'completed' | 'runtime_error' | 'timeout' | 'limit_exceeded';
   structure: Structure;
   /**
-   * Standard output, truncated to the output limit.
+   * Standard output, cut at the output limit.
    */
   stdout: string;
   steps: Step[];
   /**
-   * Final state of the objects reachable from learner classes, keyed by object id.
+   * Final state of every object referenced by the trace, keyed by object id.
    */
   heap: {
     [k: string]: HeapObject;
   };
+  /**
+   * Final values of the static fields of learner classes, keyed by class name.
+   */
+  statics: {
+    [k: string]: {
+      [k: string]: Value;
+    };
+  };
+  /**
+   * The uncaught exception that ended the program, if any.
+   */
   exception: null | ExceptionInfo;
   limits: {
     /**
@@ -150,54 +196,99 @@ export interface ExecutedTrace {
      */
     steps: number;
     /**
-     * True when a limit cut the trace or the output short.
+     * True when the program was cut before it finished on its own.
      */
     truncated: boolean;
+    /**
+     * The limit that cut the program when status is limit_exceeded; null otherwise.
+     */
+    exceeded: 'steps' | 'objects' | 'output' | 'call_depth' | null;
   };
 }
 /**
- * One traced event in learner code. Each step carries only what changed: object for object_created; target, field and value for field_set.
+ * An object of a learner class was created. The line is the one with the new expression.
  */
-export interface Step {
+export interface ObjectCreatedStep {
   index: number;
   file: string;
   line: number;
-  event: 'object_created' | 'field_set' | 'local_set' | 'call' | 'return' | 'output' | 'exception';
-  /**
-   * object_created: the new object.
-   */
-  object?: {
+  event: 'object_created';
+  object: {
     id: ObjectId;
     type: string;
   };
-  target?: ObjectId;
-  /**
-   * field_set: the field written.
-   */
-  field?: string;
-  value?: Value;
-  /**
-   * Call stack with the locals visible after the event, innermost frame last.
-   */
-  frames?: Frame[];
-}
-export interface Frame {
-  /**
-   * Qualified as Class.method, e.g. Main.main.
-   */
-  method: string;
-  locals: {
-    [k: string]: Value;
-  };
-}
-export interface HeapObject {
-  type: string;
-  fields: {
-    [k: string]: Value;
-  };
 }
 /**
- * The uncaught exception that stopped the program. file and line point to the first frame in learner code.
+ * A field of a learner class was written. target is the object; a static field carries ownerClass instead.
+ */
+export interface FieldSetStep {
+  index: number;
+  file: string;
+  line: number;
+  event: 'field_set';
+  target?: ObjectId;
+  ownerClass?: string;
+  field: string;
+  value: Value;
+}
+/**
+ * A local variable of a learner method received a value.
+ */
+export interface LocalSetStep {
+  index: number;
+  file: string;
+  line: number;
+  event: 'local_set';
+  method: MethodName;
+  name: string;
+  value: Value;
+}
+/**
+ * A learner method or constructor started. The line is the call site when the caller is learner code. method names the implementation that runs; target is the receiver, absent in static methods.
+ */
+export interface CallStep {
+  index: number;
+  file: string;
+  line: number;
+  event: 'call';
+  method: MethodName;
+  target?: ObjectId;
+  args: Value[];
+}
+/**
+ * A learner method or constructor finished normally. value is absent when it returns void.
+ */
+export interface ReturnStep {
+  index: number;
+  file: string;
+  line: number;
+  event: 'return';
+  method: MethodName;
+  value?: Value;
+}
+/**
+ * The line wrote text to standard output.
+ */
+export interface OutputStep {
+  index: number;
+  file: string;
+  line: number;
+  event: 'output';
+  text: string;
+}
+/**
+ * An exception was thrown. caught says whether learner code catches it; otherwise it ends the program.
+ */
+export interface ExceptionStep {
+  index: number;
+  file: string;
+  line: number;
+  event: 'exception';
+  exception: ExceptionInfo;
+  caught: boolean;
+}
+/**
+ * An exception. file and line point to the first frame in learner code.
  */
 export interface ExceptionInfo {
   /**
@@ -207,4 +298,32 @@ export interface ExceptionInfo {
   message: string | null;
   file: string;
   line: number;
+}
+/**
+ * An object with its fields. Objects of classes the learner did not write carry no fields.
+ */
+export interface InstanceObject {
+  type: string;
+  fields: {
+    [k: string]: Value;
+  };
+}
+/**
+ * An array, a list or a set, with at most its first 200 elements.
+ */
+export interface SequenceObject {
+  type: string;
+  size: number;
+  elements: Value[];
+}
+/**
+ * A map, with at most its first 200 entries.
+ */
+export interface MapObject {
+  type: string;
+  size: number;
+  entries: {
+    key: Value;
+    value: Value;
+  }[];
 }

@@ -1,0 +1,9 @@
+{
+  "files": [
+    {
+      "path": "Main.java",
+      "content": "public class Main {\n  public static void main(String[] args) {\n    System.out.println(\"Hola, UTN\");\n  }\n}\n"
+    }
+  ],
+  "limits": { "timeoutMs": 5000 }
+}
