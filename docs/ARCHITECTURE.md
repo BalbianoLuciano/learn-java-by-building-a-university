@@ -103,8 +103,11 @@ Tiempo total objetivo: p95 < 4 s.
 
 ## 5. Contratos
 
-Fuente de verdad: JSON Schemas en `packages/contracts/`. Los tipos de TypeScript se
-**generan** desde ahí; los `record` de Java se validan contra los mismos schemas en tests.
+Fuente de verdad: JSON Schemas en `packages/contracts/` (`trace.schema.json`,
+`result.schema.json`, `challenge.schema.json`). Los tipos de TypeScript se **generan** desde
+ahí (`pnpm --filter @ljbu/contracts generate`); los `record` de Java se validan contra los
+mismos schemas en tests. El detalle campo por campo está en los schemas; los ejemplos de
+esta sección viven en `packages/contracts/examples/` y se validan en CI.
 
 ### 5.1 API pública (`/api/v1`)
 
@@ -160,6 +163,9 @@ Fuente de verdad: JSON Schemas en `packages/contracts/`. Los tipos de TypeScript
 - `heap` es el estado final de los objetos alcanzables desde clases del alumno; cada paso
   incluye solo los cambios.
 - Solo se registran eventos en clases del alumno.
+- La forma depende de `status`: con `compile_error` solo viaja `diagnostics` (archivo,
+  línea, columna, código de `javac`, mensaje); con `rejected`, `structure` y `violations`
+  (archivo, línea y símbolo prohibido); en el resto, el ejemplo de arriba.
 
 ### 5.3 Desafío (`content/challenges/<module>/<NN-slug>/`)
 
@@ -256,7 +262,8 @@ Toda la configuración por variables de entorno; ningún secreto en el repo.
 
 - Logs estructurados (JSON) con `runId`, duración por etapa y `status`.
 - **Nunca** se registra el código del alumno ni su salida.
-- `GET /health` en api y runner para Railway.
+- Estado del servicio para Railway: `GET /api/v1/health` en la api y `GET /health` en el
+  runner. Responden `{ "status": "ok" }` sin autenticación.
 
 ## 11. Calidad
 

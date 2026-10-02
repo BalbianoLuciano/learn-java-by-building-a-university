@@ -103,6 +103,15 @@ hints:
   - es: "`FacultadRegional miFacultad = resistencia;` y después asigná la ciudad a través de `miFacultad`."
 ```
 
+Además de lo que muestra el ejemplo:
+
+- `limits` solo puede **bajar** los límites de [`../SECURITY.md`](../SECURITY.md) §3, nunca
+  subirlos.
+- Un `check` puede declarar `slot` cuando afecta a un slot de su pieza (p. ej. `slot: dean`).
+- `feedback.fail` siempre lleva `hint`; en una trampa (`traps`) es opcional.
+- El ejemplo vive también en `packages/contracts/examples/challenge.m1-03.yaml`; un test
+  comprueba que valida contra el schema y que coincide con este documento.
+
 ## Reglas de validación
 
 - `id` único en todo `content/`; `order` único dentro del módulo.
