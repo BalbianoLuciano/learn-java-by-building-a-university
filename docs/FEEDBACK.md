@@ -54,23 +54,32 @@ Los aciertos (✅) llevan solo "qué pasó" y "por qué": reforzar el concepto t
 código de diagnóstico (`content/feedback/javac.es.yaml`). Si un código no está en el
 catálogo, se muestra un mensaje genérico con el texto original de `javac` debajo.
 
-Catálogo mínimo de la v1:
+Cada entrada del catálogo tiene qué pasó, por qué y una pista. Los marcadores
+(`{símbolo}`) se llenan con una expresión regular sobre el mensaje original de `javac`
+(`match`); si el mensaje no coincide se usa un texto sin marcadores (`whatWithoutMatch`).
+Los tests de la api compilan un ejemplo de cada error y comprueban el mensaje que sale.
 
-| Código `javac` | Qué pasó (plantilla) | Por qué |
-|---|---|---|
-| `compiler.err.cant.resolve.location` | "Java no conoce `{símbolo}`." | Hay que declararlo antes de usarlo, o revisar mayúsculas y nombre. |
-| `compiler.err.expected` | "Falta un `{token}` cerca de acá." | Java necesita esa marca para entender dónde termina algo. |
-| `compiler.err.prob.found.req` | "Esperaba un `{requerido}` y recibió un `{encontrado}`." | Cada variable acepta solo valores de su tipo. |
-| `compiler.err.cant.apply.symbol` | "`{método}` no recibe esos argumentos." | Los argumentos tienen que coincidir en cantidad, orden y tipo. |
-| `compiler.err.report.access` | "`{miembro}` es privado de `{clase}`." | Encapsulamiento: solo la propia clase lo toca; usá sus métodos públicos. |
-| `compiler.err.does.not.override.abstract` | "`{clase}` no implementa `{método}`." | Al extender una clase abstracta o implementar una interfaz, prometiste ese método. |
-| `compiler.err.abstract.cant.be.instantiated` | "No se puede hacer `new {clase}`." | Una clase abstracta es un molde incompleto: se instancian sus subclases. |
-| `compiler.err.cant.assign.val.to.var` | "`{campo}` es `final`: no se puede volver a asignar." | `final` fija el valor después de construir el objeto. |
-| `compiler.err.missing.ret.stmt` | "A `{método}` le falta un `return`." | Si declara que devuelve algo, todos los caminos tienen que devolverlo. |
-| `compiler.err.call.must.be.first.stmt.in.ctor` / `compiler.err.cant.ref.before.ctor.called` | "`super(...)` tiene que ir antes que lo demás." | La parte de la superclase se construye primero (la planta baja antes que el piso). |
-| `compiler.err.non-static.cant.be.ref` | "`{miembro}` necesita un objeto." | Desde un método `static` no hay `this`: primero hacé `new`. |
-| `compiler.err.var.might.not.have.been.initialized` | "`{variable}` puede no tener valor." | Las variables locales no tienen valor por defecto. |
-| `compiler.err.class.public.should.be.in.file` | "La clase `{clase}` tiene que estar en `{clase}.java`." | Una clase pública por archivo, con el mismo nombre. |
+El catálogo cubre, como mínimo, estos errores (los textos viven en el archivo, no acá):
+
+| Qué le pasó al alumno | Códigos de `javac` |
+|---|---|
+| Usó un nombre que no existe | `cant.resolve`, `cant.resolve.location` y sus variantes `.args` |
+| Le falta un símbolo o un valor | `expected`, `expected2`, `expected3`, `illegal.start.of.expr`, `not.stmt`, `premature.eof`, `unclosed.str.lit` |
+| El tipo no coincide | `prob.found.req` |
+| Llamó con argumentos que no van | `cant.apply.symbol`, `cant.apply.symbols` |
+| Tocó algo privado | `report.access` |
+| No implementó un método abstracto, o instanció una clase abstracta | `does.not.override.abstract`, `abstract.cant.be.instantiated` |
+| Reasignó un `final` | `cant.assign.val.to.var` |
+| Le falta un `return` | `missing.ret.stmt` |
+| Usó el objeto antes de `super(...)` | `cant.ref.before.ctor.called` |
+| Usó algo de instancia desde `static` | `non-static.cant.be.ref` |
+| Usó una variable local sin valor | `var.might.not.have.been.initialized` |
+| La clase pública no coincide con el archivo, o declaró dos veces un nombre | `class.public.should.be.in.file`, `already.defined` |
+| Rompió una regla de la plataforma | `ljbu.err.package.not.allowed`, `ljbu.err.main.not.found`, `ljbu.err.compilation.timed.out` |
+
+Todos los códigos de `javac` llevan el prefijo `compiler.err.`. Desde Java 25 puede haber
+código antes de `super(...)` siempre que no use el objeto, así que el mensaje correcto ya
+no es "`super(...)` va primero" sino "usaste el objeto antes de `super(...)`".
 
 ## 5. Excepciones
 
@@ -84,10 +93,16 @@ Catálogo en `content/feedback/exceptions.es.yaml`.
 | `ClassCastException` | "Un `{real}` no es un `{pedido}`." | Un objeto es de su clase y de sus superclases, no de sus hermanas. | Pisos resaltados |
 | `IllegalArgumentException` (lanzada por el alumno) | Se muestra su propio mensaje | Si el desafío la espera, es un acierto ✅. | — |
 | `StackOverflowError` | "Un método se llamó a sí mismo sin parar." | Cada llamada ocupa lugar en la pila hasta que se llena. | Pieza ❌ |
-| `OutOfMemoryError` | "Se crearon demasiados objetos." | La memoria del programa tiene un límite. | Pieza ❌ |
+| `OutOfMemoryError` | "Se pidió más memoria de la que el programa tiene." | La memoria del programa tiene un límite, y los objetos y arreglos la ocupan. | Pieza ❌ |
 
 La línea que se muestra es la **primera línea del código del alumno** en la pila de la
-excepción.
+excepción. Los marcadores se llenan igual que en el catálogo de `javac`, a partir del
+mensaje de la excepción; `{type}` y `{message}` están siempre disponibles.
+
+Otros dos catálogos explican lo que no es ni un error de compilación ni una excepción:
+`content/feedback/limits.es.yaml`, un mensaje por cada límite del sandbox, y
+`content/feedback/rejections.es.yaml`, que explica por familias (archivos, red, hilos,
+procesos, teclado, reflexión) el código que la lista permitida rechaza.
 
 Una recursión que no termina casi nunca llega a `StackOverflowError`: el runner la corta
 antes, al pasar las 1 000 llamadas anidadas (límite `call_depth`). Ese corte se explica con
@@ -117,6 +132,10 @@ completo en [`specs/challenge-format.md`](specs/challenge-format.md)):
       why: { es: "Una facultad **tiene** un decano: es composición, no herencia." }
       hint: { es: "¿Qué atributo de `FacultadRegional` está quedando en `null`?" }
 ```
+
+Una verificación puede declarar **trampas**: errores comunes con un mensaje más preciso que
+el genérico. Si la verificación falla y se cumple la condición de una trampa, se muestra
+el mensaje de la trampa.
 
 ## 7. Pistas y solución
 

@@ -184,7 +184,7 @@ public final class JdiTracer {
     } catch (LimitReached reached) {
       finish = new Finish(Status.LIMIT_EXCEEDED, reached.limit);
     } catch (VMDisconnectedException e) {
-      finish = new Finish(Status.RUNTIME_ERROR, null);
+      finish = onJvmEnded();
     }
 
     HeapReader reader = new HeapReader(registry, mapper, learnerClasses);
@@ -229,6 +229,7 @@ public final class JdiTracer {
       if (events == null) {
         // The program may be printing in a loop without any other event.
         drainOutput();
+        checkCallDepthWhileSilent();
         continue;
       }
       for (Event event : events) {
@@ -241,6 +242,27 @@ public final class JdiTracer {
     }
   }
 
+  /**
+   * The JDWP agent drops an event at the same code location as the previous one, whatever the
+   * frame. A method whose first instruction is a call to itself recurses without a single event, so
+   * the depth is also measured from here while the program is silent.
+   */
+  private void checkCallDepthWhileSilent() {
+    if (mainThread == null) {
+      return;
+    }
+    try {
+      mainThread.suspend();
+      if (mainThread.frameCount() - Math.max(mainDepth, 0) >= limits.maxCallDepth()) {
+        // Left suspended: the final heap is read before the JVM is killed.
+        throw new LimitReached(ExceededLimit.CALL_DEPTH);
+      }
+      mainThread.resume();
+    } catch (com.sun.jdi.IncompatibleThreadStateException e) {
+      mainThread.resume();
+    }
+  }
+
   private Finish handle(Event event) {
     try {
       return switch (event) {
@@ -250,9 +272,8 @@ public final class JdiTracer {
         case StepEvent step -> onStep(step);
         case ModificationWatchpointEvent write -> onFieldWrite(write);
         case ExceptionEvent thrown -> onException(thrown);
-        // The JVM died before main returned: a crash or a kill.
-        case VMDeathEvent death -> new Finish(Status.RUNTIME_ERROR, null);
-        case VMDisconnectEvent disconnect -> new Finish(Status.RUNTIME_ERROR, null);
+        case VMDeathEvent death -> onJvmEnded();
+        case VMDisconnectEvent disconnect -> onJvmEnded();
         default -> null;
       };
     } catch (com.sun.jdi.IncompatibleThreadStateException | AbsentInformationException e) {
@@ -262,6 +283,16 @@ public final class JdiTracer {
   }
 
   // --- Event handlers
+
+  /**
+   * The JVM ended before the exit of main was seen. HotSpot does not even call a main whose body is
+   * empty, so it reports no entry and no exit for it: an exit code of 0 says the program finished
+   * on its own. Anything else is a crash or a kill.
+   */
+  private Finish onJvmEnded() {
+    drainOutput();
+    return new Finish(child.exitedNormally() ? Status.COMPLETED : Status.RUNTIME_ERROR, null);
+  }
 
   private Finish onClassPrepared(ClassPrepareEvent event) {
     ReferenceType type = event.referenceType();

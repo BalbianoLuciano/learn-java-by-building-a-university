@@ -46,6 +46,7 @@
 ├── content/
 │   ├── challenges/<module>/<NN-slug>/   # un desafío por carpeta
 │   ├── domain/                 # datos de la UTN real + fuentes
+│   ├── feedback/               # catálogos de mensajes: javac, excepciones, límites, rechazos
 │   └── i18n/                   # textos de interfaz por idioma
 ├── docs/                       # specs, ADRs
 ├── DESIGN.md
@@ -79,8 +80,10 @@ Las versiones exactas se fijan en los archivos de build; este documento no las r
 ## 4. Flujo de una ejecución
 
 1. **web** envía `POST /api/v1/runs` con `{ challengeId, files: [{ path, content }] }`.
-2. **api** valida: desafío existente, tamaño total ≤ 64 KB, ≤ 10 archivos, nombres válidos,
-   rate limit por IP. Si falla responde `400`/`429` con un error estructurado.
+2. **api** valida: desafío existente, tamaño total ≤ 64 KB, rate limit por IP y que los
+   archivos enviados sean editables en ese desafío. Arma el programa con los archivos del
+   desafío, reemplazando los editables por los del alumno; los de solo lectura salen
+   siempre del desafío. Si algo falla responde `400`/`404`/`429` con un error estructurado.
 3. **api** llama a **runner** `POST /internal/v1/executions` con los archivos y los límites del
    desafío, autenticándose con `RUNNER_TOKEN`.
 4. **runner**:
@@ -97,8 +100,9 @@ Las versiones exactas se fijan en los archivos de build; este documento no las r
    4. **Ejecuta** el `main` en una JVM hija bajo JDI, registrando la traza.
    5. Devuelve `status: "completed" | "runtime_error" | "timeout" | "limit_exceeded"`,
       la estructura, la traza y la salida estándar (truncada).
-5. **api** evalúa las verificaciones del desafío sobre estructura + traza y arma el
-   **resultado**: lista de piezas con estado, mensajes de bitácora y escena.
+5. **api** valida la respuesta del runner contra el schema de la traza, evalúa las
+   verificaciones del desafío sobre estructura + traza y arma el **resultado**: piezas con
+   estado, mensajes de bitácora y línea de tiempo.
 6. **web** muestra la vista de resultado.
 
 Tiempo total objetivo: p95 < 4 s.
@@ -113,18 +117,23 @@ esta sección viven en `packages/contracts/examples/` y se validan en CI.
 
 ### 5.1 API pública (`/api/v1`)
 
-| Método | Ruta | Descripción |
-|---|---|---|
-| `GET` | `/modules` | Módulos y desafíos (metadatos, sin soluciones) |
-| `GET` | `/challenges/{id}` | Desafío completo: pedido, código base, escena real, pistas bloqueadas |
-| `POST` | `/runs` | Ejecuta y devuelve el resultado (síncrono) |
-| `GET` | `/challenges/{id}/hints/{level}` | Pista de nivel 1..3 |
-| `GET` | `/challenges/{id}/solution` | Solución explicada |
-| `GET` | `/health` | Estado del servicio |
+| Método | Ruta | Descripción | Schema de la respuesta |
+|---|---|---|---|
+| `GET` | `/modules` | Módulos y desafíos (metadatos, sin soluciones) | `module-list` |
+| `GET` | `/challenges/{id}` | Lo que hace falta para trabajar: pedido, criterios, código base, reglas y referencia real | `challenge-view` |
+| `POST` | `/runs` | Ejecuta y devuelve el resultado (síncrono). Cuerpo: `run-request` | `result` |
+| `GET` | `/challenges/{id}/hints/{level}` | Pista de nivel 1..3 | `hint` |
+| `GET` | `/challenges/{id}/solution` | Solución y su explicación | `solution` |
+| `GET` | `/health` | Estado del servicio | — |
 
-- Errores con formato `application/problem+json` (RFC 9457).
-- Pistas y solución se sirven por separado para que la interfaz las muestre recién cuando
-  corresponde. No es un control de seguridad: el contenido es abierto.
+- Los textos se devuelven ya en un idioma (`?lang=es`, que es el valor por defecto).
+- Errores con formato `application/problem+json` (RFC 9457) y un campo `code`:
+  `challenge_not_found`, `hint_not_found`, `not_editable`, `duplicate_file`,
+  `files_too_large` (400/404); `rate_limited` y `run_in_progress` (429, con `Retry-After`);
+  `runner_busy` (503) y `runner_unavailable` (502).
+- `GET /challenges/{id}` no incluye verificaciones, pistas ni solución. Pistas y solución
+  se sirven por separado para que la interfaz las muestre recién cuando corresponde. No es
+  un control de seguridad: el contenido es abierto.
 
 ### 5.2 Ejecución y traza (api ↔ runner)
 
@@ -151,7 +160,7 @@ que el runner produce de verdad):
 {
   "status": "completed",
   "structure": { "classes": [ /* nombre, superclase, campos, constructores, métodos, líneas */ ] },
-  "stdout": "Resistencia, Chaco\n",
+  "stdout": "",
   "steps": [
     { "index": 0, "file": "Main.java", "line": 3, "event": "call", "method": "Main.main", "args": [] },
     { "index": 1, "file": "Main.java", "line": 3, "event": "object_created",
@@ -164,22 +173,22 @@ que el runner produce de verdad):
       "method": "Main.main", "name": "resistencia", "value": { "ref": "o1" } },
     { "index": 5, "file": "Main.java", "line": 4, "event": "field_set",
       "target": "o1", "field": "nombre", "value": { "string": "Resistencia" } },
-    // …
-    { "index": 8, "file": "Main.java", "line": 8, "event": "local_set",
+    { "index": 6, "file": "Main.java", "line": 5, "event": "field_set",
+      "target": "o1", "field": "ciudad", "value": { "string": "Resistencia" } },
+    { "index": 7, "file": "Main.java", "line": 7, "event": "local_set",
       "method": "Main.main", "name": "miFacultad", "value": { "ref": "o1" } },
-    { "index": 9, "file": "Main.java", "line": 9, "event": "field_set",
-      "target": "o1", "field": "ciudad", "value": { "string": "Resistencia, Chaco" } },
-    { "index": 10, "file": "Main.java", "line": 11, "event": "output", "text": "Resistencia, Chaco\n" },
-    { "index": 11, "file": "Main.java", "line": 12, "event": "return", "method": "Main.main" }
+    { "index": 8, "file": "Main.java", "line": 8, "event": "field_set",
+      "target": "o1", "field": "provincia", "value": { "string": "Chaco" } },
+    { "index": 9, "file": "Main.java", "line": 9, "event": "return", "method": "Main.main" }
   ],
   "heap": {
     "o1": { "type": "FacultadRegional",
-            "fields": { "nombre": { "string": "Resistencia" }, "ciudad": { "string": "Resistencia, Chaco" },
+            "fields": { "nombre": { "string": "Resistencia" }, "ciudad": { "string": "Resistencia" },
                         "provincia": { "string": "Chaco" } } }
   },
   "statics": {},
   "exception": null,
-  "limits": { "steps": 12, "truncated": false, "exceeded": null }
+  "limits": { "steps": 10, "truncated": false, "exceeded": null }
 }
 ```
 
@@ -218,37 +227,74 @@ Limitaciones conocidas de la v1:
 - El contenido de arreglos y colecciones se lee al final: un `add` no genera un paso.
 - Las variables locales se comparan al pasar de una línea a otra: un bucle escrito entero
   en una sola línea no genera pasos intermedios.
+- La JVM no ejecuta un `main` de cuerpo vacío: ese programa termina `completed` sin pasos.
+- El depurador no informa un evento en la misma posición de código que el anterior. Una
+  recursión cuyo método empieza llamándose a sí mismo no deja pasos de las llamadas
+  internas; igual se corta por profundidad.
 
-### 5.3 Desafío (`content/challenges/<module>/<NN-slug>/`)
+### 5.3 Contenido (`content/`)
 
 ```
-challenge.yaml     # metadatos, pedido, verificaciones, escena, pistas
-starter/*.java     # código base
-solution/*.java    # solución de referencia
-solution.md        # explicación de la solución
+challenges/<module>/module.yaml               # título y objetivo del módulo
+challenges/<module>/<NN-slug>/challenge.yaml  # metadatos, pedido, verificaciones, escena, pistas
+challenges/<module>/<NN-slug>/starter/*.java  # código base
+challenges/<module>/<NN-slug>/solution/*.java # solución de referencia
+challenges/<module>/<NN-slug>/solution.md     # explicación de la solución
+challenges/<module>/<NN-slug>/tests/          # variantes con el resultado esperado
+domain/*.json                                 # reglas y unidades de la UTN real, con fuente
+feedback/*.es.yaml                            # catálogos de mensajes
 ```
 
-El formato completo de `challenge.yaml` está en [`specs/challenge-format.md`](specs/challenge-format.md).
+El formato completo está en [`specs/challenge-format.md`](specs/challenge-format.md). La
+api carga todo al arrancar y no arranca si algo es inválido.
 
 ### 5.4 Resultado (api → web)
+
+`result.schema.json`; ejemplo completo en `packages/contracts/examples/result.incomplete.json`.
 
 ```jsonc
 {
   "runId": "…",
   "outcome": "incomplete",              // passed | incomplete | failed
+  "progress": { "passed": 1, "total": 2 },
   "pieces": [
     { "id": "fr-resistencia", "archetype": "regional-faculty", "state": "incomplete",
-      "label": "FR Resistencia", "sourceRef": { "file": "Main.java", "line": 5 },
-      "slots": { "dean": { "state": "missing" } } }
+      "built": true, "label": "Resistencia", "sourceRef": { "file": "Main.java", "line": 5 },
+      "slots": { "dean": { "state": "missing", "pieceIds": [] } } },
+    { "id": "var-resistencia", "archetype": "variable-sign", "state": "passed",
+      "built": true, "label": "resistencia", "target": "fr-resistencia" }
   ],
   "log": [
     { "state": "incomplete", "title": "La FR Resistencia está sin decano.",
-      "why": "…", "sourceRef": { "file": "Main.java", "line": 5 }, "hint": "…", "pieceId": "fr-resistencia" }
+      "why": "…", "sourceRef": { "file": "Main.java", "line": 5 }, "hint": "…",
+      "pieceId": "fr-resistencia", "checkId": "dean-assigned" }
   ],
-  "timeline": [ /* pasos con referencia a piezas y líneas */ ],
+  "timeline": [
+    { "index": 0, "sourceRef": { "file": "Main.java", "line": 5 }, "event": "object_created",
+      "pieceId": "fr-resistencia", "name": "FacultadRegional" },
+    { "index": 1, "sourceRef": { "file": "Main.java", "line": 5 }, "event": "local_set",
+      "pieceId": "var-resistencia", "targetPieceId": "fr-resistencia",
+      "name": "resistencia", "value": { "ref": "o1" } }
+  ],
   "stdout": "…"
 }
 ```
+
+- `outcome`: `failed` si no compiló, se rechazó, lanzó una excepción que el desafío no
+  pide o lo cortó un límite; `passed` si pasan todas las verificaciones; si no,
+  `incomplete`.
+- `log` sigue el orden de [`FEEDBACK.md`](FEEDBACK.md) §2. `checkId` permite tildar los
+  criterios del pedido; `detail` trae el texto original de `javac` o de la JVM cuando no
+  hay un mensaje propio.
+- `pieces`: las que pide el desafío (con `built: false` si el código no las creó), los
+  demás objetos de clases del alumno y las variables de `main` que apuntan a un objeto
+  (`target`) o a nada. La pieza cuyo método se estaba ejecutando al saltar una excepción
+  queda `failed`.
+- `timeline` es la traza del runner paso por paso, con la pieza que toca cada paso
+  (`pieceId`) y la pieza a la que pasa a apuntar un campo o una variable (`targetPieceId`).
+  `name` es la clase creada, el campo o la variable escritos, el método llamado o el tipo
+  de la excepción, según el evento.
+- Si el programa no llegó a ejecutarse, `pieces` y `timeline` van vacías.
 
 ## 6. Verificaciones
 
@@ -271,13 +317,20 @@ api sobre estructura + traza. Tipos de la v1:
 | `no_exception` / `throws` | Terminó sin excepción, o lanzó la esperada |
 
 Cada verificación declara: `id`, tipo y parámetros, la **pieza** que afecta, el mensaje de
-bitácora para cada resultado y qué línea se resalta. Agregar un tipo nuevo requiere un ADR.
+bitácora para cada resultado y qué línea se resalta. Los parámetros de cada tipo están en
+[`specs/challenge-format.md`](specs/challenge-format.md). Agregar un tipo nuevo requiere un
+ADR.
+
+Se evalúan siempre que el programa haya llegado a ejecutarse, aunque después lo haya
+frenado una excepción o un límite: lo construido hasta ahí también recibe su mensaje.
 
 ## 7. Escena
 
 - Cada desafío define **bindings**: qué tipo del alumno se dibuja con qué **arquetipo**
   (`FacultadRegional → regional-faculty`), qué campo es el cartel y qué campos son
-  **slots** (p. ej. `decano → dean-pedestal`).
+  **slots** (p. ej. `decano → dean`).
+- Cada desafío declara las **piezas** que pide construir; la api las empareja con los
+  objetos que creó el código ([ADR 0017](adr/0017-piezas-y-verificaciones-sobre-la-traza.md)).
 - Los arquetipos son modelos **generados por código** en `apps/web/src/scene/archetypes/`
   ([`DESIGN.md`](../DESIGN.md) §B).
 - Tipos sin binding se dibujan con el arquetipo genérico `generic-block`.
@@ -308,7 +361,8 @@ Toda la configuración por variables de entorno; ningún secreto en el repo.
 | `RUNNER_TOKEN` | api, runner | Autenticación api → runner |
 | `RUNNER_MAX_CONCURRENT` | runner | Ejecuciones simultáneas (default 2) |
 | `RUNNER_QUEUE_CAPACITY` | runner | Ejecuciones en espera antes de responder `503` (default 8) |
-| `ALLOWED_ORIGINS` | api | CORS |
+| `ALLOWED_ORIGINS` | api | CORS: orígenes de la web, separados por coma |
+| `CONTENT_DIR` | api | Carpeta de `content/` (en la imagen, `/app/content`) |
 | `RATE_LIMIT_RUNS_PER_MINUTE` | api | Por IP (default 10) |
 | `VITE_API_URL` | web | URL pública de la api |
 
@@ -323,7 +377,9 @@ Toda la configuración por variables de entorno; ningún secreto en el repo.
 
 Nivel **intermedio** ([ADR 0010](adr/0010-calidad-intermedia.md)):
 
-- Tests unitarios en los tres componentes; tests de integración api ↔ runner.
+- Tests unitarios en los tres componentes; tests de integración api ↔ runner: los tests
+  de la api levantan el runner real como proceso y pasan por HTTP, así que el motor de
+  verificaciones y los catálogos se prueban contra lo que `javac` y la JVM dicen de verdad.
 - **Tests de contenido**: en CI, por cada desafío, la `solution/` pasa todas las
   verificaciones y el `starter/` no.
 - GitHub Actions en cada PR: formato, lint, typecheck, tests y build.

@@ -5,9 +5,9 @@ Escribís código Java de verdad, lo ejecutás y ves en una maqueta 3D isométri
 tu programa, qué le falta y por qué algo falló, con cada explicación ligada a tus líneas de
 código.
 
-> 🚧 **Estado:** en construcción. Ya funciona el runner, que compila, verifica y ejecuta
-> Java paso a paso (hito M2); todavía no hay desafíos para resolver. El próximo hito es la
-> api ([roadmap](docs/ROADMAP.md)).
+> 🚧 **Estado:** en construcción. El runner ejecuta Java paso a paso y la api ya corrige
+> los tres primeros desafíos y explica cada resultado (hito M3). Falta la interfaz para
+> resolverlos: es el próximo hito ([roadmap](docs/ROADMAP.md)).
 
 *English: an open source course to learn Java OOP by modeling the real structure of the
 Universidad Tecnológica Nacional (Argentina). Write real Java, run it, and see what your
@@ -70,7 +70,7 @@ docker compose up --build
 | Qué | Dónde |
 |---|---|
 | Web | <http://localhost:5173> |
-| Api | <http://localhost:8080/api/v1/health> |
+| Api | <http://localhost:8080/api/v1/modules> |
 | Runner | sin puerto publicado, igual que en producción: `docker compose ps` muestra su estado |
 
 Para trabajar en un componente hacen falta Node 24 con pnpm (web y contratos) y un JDK 25

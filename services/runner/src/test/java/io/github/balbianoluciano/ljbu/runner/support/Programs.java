@@ -14,9 +14,20 @@ public final class Programs {
 
   private Programs() {}
 
+  /** The solution of challenge 1.3, the aliasing challenge, as published in content/. */
+  public static List<SourceFile> aliasingSolution() {
+    return in(
+        Path.of(
+            "../../content/challenges/m1-clases-y-objetos/03-la-facultad-donde-estudias/solution"));
+  }
+
   /** The files of src/test/resources/programs/{name}. */
   public static List<SourceFile> named(String name) {
-    try (Stream<Path> paths = Files.list(Path.of("src/test/resources/programs", name))) {
+    return in(Path.of("src/test/resources/programs", name));
+  }
+
+  private static List<SourceFile> in(Path directory) {
+    try (Stream<Path> paths = Files.list(directory)) {
       List<SourceFile> files = new ArrayList<>();
       for (Path path : paths.sorted().toList()) {
         files.add(new SourceFile(path.getFileName().toString(), Files.readString(path)));

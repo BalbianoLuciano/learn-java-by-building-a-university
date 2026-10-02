@@ -4,10 +4,5 @@ public class Main {
     resistencia.nombre = "Resistencia";
     resistencia.ciudad = "Resistencia";
     resistencia.provincia = "Chaco";
-
-    FacultadRegional miFacultad = resistencia;
-    miFacultad.ciudad = "Resistencia, Chaco";
-
-    System.out.println(resistencia.ciudad);
   }
 }

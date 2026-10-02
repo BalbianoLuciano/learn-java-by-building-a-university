@@ -1,0 +1,87 @@
+id: m1-03
+module: m1
+order: 3
+title:
+  es: "La facultad donde estudiás"
+concept: aliasing
+rules: [R-UNI-02]
+brief:
+  es: |
+    Ya existe la FR Resistencia, pero le falta la provincia. Declará una variable
+    `miFacultad` que apunte a **la misma** facultad y, usando solo `miFacultad`, cargale
+    la provincia: "Chaco".
+criteria:
+  - checks: [alias-declared]
+    es: "`miFacultad` apunta a la FR Resistencia"
+  - checks: [province-through-alias]
+    es: "La provincia se cargó usando `miFacultad`"
+editable: [Main.java]
+
+scene:
+  bindings:
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      where: { field: nombre, equals: "Resistencia" }
+      label: { es: "FR Resistencia" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: alias-declared
+    type: shared_reference
+    params:
+      a: { local: resistencia, in: Main.main }
+      b: { local: miFacultad, in: Main.main }
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`miFacultad` y `resistencia` apuntan a la misma facultad." }
+        why: { es: "Asignar una referencia no copia el objeto: ahora hay dos cables al mismo edificio." }
+      fail:
+        what: { es: "`miFacultad` no apunta a la FR Resistencia." }
+        why: { es: "Para compartir el objeto, `miFacultad` tiene que recibir la referencia que guarda `resistencia`." }
+        hint: { es: "¿Qué tenés que poner a la derecha del `=` para no crear otra facultad?" }
+    traps:
+      - when:
+          type: object_count
+          params: { type: FacultadRegional, atLeast: 2 }
+        what: { es: "Creaste una segunda facultad en vez de apuntar a la que ya existía." }
+        why: { es: "Cada `new` construye un objeto nuevo; para compartir uno que ya existe se asigna su referencia." }
+        hint: { es: "¿Qué tenés que poner a la derecha del `=` para no crear otra facultad?" }
+
+  - id: province-through-alias
+    type: object_field
+    params:
+      where: { type: FacultadRegional, field: nombre, equals: "Resistencia" }
+      expect: { field: provincia, equals: "Chaco" }
+      writtenThrough: { local: miFacultad, in: Main.main }
+    piece: fr-resistencia
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La FR Resistencia ahora tiene su provincia: Chaco." }
+        why: { es: "La cargaste a través de `miFacultad` y se ve también desde `resistencia`: es el mismo objeto." }
+      fail:
+        what: { es: "La provincia de la FR Resistencia todavía no se cargó." }
+        why: { es: "Un cambio hecho a través de cualquiera de las dos variables modifica el mismo objeto." }
+        hint: { es: "Usá `miFacultad`, un punto y el atributo que querés cargar." }
+    traps:
+      - when:
+          type: object_field
+          params:
+            where: { type: FacultadRegional, field: nombre, equals: "Resistencia" }
+            expect: { field: provincia, equals: "Chaco" }
+        what: { es: "La provincia se cargó, pero no a través de `miFacultad`." }
+        why: { es: "El pedido es llegar al objeto por la segunda variable, para comprobar que las dos apuntan al mismo." }
+        hint: { es: "¿Qué variable está antes de `.provincia`?" }
+
+hints:
+  - es: "Una variable de tipo objeto guarda una referencia, no el objeto."
+  - es: "Declará `FacultadRegional miFacultad = …` sin usar `new`."
+  - es: "Asignale a `miFacultad` la variable `resistencia`, y después cargá la provincia a través de `miFacultad`."

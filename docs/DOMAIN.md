@@ -74,7 +74,7 @@ Cada regla tiene un identificador que los desafíos citan en `challenge.yaml`.
 | ID | Regla | Fuente | Concepto de Java que enseña |
 |---|---|---|---|
 | `R-UNI-01` | La universidad tiene un único Rectorado | art. 5 | objeto único, referencias compartidas |
-| `R-UNI-02` | Hay 30 Facultades Regionales, cada una con nombre, ciudad y provincia | Sedes | clases, objetos, arreglos de objetos |
+| `R-UNI-02` | Hay 30 Facultades Regionales, cada una con nombre, ciudad y provincia | Sedes (la provincia, de la página oficial de cada provincia) | clases, objetos, arreglos de objetos |
 | `R-RECT-01` | Rector y Vicerrector: argentinos, ≥ 30 años, profesores o ex profesores | art. 66 | validación en constructores |
 | `R-RECT-02` | Mandato de Rector y Vicerrector: 4 años | art. 67 | constantes, `final`, `static` |
 | `R-FR-01` | Cada FR tiene Decano y Vicedecano | art. 78 | composición |
@@ -135,8 +135,12 @@ la misma. Así la herencia entre roles nunca obliga a "transformar" un objeto.
 | Archivo | Contenido |
 |---|---|
 | `meta.json` | Fecha de revisión, versión del Estatuto |
-| `regional-faculties.json` | Las 30 FR: `id`, `nombre`, `ciudad`, `provincia`, fuente |
+| `regional-faculties.json` | Las 30 FR: `id`, `name`, `city`, `province`, fuentes |
 | `governing-bodies.json` | Órganos del art. 45 con composición, mandato y fuente |
 | `rules.json` | Las reglas de §4 con `id`, texto, artículo y URL |
 
 Las claves de los archivos van en inglés; los valores que ve el alumno, en español.
+
+Hoy `regional-faculties.json` tiene solo las FR que usan los desafíos escritos
+(Resistencia, Córdoba y Mendoza), cada una verificada contra sus fuentes; las demás y
+`governing-bodies.json` llegan con el hito M6. La api rechaza una FR sin fuente.

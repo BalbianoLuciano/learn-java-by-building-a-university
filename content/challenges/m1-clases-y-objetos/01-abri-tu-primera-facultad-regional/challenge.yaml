@@ -1,0 +1,94 @@
+id: m1-01
+module: m1
+order: 1
+title:
+  es: "Abrí tu primera Facultad Regional"
+concept: classes-and-objects
+rules: [R-UNI-02]
+brief:
+  es: |
+    La UTN tiene 30 Facultades Regionales, y cada una tiene un nombre, una ciudad y una
+    provincia. Empecemos por una.
+
+    Declará la clase `FacultadRegional` con esos tres atributos y, en `main`, creá la
+    Facultad Regional Resistencia: su nombre es "Resistencia" y está en la ciudad de
+    Resistencia, provincia de Chaco.
+criteria:
+  - checks: [attributes-declared]
+    es: "`FacultadRegional` tiene los atributos `nombre`, `ciudad` y `provincia`"
+  - checks: [faculty-created]
+    es: "Hay una facultad creada con `new`"
+  - checks: [data-loaded]
+    es: "La facultad tiene los datos de Resistencia"
+editable: [FacultadRegional.java, Main.java]
+
+scene:
+  bindings:
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: attributes-declared
+    type: field
+    params:
+      class: FacultadRegional
+      names: [nombre, ciudad, provincia]
+      type: String
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`FacultadRegional` ya tiene `nombre`, `ciudad` y `provincia`." }
+        why: { es: "Los atributos de una clase dicen qué datos guarda cada objeto que se crea con ella." }
+      fail:
+        what: { es: "A `FacultadRegional` todavía le falta declarar como `String`: {missing}." }
+        why: { es: "Una clase es un molde: los atributos que declarás son los datos que va a tener cada facultad." }
+        hint: { es: "Un atributo se declara dentro de la clase, con su tipo y su nombre. ¿Qué tipo guarda texto?" }
+
+  - id: faculty-created
+    type: object_count
+    params:
+      type: FacultadRegional
+      atLeast: 1
+    piece: fr-resistencia
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "Creaste una Facultad Regional." }
+        why: { es: "`new` construye un objeto a partir de la clase: recién ahí existe una facultad concreta." }
+      fail:
+        what: { es: "Todavía no existe ninguna Facultad Regional." }
+        why: { es: "La clase es solo el molde. Para tener una facultad hay que crear un objeto con `new`." }
+        hint: { es: "En `main`, ¿cómo le pedís a Java un objeto nuevo de la clase `FacultadRegional`?" }
+
+  - id: data-loaded
+    type: object_field
+    params:
+      where: { type: FacultadRegional }
+      expect:
+        - { field: nombre, equals: "Resistencia" }
+        - { field: ciudad, equals: "Resistencia" }
+        - { field: provincia, equals: "Chaco" }
+    piece: fr-resistencia
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La facultad tiene los datos de Resistencia." }
+        why: { es: "Con el punto llegás a los atributos de un objeto, y cada objeto guarda sus propios valores." }
+      fail:
+        what: { es: "A la facultad le falta tener bien cargado: {missing}." }
+        why: { es: "Un atributo que nunca recibe un valor se queda con su valor por defecto; para un `String` es `null`." }
+        hint: { es: "Usá tu variable, un punto y el nombre del atributo. Revisá también mayúsculas y tildes del texto." }
+
+hints:
+  - es: "Una clase describe qué datos tiene cada objeto. Un objeto es una facultad concreta, y se crea con `new`."
+  - es: "Declará tres atributos `String` dentro de `FacultadRegional`. En `main`, guardá en una variable el objeto que crea `new FacultadRegional()`."
+  - es: "Empezá con `FacultadRegional resistencia = new FacultadRegional();` y seguí con una línea por dato, con la forma `resistencia.atributo = \"valor\";`."

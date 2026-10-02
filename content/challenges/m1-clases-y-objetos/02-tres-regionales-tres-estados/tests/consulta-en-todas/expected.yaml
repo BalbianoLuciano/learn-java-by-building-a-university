@@ -1,0 +1,7 @@
+outcome: incomplete
+log:
+  - check: cordoba-consulted
+    state: passed
+  - check: others-untouched
+    state: incomplete
+    title: "La consulta quedó registrada en una facultad que no es Córdoba."

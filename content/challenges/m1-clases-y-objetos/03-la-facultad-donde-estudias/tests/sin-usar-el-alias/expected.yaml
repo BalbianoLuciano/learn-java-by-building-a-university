@@ -1,0 +1,7 @@
+outcome: incomplete
+log:
+  - check: alias-declared
+    state: passed
+  - check: province-through-alias
+    state: incomplete
+    title: "La provincia se cargó, pero no a través de `miFacultad`."

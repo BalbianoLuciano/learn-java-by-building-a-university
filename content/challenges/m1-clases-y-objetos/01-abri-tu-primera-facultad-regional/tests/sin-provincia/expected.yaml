@@ -1,0 +1,9 @@
+outcome: incomplete
+log:
+  - check: attributes-declared
+    state: passed
+  - check: faculty-created
+    state: passed
+  - check: data-loaded
+    state: incomplete
+    title: "A la facultad le falta tener bien cargado: `provincia`."

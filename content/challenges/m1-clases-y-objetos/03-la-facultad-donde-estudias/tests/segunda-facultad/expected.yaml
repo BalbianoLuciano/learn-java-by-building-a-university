@@ -1,0 +1,8 @@
+outcome: incomplete
+log:
+  - check: alias-declared
+    state: incomplete
+    title: "Creaste una segunda facultad en vez de apuntar a la que ya existía."
+  - check: province-through-alias
+    state: incomplete
+    title: "La provincia de la FR Resistencia todavía no se cargó."

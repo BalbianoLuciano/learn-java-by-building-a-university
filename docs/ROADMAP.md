@@ -41,16 +41,16 @@ falla en CI.
 la solución del desafío 1.3 producen trazas que validan contra el schema; toda la suite
 maliciosa es rechazada o cortada; p95 < 2 s en local.
 
-## M3 · Api: desafíos, verificaciones y feedback
+## M3 · Api: desafíos, verificaciones y feedback ✅
 
 **Objetivo:** `POST /api/v1/runs` devuelve el resultado completo.
 
-- Carga y validación de `content/` al arrancar (falla si un desafío es inválido).
-- Motor de verificaciones (tipos de ARCHITECTURE.md §6) y detección de trampas.
-- Catálogos de `javac` y de excepciones ([`FEEDBACK.md`](FEEDBACK.md) §4–5).
-- Armado de piezas, bitácora y línea de tiempo.
-- Rate limit, CORS, `problem+json`.
-- Tests de contenido en CI.
+- [x] Carga y validación de `content/` al arrancar (falla si un desafío es inválido).
+- [x] Motor de verificaciones (tipos de ARCHITECTURE.md §6) y detección de trampas.
+- [x] Catálogos de `javac` y de excepciones ([`FEEDBACK.md`](FEEDBACK.md) §4–5).
+- [x] Armado de piezas, bitácora y línea de tiempo.
+- [x] Rate limit, CORS, `problem+json`.
+- [x] Tests de contenido en CI.
 
 **Aceptación:** los desafíos 1.1–1.3 escritos en formato real pasan sus tests de contenido.
 

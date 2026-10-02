@@ -34,6 +34,8 @@ No hay datos personales: no hay cuentas y no se guarda el código de los alumnos
 ### Capa 1 · Validación de entrada (api)
 
 - Tamaño total del código ≤ 64 KB; ≤ 10 archivos; nombres `^[A-Z][A-Za-z0-9_]*\.java$`.
+- El alumno solo puede enviar los archivos editables del desafío: no puede agregar archivos
+  ni reemplazar los de solo lectura. Un pedido de más de 512 KB se rechaza sin leerlo.
 - Sin declaración `package` y sin `module-info.java`.
 - Rate limit por IP: 10 ejecuciones por minuto (configurable) y 1 ejecución simultánea por IP.
 - Concurrencia global del runner acotada: 2 ejecuciones a la vez y una cola de 8
@@ -124,7 +126,8 @@ Cada ejecución corre en una **JVM hija** nueva, nunca en la JVM del runner:
 - No tiene base de datos ni almacenamiento persistente.
 - Corre como usuario no root en la imagen de contenedor.
 - La api trata las respuestas del runner como **no confiables**: las valida contra el schema
-  y aplica límites de tamaño antes de procesarlas.
+  y aplica límites de tamaño (8 MB) antes de procesarlas. Una respuesta inválida se informa
+  como `502`, nunca se interpreta a medias.
 
 ## 4. Riesgos residuales
 

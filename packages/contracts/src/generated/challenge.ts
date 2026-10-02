@@ -97,10 +97,13 @@ export interface LocalizedText {
   en?: string;
 }
 /**
- * An item of the learner's goal list, ticked when its check passes.
+ * An item of the learner's goal list, ticked when all its checks pass.
  */
 export interface Criterion {
-  check: CheckId;
+  /**
+   * @minItems 1
+   */
+  checks: [CheckId, ...CheckId[]];
   es: string;
   en?: string;
 }
@@ -120,6 +123,10 @@ export interface Scene {
   realReference?: {
     regionalFaculties?: string[];
   };
+  /**
+   * What the brief asks to build. Checks refer to these pieces by id.
+   */
+  pieces: ExpectedPiece[];
 }
 /**
  * Maps a learner type to the archetype that draws it.
@@ -132,11 +139,30 @@ export interface Binding {
    */
   label?: string;
   /**
-   * Composition fields drawn as slots: field name to slot style.
+   * Composition fields drawn as slots: field name to slot name.
    */
   slots?: {
     [k: string]: string;
   };
+}
+/**
+ * An object the brief asks for. It is matched with the first object of the type that satisfies where; without where, with the first object of the type not matched yet.
+ */
+export interface ExpectedPiece {
+  id: CheckId;
+  type: string;
+  where?: {
+    field: string;
+    equals: string | number | boolean;
+  };
+  label: LocalizedText1;
+}
+/**
+ * Learner-facing text by language; es is mandatory.
+ */
+export interface LocalizedText1 {
+  es: string;
+  en?: string;
 }
 export interface Check {
   id: CheckId;
@@ -148,9 +174,9 @@ export interface Check {
     [k: string]: unknown;
   };
   /**
-   * Piece affected by the check.
+   * Id of the piece of scene.pieces the check is about; absent when it is about the whole program.
    */
-  piece: string;
+  piece?: string;
   /**
    * Slot of the piece affected by the check.
    */

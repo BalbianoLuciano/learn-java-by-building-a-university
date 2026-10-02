@@ -25,8 +25,8 @@ propio y que una variable **apunta** a un objeto.
 | # | Desafío | Pedido de obra | Concepto | Reglas | Se ve en la maqueta |
 |---|---|---|---|---|---|
 | 1.1 | **Abrí tu primera Facultad Regional** | Declarar `FacultadRegional` con `nombre`, `ciudad`, `provincia` y crear la FR Resistencia | clase, atributos, `new` | R-UNI-02 | Aparece la isla y el edificio con su cartel |
-| 1.2 | **Tres regionales, tres estados** | Crear Resistencia, Córdoba y Mendoza y cambiar solo una | estado propio de cada objeto | R-UNI-02 | Tres edificios; el cambio afecta a uno solo |
-| 1.3 | **La facultad donde estudiás** | Usar una segunda variable `miFacultad` que apunte a una FR existente y modificarla por ahí | referencias y **aliasing** | R-UNI-02 | Dos carteles, dos cables, **un** edificio |
+| 1.2 | **Tres regionales, tres estados** | Crear Resistencia, Córdoba y Mendoza y registrar una consulta solo en una (`consultas` es un contador del programa, no un dato de la UTN) | estado propio de cada objeto | R-UNI-02 | Tres edificios; el cambio afecta a uno solo |
+| 1.3 | **La facultad donde estudiás** | Usar una segunda variable `miFacultad` que apunte a una FR existente y cargarle la provincia por ahí | referencias y **aliasing** | R-UNI-02 | Dos carteles, dos cables, **un** edificio |
 | 1.4 | **Un solo Rectorado** | Crear el `Rectorado` y que todas las FR referencien el mismo objeto | referencias compartidas, `==` vs igualdad | R-UNI-01 | Cables de cada FR al mismo Rectorado central |
 | 1.5 | **Integrador: el mapa de la UTN** | Cargar las FR en un arreglo `FacultadRegional[]` y recorrerlo con métodos de instancia (`describir()`) | arreglos de objetos, métodos de instancia | R-UNI-02 | El anillo de FR alrededor del Rectorado |
 

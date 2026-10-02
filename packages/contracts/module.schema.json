@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/BalbianoLuciano/learn-java-by-building-a-university/main/packages/contracts/module.schema.json",
+  "title": "Module",
+  "description": "A module.yaml file (docs/specs/challenge-format.md).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "order", "title", "goal"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^m[1-9][0-9]*$" },
+    "order": { "type": "integer", "minimum": 1 },
+    "title": { "$ref": "#/$defs/localizedText" },
+    "goal": { "$ref": "#/$defs/localizedText" }
+  },
+  "$defs": {
+    "localizedText": {
+      "title": "LocalizedText",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["es"],
+      "properties": {
+        "es": { "type": "string", "minLength": 1 },
+        "en": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

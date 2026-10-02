@@ -1,0 +1,26 @@
+# Programs cut by a limit of the sandbox (docs/SECURITY.md §3, layer 4).
+entries:
+  timeout:
+    what: "El programa tardó demasiado y lo frenamos."
+    why: "Suele pasar cuando un bucle nunca llega a su condición de corte."
+    hint: "¿Qué tiene que cambiar en cada vuelta para que el bucle termine?"
+  steps:
+    what: "El programa dio demasiados pasos y lo frenamos."
+    why: "Guardamos cada paso para mostrártelo, y un bucle muy largo o sin fin supera el límite."
+    hint: "¿Qué tiene que cambiar en cada vuelta para que el bucle termine?"
+  objects:
+    what: "El programa creó demasiados objetos y lo frenamos."
+    why: "Cada `new` que se ejecuta crea un objeto más, también dentro de un bucle."
+    hint: "¿Hace falta un `new` en cada vuelta?"
+  output:
+    what: "El programa imprimió demasiado texto y lo frenamos."
+    why: "La salida tiene un límite; suele superarse con un `println` dentro de un bucle sin fin."
+    hint: "¿Qué tiene que cambiar en cada vuelta para que el bucle termine?"
+  call_depth:
+    what: "Un método se llamó a sí mismo sin parar."
+    why: "Cada llamada espera a que termine la siguiente; si ninguna termina, se acumulan sin fin."
+    hint: "¿En qué caso el método deja de llamarse a sí mismo?"
+  crash:
+    what: "El programa se cerró de golpe."
+    why: "La máquina virtual terminó sin informar una excepción."
+    hint: "Probá ejecutar de nuevo. Si se repite, avisanos con el botón de ayuda."

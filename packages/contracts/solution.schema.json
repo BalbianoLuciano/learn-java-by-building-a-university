@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/BalbianoLuciano/learn-java-by-building-a-university/main/packages/contracts/solution.schema.json",
+  "title": "Solution",
+  "description": "Answer of GET /api/v1/challenges/{id}/solution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["files", "explanation"],
+  "properties": {
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "content"],
+        "properties": {
+          "path": { "type": "string" },
+          "content": { "type": "string" }
+        }
+      }
+    },
+    "explanation": { "description": "Markdown.", "type": "string" }
+  }
+}

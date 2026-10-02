@@ -5,7 +5,17 @@
 # If a port is taken: `WEB_PORT=5174 API_PORT=8090 docker compose up --build`.
 services:
   api:
-    build: services/api
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    environment:
+      RUNNER_URL: http://runner:8081
+      # Only for local development; production sets its own secret.
+      RUNNER_TOKEN: ${RUNNER_TOKEN:-local-development-token}
+      ALLOWED_ORIGINS: http://localhost:${WEB_PORT:-5173}
+    depends_on:
+      runner:
+        condition: service_healthy
     ports:
       - '${API_PORT:-8080}:8080'
     healthcheck:
@@ -23,7 +33,6 @@ services:
   runner:
     build: services/runner
     environment:
-      # Only for local development; production sets its own secret.
       RUNNER_TOKEN: ${RUNNER_TOKEN:-local-development-token}
     healthcheck:
       # The Temurin images ship without curl or wget; bash opens the socket itself.

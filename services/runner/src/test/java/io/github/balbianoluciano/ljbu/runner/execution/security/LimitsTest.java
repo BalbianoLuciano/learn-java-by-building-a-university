@@ -86,6 +86,31 @@ class LimitsTest {
   }
 
   @Test
+  void cutsInfiniteRecursionThatTheDebuggerDoesNotReport() {
+    long start = System.nanoTime();
+
+    // The method starts with the call to itself: the JVM reports no event for the inner calls.
+    Trace.Executed trace =
+        run(
+            Programs.main(
+                """
+                public class Main {
+                  static void bajar() {
+                    bajar();
+                  }
+
+                  public static void main(String[] args) {
+                    bajar();
+                  }
+                }
+                """),
+            LIMITS);
+
+    assertStoppedBy(trace, Trace.ExceededLimit.CALL_DEPTH);
+    assertThat(elapsedMs(start)).isLessThan(4000);
+  }
+
+  @Test
   void runsRecursionThatEnds() {
     Trace.Executed trace =
         run(

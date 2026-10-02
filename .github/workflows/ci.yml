@@ -41,10 +41,10 @@ jobs:
           ci='^\.github/workflows/'
           js='^(package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|\.prettierrc\.json|\.nvmrc)$'
           {
-            echo "contracts=$(changed "$ci|$js|^packages/contracts/|^docs/specs/challenge-format\.md$")"
+            echo "contracts=$(changed "$ci|$js|^packages/contracts/|^docs/specs/challenge-format\.md$|^content/challenges/")"
             echo "web=$(changed "$ci|$js|^apps/web/|^packages/contracts/|^content/i18n/")"
-            echo "api=$(changed "$ci|^services/api/")"
-            echo "runner=$(changed "$ci|^services/runner/|^packages/contracts/(trace|execution-request)\.schema\.json$|^packages/contracts/examples/")"
+            echo "api=$(changed "$ci|^services/api/|^services/runner/|^packages/contracts/|^content/")"
+            echo "runner=$(changed "$ci|^services/runner/|^packages/contracts/(trace|execution-request)\.schema\.json$|^packages/contracts/examples/|^content/challenges/")"
           } >> "$GITHUB_OUTPUT"
 
   contracts:
@@ -110,6 +110,10 @@ jobs:
           cache: maven
       - name: Format
         run: ./mvnw -B spotless:check
+      # The api tests, content tests included, run against the real runner.
+      - name: Build the runner
+        working-directory: services/runner
+        run: ./mvnw -B -DskipTests -Dspotless.check.skip package
       - name: Test and build
         run: ./mvnw -B verify
 

@@ -1,0 +1,153 @@
+id: m1-02
+module: m1
+order: 2
+title:
+  es: "Tres regionales, tres estados"
+concept: object-state
+rules: [R-UNI-02]
+brief:
+  es: |
+    Tu programa ya tiene la FR Resistencia. Sumá la FR Córdoba (ciudad de Córdoba,
+    provincia de Córdoba) y la FR Mendoza (ciudad de Mendoza, provincia de Mendoza).
+
+    Cada facultad lleva la cuenta de cuántas veces la consultaron en tu programa, en el
+    atributo `consultas`. Registrá una consulta en la FR Córdoba, y solo en esa.
+criteria:
+  - checks: [three-faculties]
+    es: "Existen las FR Resistencia, Córdoba y Mendoza"
+  - checks: [cordoba-loaded, mendoza-loaded]
+    es: "Córdoba y Mendoza tienen su ciudad y su provincia"
+  - checks: [cordoba-consulted, others-untouched]
+    es: "Solo la FR Córdoba registra una consulta"
+editable: [Main.java]
+
+scene:
+  bindings:
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      where: { field: nombre, equals: "Resistencia" }
+      label: { es: "FR Resistencia" }
+    - id: fr-cordoba
+      type: FacultadRegional
+      where: { field: nombre, equals: "Córdoba" }
+      label: { es: "FR Córdoba" }
+    - id: fr-mendoza
+      type: FacultadRegional
+      where: { field: nombre, equals: "Mendoza" }
+      label: { es: "FR Mendoza" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia, cordoba, mendoza]
+
+checks:
+  - id: three-faculties
+    type: object_count
+    params:
+      type: FacultadRegional
+      equals: 3
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "Hay tres facultades: tres objetos distintos." }
+        why: { es: "Cada `new` crea un objeto nuevo a partir de la misma clase." }
+      fail:
+        what: { es: "El pedido necesita 3 facultades y tu programa creó {count}." }
+        why: { es: "Cada `new` crea un objeto distinto: tres facultades son tres objetos." }
+        hint: { es: "¿Cuántas veces aparece `new FacultadRegional()` en tu `main`?" }
+
+  - id: cordoba-loaded
+    type: object_field
+    params:
+      where: { type: FacultadRegional, field: nombre, equals: "Córdoba" }
+      expect:
+        - { field: ciudad, equals: "Córdoba" }
+        - { field: provincia, equals: "Córdoba" }
+    piece: fr-cordoba
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "La FR Córdoba tiene su ciudad y su provincia." }
+        why: { es: "Sus datos viven en su propio objeto, aparte de los de las otras facultades." }
+      fail:
+        what: { es: "A la FR Córdoba le falta tener bien cargado: {missing}." }
+        why: { es: "Cada objeto tiene sus propios atributos: hay que darles valor en cada facultad." }
+        hint: { es: "Usá la variable de la FR Córdoba, un punto y el atributo." }
+    traps:
+      - when:
+          type: object_count
+          params:
+            type: FacultadRegional
+            where: { field: nombre, equals: "Córdoba" }
+            equals: 0
+        what: { es: "No encuentro una facultad que se llame \"Córdoba\"." }
+        why: { es: "Para Java, dos textos son iguales solo si coinciden letra por letra, con tildes y mayúsculas." }
+        hint: { es: "Revisá cómo escribiste el valor de `nombre`." }
+
+  - id: mendoza-loaded
+    type: object_field
+    params:
+      where: { type: FacultadRegional, field: nombre, equals: "Mendoza" }
+      expect:
+        - { field: ciudad, equals: "Mendoza" }
+        - { field: provincia, equals: "Mendoza" }
+    piece: fr-mendoza
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "La FR Mendoza tiene su ciudad y su provincia." }
+        why: { es: "Las tres facultades salen de la misma clase, pero cada una guarda sus propios valores." }
+      fail:
+        what: { es: "A la FR Mendoza le falta tener bien cargado: {missing}." }
+        why: { es: "Cada objeto tiene sus propios atributos: hay que darles valor en cada facultad." }
+        hint: { es: "Usá la variable de la FR Mendoza, un punto y el atributo." }
+    traps:
+      - when:
+          type: object_count
+          params:
+            type: FacultadRegional
+            where: { field: nombre, equals: "Mendoza" }
+            equals: 0
+        what: { es: "No encuentro una facultad que se llame \"Mendoza\"." }
+        why: { es: "Para Java, dos textos son iguales solo si coinciden letra por letra, con tildes y mayúsculas." }
+        hint: { es: "Revisá cómo escribiste el valor de `nombre`." }
+
+  - id: cordoba-consulted
+    type: object_field
+    params:
+      where: { type: FacultadRegional, field: nombre, equals: "Córdoba" }
+      expect: { field: consultas, equals: 1 }
+    piece: fr-cordoba
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La FR Córdoba registra 1 consulta." }
+        why: { es: "Cambiaste el estado de un objeto: el valor de uno de sus atributos." }
+      fail:
+        what: { es: "La FR Córdoba todavía no registra su consulta." }
+        why: { es: "Un atributo `int` vale 0 hasta que le asignás otro valor." }
+        hint: { es: "Asigná el valor a través de la variable que apunta a la FR Córdoba." }
+
+  - id: others-untouched
+    type: object_field
+    params:
+      where: { type: FacultadRegional, field: nombre, notEquals: "Córdoba" }
+      all: true
+      expect: { field: consultas, equals: 0 }
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Las demás facultades siguen con 0 consultas." }
+        why: { es: "Cada objeto guarda su propio estado: cambiar uno no cambia a los otros." }
+      fail:
+        what: { es: "La consulta quedó registrada en una facultad que no es Córdoba." }
+        why: { es: "Solo cambia el objeto al que apunta la variable que escribís antes del punto." }
+        hint: { es: "¿Qué variable está antes de `.consultas` en cada línea?" }
+
+hints:
+  - es: "Las tres facultades salen de la misma clase, pero son tres objetos: cada uno con sus propios valores."
+  - es: "Repetí lo que ya está hecho para Resistencia, con otras dos variables. La consulta se registra con el atributo `consultas` de una sola de ellas."
+  - es: "Después de crear `cordoba` y `mendoza` y cargarles nombre, ciudad y provincia, una sola línea asigna `consultas` a través de la variable de Córdoba."
