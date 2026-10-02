@@ -345,11 +345,20 @@ frenado una excepción o un límite: lo construido hasta ahí también recibe su
 | `/desafios/:challengeId` | Pedido de obra + editor |
 | `/desafios/:challengeId/resultado` | Vista de resultado del último intento |
 
-- **Progreso**: `localStorage`, clave versionada `ljbu.progress.v1`; lectura y escritura
-  siempre en `try/catch` (la app funciona sin almacenamiento).
-- El código en edición se guarda por desafío para no perderlo al recargar.
+- **Progreso**: `localStorage`, clave versionada `ljbu.progress.v1` (estado, ejecuciones,
+  pistas vistas y si se vio la solución, por desafío); lectura y escritura siempre en
+  `try/catch` (la app funciona sin almacenamiento).
+- El código en edición se guarda por desafío en `ljbu.code.v1` para no perderlo al
+  recargar; el tema elegido, en `ljbu.theme.v1`.
+- El último resultado vive solo en memoria: al recargar la vista de resultado se vuelve al
+  editor.
+- Al ejecutar, la web manda solo los archivos editables; la api completa el programa con
+  los de solo lectura.
+- Monaco se empaqueta con la app (solo el editor y el lenguaje Java): no se carga desde una
+  CDN.
 - Todos los textos de interfaz salen de `content/i18n/<lang>.json`; ningún texto visible
-  queda escrito en componentes.
+  queda escrito en componentes. Los mensajes de la bitácora pueden citar código del
+  alumno: se muestran como texto, nunca como HTML.
 
 ## 9. Configuración
 
