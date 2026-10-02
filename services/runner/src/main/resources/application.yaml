@@ -1,6 +1,15 @@
 spring:
   application:
     name: ljbu-runner
+  mvc:
+    problemdetails:
+      enabled: true
 
 server:
   port: ${PORT:8081}
+
+ljbu:
+  runner:
+    token: ${RUNNER_TOKEN:}
+    max-concurrent: ${RUNNER_MAX_CONCURRENT:2}
+    queue-capacity: ${RUNNER_QUEUE_CAPACITY:8}
