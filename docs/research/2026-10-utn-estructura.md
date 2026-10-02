@@ -55,6 +55,13 @@ Mendoza, Neuquén, Paraná, Rafaela, Reconquista, Resistencia, Rosario, San Fran
 San Nicolás, San Rafael, Santa Cruz, Santa Fe, Tierra del Fuego (Río Grande),
 Trenque Lauquen, Tucumán, Venado Tuerto, Villa María.
 
+La página de Sedes da la dirección y la ciudad de cada FR, pero no la provincia. La
+provincia se toma de la página oficial de cada provincia, que nombra su capital:
+Resistencia es la capital de Chaco ([argentina.gob.ar/chaco](https://www.argentina.gob.ar/chaco)),
+Córdoba la de Córdoba ([argentina.gob.ar/cordoba](https://www.argentina.gob.ar/cordoba)) y
+Mendoza la de Mendoza ([argentina.gob.ar/mendoza](https://www.argentina.gob.ar/mendoza)).
+Consultadas el 2026-10-02.
+
 ## 3. Gobierno de una Facultad Regional
 
 - Asamblea de FR: Decano, Consejo Directivo, Directores de Departamento, Consejos
