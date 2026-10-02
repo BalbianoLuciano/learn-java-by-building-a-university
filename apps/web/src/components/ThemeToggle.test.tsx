@@ -21,12 +21,18 @@ describe('ThemeToggle', () => {
     expect(screen.getByRole('button', { name: es.theme.switchToLight })).toBeInTheDocument();
   });
 
-  it('starts from the remembered choice', () => {
-    localStorage.setItem('ljbu.theme.v1', 'dark');
+  it('tells every component the same theme', async () => {
+    render(
+      <>
+        <ThemeToggle />
+        <ThemeToggle />
+      </>,
+    );
 
-    render(<ThemeToggle />);
+    const [first] = screen.getAllByRole('button', { name: es.theme.switchToDark });
+    await userEvent.click(first as HTMLElement);
 
-    expect(screen.getByRole('button', { name: es.theme.switchToLight })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: es.theme.switchToLight })).toHaveLength(2);
   });
 
   it('still switches the theme when storage is unavailable', async () => {

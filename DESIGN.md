@@ -41,9 +41,9 @@ que ya tenga token.
 --color-accent        #4458D6   acción principal, foco, enlaces
 --color-on-accent     #FFFFFF   texto sobre --color-accent
 --color-accent-soft   #E6E9FB   fondo de elementos activos
---color-success       #23855A   ✅
---color-warning       #A86A00   🚧 (texto); relleno: --color-warning-soft
---color-danger        #C23B3B   ❌
+--color-success       #207A53   ✅
+--color-warning       #975F00   🚧 (texto); relleno: --color-warning-soft
+--color-danger        #BC3939   ❌
 --color-success-soft  #E3F3EA
 --color-warning-soft  #FBF0D9
 --color-danger-soft   #F9E3E3
@@ -75,7 +75,9 @@ El tema sigue `prefers-color-scheme` y se puede forzar con `data-theme="light|da
 `<html>`; la elección manual se recuerda en `localStorage`.
 
 **Contraste:** todo texto cumple WCAG 2.2 AA (4.5:1; 3:1 para texto ≥ 24px). Los colores
-de estado nunca van solos: siempre con ícono y texto.
+de estado del tema claro dan al menos 4.5:1 sobre `--color-bg`, `--color-surface`,
+`--color-surface-2` y su propio fondo suave (medido: el más bajo es 4.52). Los colores de
+estado nunca van solos: siempre con ícono y texto.
 
 ### Tipografía
 

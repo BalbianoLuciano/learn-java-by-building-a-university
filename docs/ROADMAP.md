@@ -54,14 +54,14 @@ maliciosa es rechazada o cortada; p95 < 2 s en local.
 
 **Aceptación:** los desafíos 1.1–1.3 escritos en formato real pasan sus tests de contenido.
 
-## M4 · Web: editor y bitácora (sin 3D)
+## M4 · Web: editor y bitácora (sin 3D) ✅
 
 **Objetivo:** el flujo completo funciona con una vista de resultado **textual**.
 
-- Inicio, módulo, desafío con pedido de obra y Monaco.
-- Vista de resultado con bitácora, chips de línea, mini código y línea de tiempo.
-- Pistas y solución.
-- Progreso y código en `localStorage`; i18n.
+- [x] Inicio, módulo, desafío con pedido de obra y Monaco.
+- [x] Vista de resultado con bitácora, chips de línea, mini código y línea de tiempo.
+- [x] Pistas y solución.
+- [x] Progreso y código en `localStorage`; i18n.
 
 **Aceptación:** se completa el desafío 1.3 de punta a punta solo con teclado; la bitácora
 cumple WCAG 2.2 AA.

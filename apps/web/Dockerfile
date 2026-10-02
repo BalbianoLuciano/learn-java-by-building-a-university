@@ -10,6 +10,9 @@ RUN pnpm install --frozen-lockfile
 COPY packages/contracts packages/contracts
 COPY content/i18n content/i18n
 COPY apps/web apps/web
+# Where the browser reaches the api from.
+ARG VITE_API_URL=http://localhost:8080
+ENV VITE_API_URL=$VITE_API_URL
 RUN pnpm --filter @ljbu/web build
 
 FROM nginxinc/nginx-unprivileged:stable-alpine

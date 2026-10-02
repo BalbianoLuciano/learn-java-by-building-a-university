@@ -1,31 +1,113 @@
 {
   "app": {
-    "name": "Learn Java by Building a University"
+    "name": "Learn Java by Building a University",
+    "skipToContent": "Ir al contenido"
   },
   "theme": {
     "switchToDark": "Cambiar a tema oscuro",
     "switchToLight": "Cambiar a tema claro"
   },
+  "common": {
+    "loading": "Cargando…",
+    "retry": "Reintentar",
+    "back": "Volver",
+    "line": "Línea {{line}} de {{file}}",
+    "lineChip": "L{{line}}"
+  },
+  "errors": {
+    "title": "Algo no salió como esperábamos",
+    "network": "No pudimos hablar con el servidor. Revisá tu conexión y probá de nuevo.",
+    "notFound": "Esa página no existe.",
+    "challenge_not_found": "Ese desafío no existe.",
+    "rate_limited": "Hiciste muchas ejecuciones seguidas. Esperá un momento y probá de nuevo.",
+    "run_in_progress": "Todavía se está ejecutando tu intento anterior.",
+    "runner_busy": "Hay muchas ejecuciones en este momento. Probá de nuevo en unos segundos.",
+    "runner_unavailable": "No pudimos ejecutar tu código. Probá de nuevo en un rato.",
+    "unknown": "Pasó algo inesperado. Probá de nuevo."
+  },
   "home": {
     "title": "Aprendé Java construyendo una universidad",
-    "lead": "Escribís Java de verdad, lo ejecutás y ves en una maqueta 3D qué construyó tu código, qué le falta y por qué algo falló.",
-    "notice": "La plataforma está en construcción: todavía no hay desafíos para resolver.",
-    "statesTitle": "Así vas a leer cada resultado",
-    "repoLink": "Ver el proyecto en GitHub",
+    "lead": "Escribís Java de verdad, lo ejecutás y ves qué construyó tu código, qué le falta y por qué algo falló.",
+    "modulesTitle": "Módulos",
+    "moduleProgress": "{{done}} de {{total}} desafíos",
     "disclaimer": "Proyecto independiente y de código abierto. No es un sitio oficial de la UTN."
   },
-  "state": {
-    "passed": {
-      "title": "¡Obra terminada!",
-      "description": "Tu código compila, corre y cumple todo el pedido."
+  "module": {
+    "challengesTitle": "Desafíos",
+    "challenge": "Desafío {{order}}"
+  },
+  "status": {
+    "pending": "Pendiente",
+    "completed": "Completado",
+    "completedWithSolution": "Completado con solución"
+  },
+  "challenge": {
+    "brief": "Pedido de obra",
+    "goals": "Lo que tenés que lograr",
+    "rules": "Reglas de la UTN real",
+    "editor": "Editor",
+    "readOnly": "solo lectura",
+    "run": "Ejecutar",
+    "running": "Ejecutando…",
+    "runShortcut": "Ctrl/Cmd + Enter",
+    "resetCode": "Volver al código base",
+    "lastResult": "Ver el último resultado",
+    "position": "{{order}} / {{total}}"
+  },
+  "hints": {
+    "ask": "Pedir pista",
+    "title": "Pistas",
+    "level": "Pista {{level}}",
+    "locked": "Pista {{level}}: se habilita después de {{runs}} ejecuciones",
+    "lockedOne": "Pista {{level}}: se habilita después de una ejecución",
+    "solution": "Ver solución",
+    "solutionLocked": "La solución se habilita después de 3 ejecuciones o de las 3 pistas",
+    "solutionConfirm": "¿Seguro? Si la ves, el desafío queda como completado con solución.",
+    "solutionYes": "Sí, mostrarla",
+    "solutionNo": "Todavía no",
+    "solutionTitle": "Solución"
+  },
+  "result": {
+    "backToCode": "Volver al código",
+    "title": "Resultado",
+    "outcome": {
+      "passed": "¡Obra terminada!",
+      "incomplete": "Obra en construcción ({{passed}}/{{total}})",
+      "failed": "La obra se frenó"
     },
-    "incomplete": {
-      "title": "Obra en construcción",
-      "description": "Tu código compila y corre, pero todavía le falta algo del pedido."
-    },
-    "failed": {
-      "title": "La obra se frenó",
-      "description": "Tu código no compila, lanza una excepción inesperada o supera un límite."
+    "pieces": "Maqueta",
+    "piecesEmpty": "Tu código todavía no construyó nada que se pueda mostrar.",
+    "pieceNotBuilt": "pendiente",
+    "log": "Bitácora",
+    "logEmpty": "No hay nada que explicar todavía.",
+    "hint": "Pista",
+    "detail": "Mensaje original",
+    "code": "Código",
+    "codeHint": "Elegí una entrada de la bitácora o un paso para ver su línea.",
+    "stdout": "Salida del programa",
+    "stdoutEmpty": "El programa no imprimió nada."
+  },
+  "timeline": {
+    "title": "Línea de tiempo",
+    "previous": "Paso anterior",
+    "next": "Paso siguiente",
+    "position": "Paso {{current}} / {{total}} · {{file}}:{{line}}",
+    "empty": "El programa no llegó a ejecutarse.",
+    "help": "Con la línea de tiempo enfocada, ← y → cambian de paso.",
+    "event": {
+      "object_created": "Se creó un objeto {{name}}",
+      "field_set": "Se escribió el atributo {{name}}",
+      "local_set": "La variable {{name}} recibió un valor",
+      "call": "Se llamó a {{name}}",
+      "return": "Terminó {{name}}",
+      "output": "El programa imprimió texto",
+      "exception": "Se lanzó {{name}}",
+      "exceptionCaught": "Se lanzó y se atrapó {{name}}"
     }
+  },
+  "state": {
+    "passed": "Correcto",
+    "incomplete": "Incompleto",
+    "failed": "Falló"
   }
 }

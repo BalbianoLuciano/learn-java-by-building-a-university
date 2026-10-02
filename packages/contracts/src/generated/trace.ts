@@ -68,7 +68,7 @@ export interface CompileErrorTrace {
   /**
    * @minItems 1
    */
-  diagnostics: [Diagnostic, ...Diagnostic[]];
+  diagnostics: Diagnostic[];
 }
 /**
  * A compilation error: a javac diagnostic, or a runner rule reported with an ljbu.err.* code.
@@ -95,7 +95,7 @@ export interface RejectedTrace {
   /**
    * @minItems 1
    */
-  violations: [Violation, ...Violation[]];
+  violations: Violation[];
 }
 /**
  * Static structure of the learner's compiled classes.

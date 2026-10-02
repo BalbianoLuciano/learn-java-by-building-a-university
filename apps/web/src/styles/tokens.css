@@ -14,9 +14,9 @@
   --color-accent: light-dark(#4458d6, #8c9bff);
   --color-on-accent: light-dark(#ffffff, #121318);
   --color-accent-soft: light-dark(#e6e9fb, #262b4a);
-  --color-success: light-dark(#23855a, #5cc796);
-  --color-warning: light-dark(#a86a00, #e8b24a);
-  --color-danger: light-dark(#c23b3b, #f07c7c);
+  --color-success: light-dark(#207a53, #5cc796);
+  --color-warning: light-dark(#975f00, #e8b24a);
+  --color-danger: light-dark(#bc3939, #f07c7c);
   --color-success-soft: light-dark(#e3f3ea, #18322a);
   --color-warning-soft: light-dark(#fbf0d9, #3a2e14);
   --color-danger-soft: light-dark(#f9e3e3, #3d1e20);

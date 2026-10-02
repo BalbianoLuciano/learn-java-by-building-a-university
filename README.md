@@ -5,9 +5,9 @@ Escribís código Java de verdad, lo ejecutás y ves en una maqueta 3D isométri
 tu programa, qué le falta y por qué algo falló, con cada explicación ligada a tus líneas de
 código.
 
-> 🚧 **Estado:** en construcción. El runner ejecuta Java paso a paso y la api ya corrige
-> los tres primeros desafíos y explica cada resultado (hito M3). Falta la interfaz para
-> resolverlos: es el próximo hito ([roadmap](docs/ROADMAP.md)).
+> 🚧 **Estado:** en construcción. Ya se pueden resolver los tres primeros desafíos de
+> punta a punta: editor, ejecución y bitácora con la explicación de cada resultado (hito
+> M4). Falta la maqueta 3D, que es el próximo hito ([roadmap](docs/ROADMAP.md)).
 
 *English: an open source course to learn Java OOP by modeling the real structure of the
 Universidad Tecnológica Nacional (Argentina). Write real Java, run it, and see what your

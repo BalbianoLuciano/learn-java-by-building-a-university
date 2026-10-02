@@ -1,0 +1,17 @@
+.icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+
+.icon[data-state='passed'] {
+  color: var(--color-success);
+}
+
+.icon[data-state='incomplete'] {
+  color: var(--color-warning);
+}
+
+.icon[data-state='failed'] {
+  color: var(--color-danger);
+}
