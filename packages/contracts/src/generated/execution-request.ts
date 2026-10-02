@@ -10,47 +10,7 @@ export interface ExecutionRequest {
    * @minItems 1
    * @maxItems 10
    */
-  files:
-    | [SourceFile]
-    | [SourceFile, SourceFile]
-    | [SourceFile, SourceFile, SourceFile]
-    | [SourceFile, SourceFile, SourceFile, SourceFile]
-    | [SourceFile, SourceFile, SourceFile, SourceFile, SourceFile]
-    | [SourceFile, SourceFile, SourceFile, SourceFile, SourceFile, SourceFile]
-    | [SourceFile, SourceFile, SourceFile, SourceFile, SourceFile, SourceFile, SourceFile]
-    | [
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile
-      ]
-    | [
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile
-      ]
-    | [
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile,
-        SourceFile
-      ];
+  files: SourceFile[];
   /**
    * Overrides of the docs/SECURITY.md limits; they can only be lowered.
    */

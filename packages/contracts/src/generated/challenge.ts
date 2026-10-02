@@ -65,13 +65,13 @@ export interface Challenge {
   /**
    * @minItems 1
    */
-  criteria: [Criterion, ...Criterion[]];
+  criteria: Criterion[];
   /**
    * Files the learner can edit; the rest are read-only.
    *
    * @minItems 1
    */
-  editable: [JavaFileName, ...JavaFileName[]];
+  editable: JavaFileName[];
   /**
    * Overrides of the docs/SECURITY.md limits; they can only be lowered.
    */
@@ -82,12 +82,12 @@ export interface Challenge {
   /**
    * @minItems 1
    */
-  checks: [Check, ...Check[]];
+  checks: Check[];
   /**
    * @minItems 3
    * @maxItems 3
    */
-  hints: [LocalizedText, LocalizedText, LocalizedText];
+  hints: LocalizedText[];
 }
 /**
  * Learner-facing text by language; es is mandatory.
@@ -103,7 +103,7 @@ export interface Criterion {
   /**
    * @minItems 1
    */
-  checks: [CheckId, ...CheckId[]];
+  checks: CheckId[];
   es: string;
   en?: string;
 }

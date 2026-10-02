@@ -26,6 +26,8 @@ for (const name of schemas) {
   const generated = await compileFromFile(`${root}${source}`, {
     cwd: root,
     bannerComment: `// Generated from ${source} by scripts/generate.mjs. Do not edit.`,
+    // maxItems would otherwise become a tuple type; a bounded list is still a list.
+    ignoreMinAndMaxItems: true,
     style: { printWidth: 100, singleQuote: true },
   });
   if (check) {
