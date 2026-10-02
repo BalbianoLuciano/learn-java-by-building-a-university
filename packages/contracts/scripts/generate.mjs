@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { compileFromFile } from 'json-schema-to-typescript';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const schemas = ['trace', 'result', 'challenge'];
+const schemas = ['trace', 'result', 'challenge', 'execution-request'];
 const check = process.argv.includes('--check');
 
 const stale = [];

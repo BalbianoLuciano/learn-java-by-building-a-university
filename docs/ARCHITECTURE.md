@@ -82,16 +82,18 @@ Las versiones exactas se fijan en los archivos de build; este documento no las r
 2. **api** valida: desafío existente, tamaño total ≤ 64 KB, ≤ 10 archivos, nombres válidos,
    rate limit por IP. Si falla responde `400`/`429` con un error estructurado.
 3. **api** llama a **runner** `POST /internal/v1/executions` con los archivos y los límites del
-   desafío.
+   desafío, autenticándose con `RUNNER_TOKEN`.
 4. **runner**:
-   1. **Compila** en memoria (`--release 25`, `-proc:none`, `-Xlint:none`).
+   1. **Compila** en memoria (`--release 25`, `-proc:none`, `-Xlint:none`, `-g`).
       Si falla, devuelve `status: "compile_error"` con diagnósticos (archivo, línea, columna,
-      código de `javac`, mensaje).
+      código de `javac`, mensaje). Una declaración `package` o un `Main` sin
+      `public static void main(String[] args)` se informan igual, con códigos `ljbu.err.*`.
    2. **Extrae la estructura** de las clases compiladas: clases, superclase, interfaces,
       campos (tipo, visibilidad, `final`, `static`), constructores, métodos, líneas de
-      declaración.
+      declaración y `@Override`. Las líneas y `@Override` no están en el bytecode: salen
+      del árbol de sintaxis de `javac` ([ADR 0016](adr/0016-datos-del-fuente-desde-el-arbol-de-javac.md)).
    3. **Verifica el bytecode** contra la lista permitida ([`SECURITY.md`](SECURITY.md)).
-      Si hay un uso prohibido, devuelve `status: "rejected"` con la línea.
+      Si hay un uso prohibido, devuelve `status: "rejected"` con cada símbolo y su línea.
    4. **Ejecuta** el `main` en una JVM hija bajo JDI, registrando la traza.
    5. Devuelve `status: "completed" | "runtime_error" | "timeout" | "limit_exceeded"`,
       la estructura, la traza y la salida estándar (truncada).
@@ -124,48 +126,98 @@ esta sección viven en `packages/contracts/examples/` y se validan en CI.
 - Pistas y solución se sirven por separado para que la interfaz las muestre recién cuando
   corresponde. No es un control de seguridad: el contenido es abierto.
 
-### 5.2 Traza (runner → api)
+### 5.2 Ejecución y traza (api ↔ runner)
+
+`POST /internal/v1/executions`, con `Authorization: Bearer <RUNNER_TOKEN>`
+(`execution-request.schema.json`):
+
+```jsonc
+{
+  "files": [{ "path": "Main.java", "content": "…" }],
+  "limits": { "timeoutMs": 5000 }        // opcional: solo puede bajar el límite
+}
+```
+
+Responde `200` con la traza, cualquiera sea el resultado del programa. Responde `400` si el
+pedido rompe una regla de entrada ([`SECURITY.md`](SECURITY.md) §3, capa 1), `401` sin el
+token y `503` si la cola de ejecuciones está llena; el `400` y el `503` van como
+`application/problem+json` con un campo `code`.
+
+Traza de la solución del desafío 1.3 (`trace.schema.json`; completa en
+`packages/contracts/examples/trace.completed.json`, que un test del runner compara con lo
+que el runner produce de verdad):
 
 ```jsonc
 {
   "status": "completed",
   "structure": { "classes": [ /* nombre, superclase, campos, constructores, métodos, líneas */ ] },
-  "stdout": "…",
+  "stdout": "Resistencia, Chaco\n",
   "steps": [
-    {
-      "index": 0,
-      "file": "Main.java",
-      "line": 5,
-      "event": "object_created",          // object_created | field_set | local_set | call | return | output | exception
-      "object": { "id": "o1", "type": "FacultadRegional" },
-      "frames": [ { "method": "Main.main", "locals": { "fr": { "ref": "o1" } } } ]
-    },
-    {
-      "index": 1,
-      "file": "FacultadRegional.java",
-      "line": 9,
-      "event": "field_set",
-      "target": "o1",
-      "field": "nombre",
-      "value": { "string": "Resistencia" }
-    }
+    { "index": 0, "file": "Main.java", "line": 3, "event": "call", "method": "Main.main", "args": [] },
+    { "index": 1, "file": "Main.java", "line": 3, "event": "object_created",
+      "object": { "id": "o1", "type": "FacultadRegional" } },
+    { "index": 2, "file": "Main.java", "line": 3, "event": "call",
+      "method": "FacultadRegional.<init>", "target": "o1", "args": [] },
+    { "index": 3, "file": "FacultadRegional.java", "line": 1, "event": "return",
+      "method": "FacultadRegional.<init>" },
+    { "index": 4, "file": "Main.java", "line": 3, "event": "local_set",
+      "method": "Main.main", "name": "resistencia", "value": { "ref": "o1" } },
+    { "index": 5, "file": "Main.java", "line": 4, "event": "field_set",
+      "target": "o1", "field": "nombre", "value": { "string": "Resistencia" } },
+    // …
+    { "index": 8, "file": "Main.java", "line": 8, "event": "local_set",
+      "method": "Main.main", "name": "miFacultad", "value": { "ref": "o1" } },
+    { "index": 9, "file": "Main.java", "line": 9, "event": "field_set",
+      "target": "o1", "field": "ciudad", "value": { "string": "Resistencia, Chaco" } },
+    { "index": 10, "file": "Main.java", "line": 11, "event": "output", "text": "Resistencia, Chaco\n" },
+    { "index": 11, "file": "Main.java", "line": 12, "event": "return", "method": "Main.main" }
   ],
-  "heap": { "o1": { "type": "FacultadRegional", "fields": { "nombre": { "string": "Resistencia" }, "decano": { "null": true } } } },
+  "heap": {
+    "o1": { "type": "FacultadRegional",
+            "fields": { "nombre": { "string": "Resistencia" }, "ciudad": { "string": "Resistencia, Chaco" },
+                        "provincia": { "string": "Chaco" } } }
+  },
+  "statics": {},
   "exception": null,
-  "limits": { "steps": 312, "truncated": false }
+  "limits": { "steps": 12, "truncated": false, "exceeded": null }
 }
 ```
 
-- Valores: `{ "int": 3 }`, `{ "double": 1.5 }`, `{ "boolean": true }`, `{ "char": "a" }`,
-  `{ "string": "…" }`, `{ "ref": "o1" }`, `{ "null": true }`.
+La forma depende de `status`: con `compile_error` solo viaja `diagnostics` (archivo, línea,
+columna, código y mensaje); con `rejected`, `structure` y `violations` (archivo, línea y
+símbolo prohibido); en el resto, lo de arriba.
+
+Cada paso tiene `index`, `file`, `line` y `event`, más los datos del evento:
+
+| Evento | Cuándo | Datos |
+|---|---|---|
+| `call` | Empieza un método o constructor del alumno | `method` (la implementación que corre: `Clase.metodo`, o `Clase.<init>`), `target` (el receptor; no va en métodos `static`), `args`. La línea es la de la llamada |
+| `return` | Termina sin excepción | `method`, `value` (no va si devuelve `void`) |
+| `object_created` | Se crea un objeto de una clase del alumno | `object: { id, type }`. La línea es la del `new` |
+| `field_set` | Se escribe un campo de una clase del alumno | `target` (el objeto) o `ownerClass` (si el campo es `static`), `field`, `value` |
+| `local_set` | Una variable local recibe un valor | `method`, `name`, `value`. Los parámetros no generan este evento: llegan en `args` |
+| `output` | La línea escribió en la salida estándar | `text` |
+| `exception` | Se lanza una excepción | `exception` (tipo, mensaje, archivo y línea del código del alumno), `caught` (si la atrapa el alumno; si no, termina el programa) |
+
+- Valores: `{ "int": 3 }` (también `byte`, `short` y `long`), `{ "double": 1.5 }` (también
+  `float`; `NaN` e infinitos viajan como texto), `{ "boolean": true }`, `{ "char": "a" }`,
+  `{ "string": "…" }` (hasta 1 000 caracteres), `{ "ref": "o1" }`, `{ "null": true }`.
 - `String` y los wrappers se tratan como **valores** (son inmutables); el resto de los
   objetos, como referencias.
-- `heap` es el estado final de los objetos alcanzables desde clases del alumno; cada paso
-  incluye solo los cambios.
-- Solo se registran eventos en clases del alumno.
-- La forma depende de `status`: con `compile_error` solo viaja `diagnostics` (archivo,
-  línea, columna, código de `javac`, mensaje); con `rejected`, `structure` y `violations`
-  (archivo, línea y símbolo prohibido); en el resto, el ejemplo de arriba.
+- `heap` es el **estado final** de todo objeto que la traza menciona. Los objetos del
+  alumno llevan sus campos; los arreglos, listas y sets llevan `size` y `elements`; los
+  maps, `size` y `entries` (hasta 200 en ambos casos); cualquier otro objeto del JDK va
+  sin campos. `statics` trae los campos `static` de las clases del alumno.
+- Solo se registran eventos en clases del alumno. Los constructores se registran en el
+  orden real: el de la superclase termina antes que el de la subclase.
+- `limits.exceeded` dice qué límite cortó el programa (`steps`, `objects`, `output` o
+  `call_depth`) cuando `status` es `limit_exceeded`.
+
+Limitaciones conocidas de la v1:
+
+- El contenido de arreglos y colecciones se lee al final: un `add` no genera un paso.
+- Las variables locales se comparan al pasar de una línea a otra: un bucle escrito entero
+  en una sola línea no genera pasos intermedios.
 
 ### 5.3 Desafío (`content/challenges/<module>/<NN-slug>/`)
 
@@ -254,6 +306,8 @@ Toda la configuración por variables de entorno; ningún secreto en el repo.
 |---|---|---|
 | `RUNNER_URL` | api | URL privada del runner |
 | `RUNNER_TOKEN` | api, runner | Autenticación api → runner |
+| `RUNNER_MAX_CONCURRENT` | runner | Ejecuciones simultáneas (default 2) |
+| `RUNNER_QUEUE_CAPACITY` | runner | Ejecuciones en espera antes de responder `503` (default 8) |
 | `ALLOWED_ORIGINS` | api | CORS |
 | `RATE_LIMIT_RUNS_PER_MINUTE` | api | Por IP (default 10) |
 | `VITE_API_URL` | web | URL pública de la api |

@@ -18,7 +18,7 @@
 | **No compila** | Diagnósticos de `javac` | Nada: la maqueta muestra solo la silueta real | ❌ |
 | **Rechazado** | Uso fuera de la lista permitida ([`SECURITY.md`](SECURITY.md)) | Nada | ❌ |
 | **Excepción** | Excepción no esperada por el desafío | Todo hasta el paso donde se lanzó; ahí la pieza queda ❌ | ❌ |
-| **Límite** | Tiempo, memoria, pasos o salida | Lo construido hasta el corte | ❌ |
+| **Límite** | Tiempo, pasos, objetos, salida o profundidad de llamadas | Lo construido hasta el corte | ❌ |
 | **No cumple el pedido** | Verificación que no pasa | Todo, con las partes faltantes en andamio | 🚧 |
 
 Si hay varios problemas, la bitácora los ordena así: compilación → rechazo → excepción →
@@ -88,6 +88,11 @@ Catálogo en `content/feedback/exceptions.es.yaml`.
 
 La línea que se muestra es la **primera línea del código del alumno** en la pila de la
 excepción.
+
+Una recursión que no termina casi nunca llega a `StackOverflowError`: el runner la corta
+antes, al pasar las 1 000 llamadas anidadas (límite `call_depth`). Ese corte se explica con
+el mismo mensaje que `StackOverflowError`. La memoria agotada sí llega como
+`OutOfMemoryError`.
 
 ## 6. Verificaciones
 

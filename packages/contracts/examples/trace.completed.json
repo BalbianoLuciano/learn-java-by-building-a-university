@@ -3,28 +3,6 @@
   "structure": {
     "classes": [
       {
-        "name": "Main",
-        "kind": "class",
-        "abstract": false,
-        "superclass": null,
-        "interfaces": [],
-        "file": "Main.java",
-        "line": 1,
-        "fields": [],
-        "constructors": [{ "parameterTypes": [], "visibility": "public", "line": 1 }],
-        "methods": [
-          {
-            "name": "main",
-            "returnType": "void",
-            "parameterTypes": ["String[]"],
-            "visibility": "public",
-            "static": true,
-            "abstract": false,
-            "line": 3
-          }
-        ]
-      },
-      {
         "name": "FacultadRegional",
         "kind": "class",
         "abstract": false,
@@ -36,63 +14,206 @@
           {
             "name": "nombre",
             "type": "String",
-            "visibility": "private",
+            "visibility": "package",
+            "final": false,
+            "static": false,
+            "line": 2
+          },
+          {
+            "name": "ciudad",
+            "type": "String",
+            "visibility": "package",
             "final": false,
             "static": false,
             "line": 3
           },
           {
-            "name": "decano",
-            "type": "Decano",
-            "visibility": "private",
+            "name": "provincia",
+            "type": "String",
+            "visibility": "package",
             "final": false,
             "static": false,
             "line": 4
           }
         ],
-        "constructors": [{ "parameterTypes": ["String"], "visibility": "public", "line": 8 }],
+        "constructors": [
+          {
+            "parameterTypes": [],
+            "visibility": "public",
+            "line": 1
+          }
+        ],
         "methods": []
       },
       {
-        "name": "Decano",
+        "name": "Main",
         "kind": "class",
         "abstract": false,
         "superclass": null,
         "interfaces": [],
-        "file": "Decano.java",
+        "file": "Main.java",
         "line": 1,
         "fields": [],
-        "constructors": [{ "parameterTypes": [], "visibility": "public", "line": 1 }],
-        "methods": []
+        "constructors": [
+          {
+            "parameterTypes": [],
+            "visibility": "public",
+            "line": 1
+          }
+        ],
+        "methods": [
+          {
+            "name": "main",
+            "returnType": "void",
+            "parameterTypes": ["String[]"],
+            "visibility": "public",
+            "static": true,
+            "abstract": false,
+            "override": false,
+            "line": 2
+          }
+        ]
       }
     ]
   },
-  "stdout": "",
+  "stdout": "Resistencia, Chaco\n",
   "steps": [
     {
       "index": 0,
       "file": "Main.java",
-      "line": 5,
-      "event": "object_created",
-      "object": { "id": "o1", "type": "FacultadRegional" },
-      "frames": [{ "method": "Main.main", "locals": { "fr": { "ref": "o1" } } }]
+      "line": 3,
+      "event": "call",
+      "method": "Main.main",
+      "args": []
     },
     {
       "index": 1,
+      "file": "Main.java",
+      "line": 3,
+      "event": "object_created",
+      "object": {
+        "id": "o1",
+        "type": "FacultadRegional"
+      }
+    },
+    {
+      "index": 2,
+      "file": "Main.java",
+      "line": 3,
+      "event": "call",
+      "method": "FacultadRegional.<init>",
+      "target": "o1",
+      "args": []
+    },
+    {
+      "index": 3,
       "file": "FacultadRegional.java",
-      "line": 9,
+      "line": 1,
+      "event": "return",
+      "method": "FacultadRegional.<init>"
+    },
+    {
+      "index": 4,
+      "file": "Main.java",
+      "line": 3,
+      "event": "local_set",
+      "method": "Main.main",
+      "name": "resistencia",
+      "value": {
+        "ref": "o1"
+      }
+    },
+    {
+      "index": 5,
+      "file": "Main.java",
+      "line": 4,
       "event": "field_set",
       "target": "o1",
       "field": "nombre",
-      "value": { "string": "Resistencia" }
+      "value": {
+        "string": "Resistencia"
+      }
+    },
+    {
+      "index": 6,
+      "file": "Main.java",
+      "line": 5,
+      "event": "field_set",
+      "target": "o1",
+      "field": "ciudad",
+      "value": {
+        "string": "Resistencia"
+      }
+    },
+    {
+      "index": 7,
+      "file": "Main.java",
+      "line": 6,
+      "event": "field_set",
+      "target": "o1",
+      "field": "provincia",
+      "value": {
+        "string": "Chaco"
+      }
+    },
+    {
+      "index": 8,
+      "file": "Main.java",
+      "line": 8,
+      "event": "local_set",
+      "method": "Main.main",
+      "name": "miFacultad",
+      "value": {
+        "ref": "o1"
+      }
+    },
+    {
+      "index": 9,
+      "file": "Main.java",
+      "line": 9,
+      "event": "field_set",
+      "target": "o1",
+      "field": "ciudad",
+      "value": {
+        "string": "Resistencia, Chaco"
+      }
+    },
+    {
+      "index": 10,
+      "file": "Main.java",
+      "line": 11,
+      "event": "output",
+      "text": "Resistencia, Chaco\n"
+    },
+    {
+      "index": 11,
+      "file": "Main.java",
+      "line": 12,
+      "event": "return",
+      "method": "Main.main"
     }
   ],
   "heap": {
     "o1": {
       "type": "FacultadRegional",
-      "fields": { "nombre": { "string": "Resistencia" }, "decano": { "null": true } }
+      "fields": {
+        "nombre": {
+          "string": "Resistencia"
+        },
+        "ciudad": {
+          "string": "Resistencia, Chaco"
+        },
+        "provincia": {
+          "string": "Chaco"
+        }
+      }
     }
   },
+  "statics": {},
   "exception": null,
-  "limits": { "steps": 2, "truncated": false }
+  "limits": {
+    "steps": 12,
+    "truncated": false,
+    "exceeded": null
+  }
 }

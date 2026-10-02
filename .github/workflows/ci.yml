@@ -44,7 +44,7 @@ jobs:
             echo "contracts=$(changed "$ci|$js|^packages/contracts/|^docs/specs/challenge-format\.md$")"
             echo "web=$(changed "$ci|$js|^apps/web/|^packages/contracts/|^content/i18n/")"
             echo "api=$(changed "$ci|^services/api/")"
-            echo "runner=$(changed "$ci|^services/runner/")"
+            echo "runner=$(changed "$ci|^services/runner/|^packages/contracts/(trace|execution-request)\.schema\.json$|^packages/contracts/examples/")"
           } >> "$GITHUB_OUTPUT"
 
   contracts:

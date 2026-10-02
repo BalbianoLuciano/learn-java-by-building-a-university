@@ -15,13 +15,7 @@ function readYaml(path: string): unknown {
 }
 
 function validatorFor(schemaFile: string) {
-  const ajv = new Ajv2020({
-    allErrors: true,
-    strict: true,
-    // The if/then blocks of the step schema require properties declared one level up.
-    strictRequired: false,
-    allowUnionTypes: true,
-  });
+  const ajv = new Ajv2020({ allErrors: true, strict: true, allowUnionTypes: true });
   const validate = ajv.compile(readJson(schemaFile) as object);
   return (data: unknown) => {
     const valid = validate(data);
@@ -59,10 +53,47 @@ describe('trace.schema.json', () => {
     expect(validate(trace).valid).toBe(false);
   });
 
-  it('rejects a field set step without its target', () => {
+  it('rejects a field set step without its value', () => {
     const trace = clone(completed) as { steps: Record<string, unknown>[] };
-    delete trace.steps[1]!['target'];
+    const fieldSet = trace.steps.find((step) => step['event'] === 'field_set')!;
+    delete fieldSet['value'];
     expect(validate(trace).valid).toBe(false);
+  });
+
+  it('rejects a step with a property of another event', () => {
+    const trace = clone(completed) as { steps: Record<string, unknown>[] };
+    const output = trace.steps.find((step) => step['event'] === 'output')!;
+    output['method'] = 'Main.main';
+    expect(validate(trace).valid).toBe(false);
+  });
+
+  it('accepts lists, maps and non-finite doubles in the heap', () => {
+    const trace = clone(completed) as { heap: Record<string, unknown> };
+    trace.heap['o2'] = { type: 'ArrayList', size: 1, elements: [{ ref: 'o1' }] };
+    trace.heap['o3'] = {
+      type: 'HashMap',
+      size: 1,
+      entries: [{ key: { string: 'promedio' }, value: { double: 'NaN' } }],
+    };
+    expect(validate(trace)).toEqual({ valid: true, errors: [] });
+  });
+});
+
+describe('execution-request.schema.json', () => {
+  const validate = validatorFor('execution-request.schema.json');
+  const request = readJson('examples/execution-request.json') as Record<string, unknown>;
+
+  it('accepts the example', () => {
+    expect(validate(request)).toEqual({ valid: true, errors: [] });
+  });
+
+  it('rejects a file name with a path', () => {
+    const files = [{ path: '../Main.java', content: '' }];
+    expect(validate({ ...clone(request), files }).valid).toBe(false);
+  });
+
+  it('rejects a timeout above the sandbox limit', () => {
+    expect(validate({ ...clone(request), limits: { timeoutMs: 60000 } }).valid).toBe(false);
   });
 });
 

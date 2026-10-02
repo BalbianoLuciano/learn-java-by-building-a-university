@@ -25,20 +25,21 @@
 **Aceptación:** `docker compose up` levanta las tres apps; un PR con un error de formato
 falla en CI.
 
-## M2 · Runner: compilar, verificar, ejecutar, trazar
+## M2 · Runner: compilar, verificar, ejecutar, trazar ✅
 
 **Objetivo:** dado código Java, el runner devuelve estructura y traza según
 [`ARCHITECTURE.md`](ARCHITECTURE.md) §5.2.
 
-- Compilación en memoria con diagnósticos.
-- Extracción de estructura con `java.lang.classfile`.
-- Verificador de lista permitida ([`SECURITY.md`](SECURITY.md) §3).
-- JVM hija bajo JDI con límites; traza de creación de objetos, escrituras de campos,
+- [x] Compilación en memoria con diagnósticos.
+- [x] Extracción de estructura con `java.lang.classfile`.
+- [x] Verificador de lista permitida ([`SECURITY.md`](SECURITY.md) §3).
+- [x] JVM hija bajo JDI con límites; traza de creación de objetos, escrituras de campos,
   locales, llamadas, salida y excepciones.
-- Suite de seguridad completa (§5 de SECURITY.md).
+- [x] Suite de seguridad completa (§5 de SECURITY.md).
 
-**Aceptación:** la solución del TP de inventario y la del desafío 1.3 producen trazas que
-validan contra el schema; toda la suite maliciosa es rechazada o cortada; p95 < 2 s en local.
+**Aceptación:** un programa de inventario de ejemplo (escrito para los tests del runner) y
+la solución del desafío 1.3 producen trazas que validan contra el schema; toda la suite
+maliciosa es rechazada o cortada; p95 < 2 s en local.
 
 ## M3 · Api: desafíos, verificaciones y feedback
 

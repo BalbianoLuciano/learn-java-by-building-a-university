@@ -22,6 +22,9 @@ services:
 
   runner:
     build: services/runner
+    environment:
+      # Only for local development; production sets its own secret.
+      RUNNER_TOKEN: ${RUNNER_TOKEN:-local-development-token}
     healthcheck:
       # The Temurin images ship without curl or wget; bash opens the socket itself.
       test:

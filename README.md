@@ -5,8 +5,9 @@ Escribís código Java de verdad, lo ejecutás y ves en una maqueta 3D isométri
 tu programa, qué le falta y por qué algo falló, con cada explicación ligada a tus líneas de
 código.
 
-> 🚧 **Estado:** en construcción. Ya está el esqueleto del monorepo (hito M1); todavía no
-> hay desafíos para resolver. El próximo hito es el runner ([roadmap](docs/ROADMAP.md)).
+> 🚧 **Estado:** en construcción. Ya funciona el runner, que compila, verifica y ejecuta
+> Java paso a paso (hito M2); todavía no hay desafíos para resolver. El próximo hito es la
+> api ([roadmap](docs/ROADMAP.md)).
 
 *English: an open source course to learn Java OOP by modeling the real structure of the
 Universidad Tecnológica Nacional (Argentina). Write real Java, run it, and see what your

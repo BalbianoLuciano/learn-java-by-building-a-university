@@ -4,15 +4,9 @@
   "title": "Trace",
   "description": "Execution report returned by the runner to the api (docs/ARCHITECTURE.md §5.2).",
   "oneOf": [
-    {
-      "$ref": "#/$defs/compileErrorTrace"
-    },
-    {
-      "$ref": "#/$defs/rejectedTrace"
-    },
-    {
-      "$ref": "#/$defs/executedTrace"
-    }
+    { "$ref": "#/$defs/compileErrorTrace" },
+    { "$ref": "#/$defs/rejectedTrace" },
+    { "$ref": "#/$defs/executedTrace" }
   ],
   "$defs": {
     "compileErrorTrace": {
@@ -22,15 +16,11 @@
       "additionalProperties": false,
       "required": ["status", "diagnostics"],
       "properties": {
-        "status": {
-          "const": "compile_error"
-        },
+        "status": { "const": "compile_error" },
         "diagnostics": {
           "type": "array",
           "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/diagnostic"
-          }
+          "items": { "$ref": "#/$defs/diagnostic" }
         }
       }
     },
@@ -41,18 +31,12 @@
       "additionalProperties": false,
       "required": ["status", "structure", "violations"],
       "properties": {
-        "status": {
-          "const": "rejected"
-        },
-        "structure": {
-          "$ref": "#/$defs/structure"
-        },
+        "status": { "const": "rejected" },
+        "structure": { "$ref": "#/$defs/structure" },
         "violations": {
           "type": "array",
           "minItems": 1,
-          "items": {
-            "$ref": "#/$defs/violation"
-          }
+          "items": { "$ref": "#/$defs/violation" }
         }
       }
     },
@@ -61,48 +45,46 @@
       "description": "The code ran in the child JVM, to completion or until an exception or a limit stopped it.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "structure", "stdout", "steps", "heap", "exception", "limits"],
+      "required": [
+        "status",
+        "structure",
+        "stdout",
+        "steps",
+        "heap",
+        "statics",
+        "exception",
+        "limits"
+      ],
       "properties": {
-        "status": {
-          "enum": ["completed", "runtime_error", "timeout", "limit_exceeded"]
-        },
-        "structure": {
-          "$ref": "#/$defs/structure"
-        },
+        "status": { "enum": ["completed", "runtime_error", "timeout", "limit_exceeded"] },
+        "structure": { "$ref": "#/$defs/structure" },
         "stdout": {
-          "description": "Standard output, truncated to the output limit.",
+          "description": "Standard output, cut at the output limit.",
           "type": "string"
         },
-        "steps": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/step"
-          }
-        },
+        "steps": { "type": "array", "items": { "$ref": "#/$defs/step" } },
         "heap": {
-          "description": "Final state of the objects reachable from learner classes, keyed by object id.",
+          "description": "Final state of every object referenced by the trace, keyed by object id.",
           "type": "object",
-          "propertyNames": {
-            "$ref": "#/$defs/objectId"
-          },
+          "propertyNames": { "$ref": "#/$defs/objectId" },
+          "additionalProperties": { "$ref": "#/$defs/heapObject" }
+        },
+        "statics": {
+          "description": "Final values of the static fields of learner classes, keyed by class name.",
+          "type": "object",
           "additionalProperties": {
-            "$ref": "#/$defs/heapObject"
+            "type": "object",
+            "additionalProperties": { "$ref": "#/$defs/value" }
           }
         },
         "exception": {
-          "oneOf": [
-            {
-              "type": "null"
-            },
-            {
-              "$ref": "#/$defs/exceptionInfo"
-            }
-          ]
+          "description": "The uncaught exception that ended the program, if any.",
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/exceptionInfo" }]
         },
         "limits": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["steps", "truncated"],
+          "required": ["steps", "truncated", "exceeded"],
           "properties": {
             "steps": {
               "description": "Number of steps recorded.",
@@ -110,8 +92,12 @@
               "minimum": 0
             },
             "truncated": {
-              "description": "True when a limit cut the trace or the output short.",
+              "description": "True when the program was cut before it finished on its own.",
               "type": "boolean"
+            },
+            "exceeded": {
+              "description": "The limit that cut the program when status is limit_exceeded; null otherwise.",
+              "enum": ["steps", "objects", "output", "call_depth", null]
             }
           }
         }
@@ -119,30 +105,19 @@
     },
     "diagnostic": {
       "title": "Diagnostic",
-      "description": "A javac error.",
+      "description": "A compilation error: a javac diagnostic, or a runner rule reported with an ljbu.err.* code.",
       "type": "object",
       "additionalProperties": false,
       "required": ["file", "line", "column", "code", "message"],
       "properties": {
-        "file": {
-          "type": "string"
-        },
-        "line": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "column": {
-          "type": "integer",
-          "minimum": 1
-        },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 1 },
         "code": {
           "description": "javac diagnostic code, e.g. compiler.err.cant.resolve.location.",
           "type": "string"
         },
-        "message": {
-          "description": "Original javac message.",
-          "type": "string"
-        }
+        "message": { "description": "Original javac message.", "type": "string" }
       }
     },
     "violation": {
@@ -152,13 +127,8 @@
       "additionalProperties": false,
       "required": ["file", "line", "symbol"],
       "properties": {
-        "file": {
-          "type": "string"
-        },
-        "line": {
-          "type": "integer",
-          "minimum": 1
-        },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
         "symbol": {
           "description": "The forbidden reference, e.g. java.lang.System.exit.",
           "type": "string"
@@ -172,12 +142,7 @@
       "additionalProperties": false,
       "required": ["classes"],
       "properties": {
-        "classes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/classInfo"
-          }
-        }
+        "classes": { "type": "array", "items": { "$ref": "#/$defs/classInfo" } }
       }
     },
     "visibility": {
@@ -186,6 +151,7 @@
     },
     "classInfo": {
       "title": "ClassInfo",
+      "description": "Types are written with simple names and their type arguments, e.g. List<Departamento>.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -201,50 +167,19 @@
         "methods"
       ],
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "kind": {
-          "enum": ["class", "interface", "enum", "record"]
-        },
-        "abstract": {
-          "type": "boolean"
-        },
+        "name": { "type": "string" },
+        "kind": { "enum": ["class", "interface", "enum", "record"] },
+        "abstract": { "type": "boolean" },
         "superclass": {
-          "description": "Null when the class extends java.lang.Object directly.",
+          "description": "Null when the class has no explicit superclass.",
           "type": ["string", "null"]
         },
-        "interfaces": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "file": {
-          "type": "string"
-        },
-        "line": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "fields": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/fieldInfo"
-          }
-        },
-        "constructors": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/constructorInfo"
-          }
-        },
-        "methods": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/methodInfo"
-          }
-        }
+        "interfaces": { "type": "array", "items": { "type": "string" } },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "fields": { "type": "array", "items": { "$ref": "#/$defs/fieldInfo" } },
+        "constructors": { "type": "array", "items": { "$ref": "#/$defs/constructorInfo" } },
+        "methods": { "type": "array", "items": { "$ref": "#/$defs/methodInfo" } }
       }
     },
     "fieldInfo": {
@@ -253,25 +188,12 @@
       "additionalProperties": false,
       "required": ["name", "type", "visibility", "final", "static", "line"],
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string"
-        },
-        "visibility": {
-          "$ref": "#/$defs/visibility"
-        },
-        "final": {
-          "type": "boolean"
-        },
-        "static": {
-          "type": "boolean"
-        },
-        "line": {
-          "type": "integer",
-          "minimum": 1
-        }
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "visibility": { "$ref": "#/$defs/visibility" },
+        "final": { "type": "boolean" },
+        "static": { "type": "boolean" },
+        "line": { "type": "integer", "minimum": 1 }
       }
     },
     "constructorInfo": {
@@ -280,16 +202,10 @@
       "additionalProperties": false,
       "required": ["parameterTypes", "visibility", "line"],
       "properties": {
-        "parameterTypes": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "visibility": {
-          "$ref": "#/$defs/visibility"
-        },
+        "parameterTypes": { "type": "array", "items": { "type": "string" } },
+        "visibility": { "$ref": "#/$defs/visibility" },
         "line": {
+          "description": "Line of the declaration; the line of the class for an implicit constructor.",
           "type": "integer",
           "minimum": 1
         }
@@ -306,34 +222,21 @@
         "visibility",
         "static",
         "abstract",
+        "override",
         "line"
       ],
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "returnType": {
-          "type": "string"
-        },
-        "parameterTypes": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "visibility": {
-          "$ref": "#/$defs/visibility"
-        },
-        "static": {
+        "name": { "type": "string" },
+        "returnType": { "type": "string" },
+        "parameterTypes": { "type": "array", "items": { "type": "string" } },
+        "visibility": { "$ref": "#/$defs/visibility" },
+        "static": { "type": "boolean" },
+        "abstract": { "type": "boolean" },
+        "override": {
+          "description": "True when the method is annotated with @Override in the source.",
           "type": "boolean"
         },
-        "abstract": {
-          "type": "boolean"
-        },
-        "line": {
-          "type": "integer",
-          "minimum": 1
-        }
+        "line": { "type": "integer", "minimum": 1 }
       }
     },
     "objectId": {
@@ -351,9 +254,7 @@
           "additionalProperties": false,
           "required": ["int"],
           "properties": {
-            "int": {
-              "type": "integer"
-            }
+            "int": { "description": "byte, short, int or long.", "type": "integer" }
           }
         },
         {
@@ -362,7 +263,8 @@
           "required": ["double"],
           "properties": {
             "double": {
-              "type": "number"
+              "description": "float or double; the non-finite values travel as strings.",
+              "oneOf": [{ "type": "number" }, { "enum": ["NaN", "Infinity", "-Infinity"] }]
             }
           }
         },
@@ -370,201 +272,235 @@
           "type": "object",
           "additionalProperties": false,
           "required": ["boolean"],
-          "properties": {
-            "boolean": {
-              "type": "boolean"
-            }
-          }
+          "properties": { "boolean": { "type": "boolean" } }
         },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["char"],
-          "properties": {
-            "char": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 1
-            }
-          }
+          "properties": { "char": { "type": "string", "minLength": 1, "maxLength": 1 } }
         },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["string"],
           "properties": {
-            "string": {
-              "type": "string"
-            }
+            "string": { "description": "Cut at 1000 characters.", "type": "string" }
           }
         },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["ref"],
-          "properties": {
-            "ref": {
-              "$ref": "#/$defs/objectId"
-            }
-          }
+          "properties": { "ref": { "$ref": "#/$defs/objectId" } }
         },
         {
           "type": "object",
           "additionalProperties": false,
           "required": ["null"],
-          "properties": {
-            "null": {
-              "const": true
-            }
-          }
+          "properties": { "null": { "const": true } }
         }
       ]
     },
     "heapObject": {
       "title": "HeapObject",
+      "oneOf": [
+        { "$ref": "#/$defs/instanceObject" },
+        { "$ref": "#/$defs/sequenceObject" },
+        { "$ref": "#/$defs/mapObject" }
+      ]
+    },
+    "instanceObject": {
+      "title": "InstanceObject",
+      "description": "An object with its fields. Objects of classes the learner did not write carry no fields.",
       "type": "object",
       "additionalProperties": false,
       "required": ["type", "fields"],
       "properties": {
-        "type": {
-          "type": "string"
-        },
-        "fields": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/value"
-          }
-        }
+        "type": { "type": "string" },
+        "fields": { "type": "object", "additionalProperties": { "$ref": "#/$defs/value" } }
       }
     },
-    "frame": {
-      "title": "Frame",
+    "sequenceObject": {
+      "title": "SequenceObject",
+      "description": "An array, a list or a set, with at most its first 200 elements.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["method", "locals"],
+      "required": ["type", "size", "elements"],
       "properties": {
-        "method": {
-          "description": "Qualified as Class.method, e.g. Main.main.",
-          "type": "string"
-        },
-        "locals": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/$defs/value"
+        "type": { "type": "string" },
+        "size": { "type": "integer", "minimum": 0 },
+        "elements": { "type": "array", "items": { "$ref": "#/$defs/value" } }
+      }
+    },
+    "mapObject": {
+      "title": "MapObject",
+      "description": "A map, with at most its first 200 entries.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "size", "entries"],
+      "properties": {
+        "type": { "type": "string" },
+        "size": { "type": "integer", "minimum": 0 },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["key", "value"],
+            "properties": {
+              "key": { "$ref": "#/$defs/value" },
+              "value": { "$ref": "#/$defs/value" }
+            }
           }
         }
       }
     },
     "exceptionInfo": {
       "title": "ExceptionInfo",
-      "description": "The uncaught exception that stopped the program. file and line point to the first frame in learner code.",
+      "description": "An exception. file and line point to the first frame in learner code.",
       "type": "object",
       "additionalProperties": false,
       "required": ["type", "message", "file", "line"],
       "properties": {
-        "type": {
-          "description": "Fully qualified class name.",
-          "type": "string"
-        },
-        "message": {
-          "type": ["string", "null"]
-        },
-        "file": {
-          "type": "string"
-        },
-        "line": {
-          "type": "integer",
-          "minimum": 1
-        }
+        "type": { "description": "Fully qualified class name.", "type": "string" },
+        "message": { "type": ["string", "null"] },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 }
       }
     },
     "step": {
       "title": "Step",
-      "description": "One traced event in learner code. Each step carries only what changed: object for object_created; target, field and value for field_set.",
+      "description": "One traced event in learner code. file and line say where it happened.",
+      "oneOf": [
+        { "$ref": "#/$defs/objectCreatedStep" },
+        { "$ref": "#/$defs/fieldSetStep" },
+        { "$ref": "#/$defs/localSetStep" },
+        { "$ref": "#/$defs/callStep" },
+        { "$ref": "#/$defs/returnStep" },
+        { "$ref": "#/$defs/outputStep" },
+        { "$ref": "#/$defs/exceptionStep" }
+      ]
+    },
+    "objectCreatedStep": {
+      "title": "ObjectCreatedStep",
+      "description": "An object of a learner class was created. The line is the one with the new expression.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["index", "file", "line", "event"],
+      "required": ["index", "file", "line", "event", "object"],
       "properties": {
-        "index": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "file": {
-          "type": "string"
-        },
-        "line": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "event": {
-          "enum": [
-            "object_created",
-            "field_set",
-            "local_set",
-            "call",
-            "return",
-            "output",
-            "exception"
-          ]
-        },
+        "index": { "type": "integer", "minimum": 0 },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "event": { "const": "object_created" },
         "object": {
-          "description": "object_created: the new object.",
           "type": "object",
           "additionalProperties": false,
           "required": ["id", "type"],
           "properties": {
-            "id": {
-              "$ref": "#/$defs/objectId"
-            },
-            "type": {
-              "type": "string"
-            }
+            "id": { "$ref": "#/$defs/objectId" },
+            "type": { "type": "string" }
           }
-        },
-        "target": {
-          "$ref": "#/$defs/objectId"
-        },
-        "field": {
-          "description": "field_set: the field written.",
-          "type": "string"
-        },
-        "value": {
-          "$ref": "#/$defs/value"
-        },
-        "frames": {
-          "description": "Call stack with the locals visible after the event, innermost frame last.",
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/frame"
-          }
-        }
-      },
-      "if": {
-        "type": "object",
-        "required": ["event"],
-        "properties": {
-          "event": {
-            "const": "object_created"
-          }
-        }
-      },
-      "then": {
-        "required": ["object"]
-      },
-      "else": {
-        "if": {
-          "type": "object",
-          "required": ["event"],
-          "properties": {
-            "event": {
-              "const": "field_set"
-            }
-          }
-        },
-        "then": {
-          "required": ["target", "field", "value"]
         }
       }
+    },
+    "fieldSetStep": {
+      "title": "FieldSetStep",
+      "description": "A field of a learner class was written. target is the object; a static field carries ownerClass instead.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "file", "line", "event", "field", "value"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "event": { "const": "field_set" },
+        "target": { "$ref": "#/$defs/objectId" },
+        "ownerClass": { "type": "string" },
+        "field": { "type": "string" },
+        "value": { "$ref": "#/$defs/value" }
+      }
+    },
+    "localSetStep": {
+      "title": "LocalSetStep",
+      "description": "A local variable of a learner method received a value.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "file", "line", "event", "method", "name", "value"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "event": { "const": "local_set" },
+        "method": { "$ref": "#/$defs/methodName" },
+        "name": { "type": "string" },
+        "value": { "$ref": "#/$defs/value" }
+      }
+    },
+    "callStep": {
+      "title": "CallStep",
+      "description": "A learner method or constructor started. The line is the call site when the caller is learner code. method names the implementation that runs; target is the receiver, absent in static methods.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "file", "line", "event", "method", "args"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "event": { "const": "call" },
+        "method": { "$ref": "#/$defs/methodName" },
+        "target": { "$ref": "#/$defs/objectId" },
+        "args": { "type": "array", "items": { "$ref": "#/$defs/value" } }
+      }
+    },
+    "returnStep": {
+      "title": "ReturnStep",
+      "description": "A learner method or constructor finished normally. value is absent when it returns void.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "file", "line", "event", "method"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "event": { "const": "return" },
+        "method": { "$ref": "#/$defs/methodName" },
+        "value": { "$ref": "#/$defs/value" }
+      }
+    },
+    "outputStep": {
+      "title": "OutputStep",
+      "description": "The line wrote text to standard output.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "file", "line", "event", "text"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "event": { "const": "output" },
+        "text": { "type": "string" }
+      }
+    },
+    "exceptionStep": {
+      "title": "ExceptionStep",
+      "description": "An exception was thrown. caught says whether learner code catches it; otherwise it ends the program.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "file", "line", "event", "exception", "caught"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "event": { "const": "exception" },
+        "exception": { "$ref": "#/$defs/exceptionInfo" },
+        "caught": { "type": "boolean" }
+      }
+    },
+    "methodName": {
+      "title": "MethodName",
+      "description": "Class and method joined by a dot, e.g. Main.main; constructors are Class.<init>.",
+      "type": "string"
     }
   }
 }

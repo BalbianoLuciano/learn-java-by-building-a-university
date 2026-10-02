@@ -44,8 +44,13 @@ CI corre lo mismo en cada PR, un job por componente y solo si cambió.
 - Si cambiás un schema de `packages/contracts`, regenerá los tipos con
   `pnpm --filter @ljbu/contracts generate` y commitealos.
 - Servidor de desarrollo de la web: `pnpm --filter @ljbu/web dev`.
-- Sin JDK instalado, los comandos de Maven corren igual dentro de Docker:
-  `docker run --rm -v "$PWD":/work -w /work eclipse-temurin:25-jdk ./mvnw verify`.
+- Sin JDK instalado, los comandos de Maven corren igual dentro de Docker. Desde la raíz del
+  repo (los tests del runner leen los schemas de `packages/contracts`):
+  `docker run --rm -v "$PWD":/repo -w /repo/services/runner eclipse-temurin:25-jdk ./mvnw verify`.
+- El runner no arranca sin `RUNNER_TOKEN`; para levantarlo solo:
+  `RUNNER_TOKEN=local ./mvnw spring-boot:run`.
+- Si cambia la traza que produce el runner, el ejemplo del contrato se regenera con
+  `./mvnw test -Dtest=ContractExampleTest -Dljbu.updateExamples=true`.
 - Todo junto: `docker compose up --build`.
 
 ## Idiomas
