@@ -1,0 +1,9 @@
+outcome: incomplete
+log:
+  - check: three-faculties
+    state: passed
+  - check: cordoba-loaded
+    state: incomplete
+    title: "No encuentro una facultad que se llame \"Córdoba\"."
+  - check: mendoza-loaded
+    state: passed

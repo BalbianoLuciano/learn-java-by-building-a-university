@@ -1,0 +1,6 @@
+id: m1
+order: 1
+title:
+  es: "Clases, objetos y referencias"
+goal:
+  es: "Entender que una clase es un molde, que cada `new` crea un objeto con estado propio y que una variable apunta a un objeto."
