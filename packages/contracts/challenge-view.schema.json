@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/BalbianoLuciano/learn-java-by-building-a-university/main/packages/contracts/challenge-view.schema.json",
+  "title": "ChallengeView",
+  "description": "Answer of GET /api/v1/challenges/{id}: what the learner needs to work on a challenge. Checks, hints and the solution are not here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "module",
+    "order",
+    "title",
+    "concept",
+    "brief",
+    "criteria",
+    "files",
+    "hintCount",
+    "rules",
+    "realReference"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "module": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "concept": {
+      "type": "string"
+    },
+    "brief": {
+      "description": "Short Markdown.",
+      "type": "string"
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["checks", "text"],
+        "properties": {
+          "checks": {
+            "description": "Checks that tick this item when all of them pass.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "files": {
+      "description": "The starter code.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "content", "editable"],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "editable": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "hintCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "rules": {
+      "description": "Rules of the real UTN the challenge is based on.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "source", "url"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "realReference": {
+      "description": "The part of the real UTN the model is compared with.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regionalFaculties"],
+      "properties": {
+        "regionalFaculties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "city", "province"],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "province": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

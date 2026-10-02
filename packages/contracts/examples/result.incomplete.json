@@ -1,14 +1,25 @@
 {
   "runId": "0f8b5f0e-5d43-4c58-9f43-6f1d4d1c2a10",
   "outcome": "incomplete",
+  "progress": { "passed": 1, "total": 2 },
   "pieces": [
     {
       "id": "fr-resistencia",
       "archetype": "regional-faculty",
       "state": "incomplete",
-      "label": "FR Resistencia",
+      "built": true,
+      "label": "Resistencia",
       "sourceRef": { "file": "Main.java", "line": 5 },
-      "slots": { "dean": { "state": "missing" } }
+      "slots": { "dean": { "state": "missing", "pieceIds": [] } }
+    },
+    {
+      "id": "var-resistencia",
+      "archetype": "variable-sign",
+      "state": "passed",
+      "built": true,
+      "label": "resistencia",
+      "sourceRef": { "file": "Main.java", "line": 5 },
+      "target": "fr-resistencia"
     }
   ],
   "log": [
@@ -18,11 +29,35 @@
       "why": "Una facultad **tiene** un decano: es composición, no herencia.",
       "sourceRef": { "file": "Main.java", "line": 5 },
       "hint": "¿Qué atributo de `FacultadRegional` está quedando en `null`?",
-      "pieceId": "fr-resistencia"
+      "pieceId": "fr-resistencia",
+      "checkId": "dean-assigned"
+    },
+    {
+      "state": "passed",
+      "title": "La FR Resistencia ya existe.",
+      "why": "Cada `new` construye un objeto nuevo a partir de la clase.",
+      "sourceRef": { "file": "Main.java", "line": 5 },
+      "pieceId": "fr-resistencia",
+      "checkId": "faculty-created"
     }
   ],
   "timeline": [
-    { "index": 0, "sourceRef": { "file": "Main.java", "line": 5 }, "pieceId": "fr-resistencia" }
+    {
+      "index": 0,
+      "sourceRef": { "file": "Main.java", "line": 5 },
+      "event": "object_created",
+      "pieceId": "fr-resistencia",
+      "name": "FacultadRegional"
+    },
+    {
+      "index": 1,
+      "sourceRef": { "file": "Main.java", "line": 5 },
+      "event": "local_set",
+      "pieceId": "var-resistencia",
+      "targetPieceId": "fr-resistencia",
+      "name": "resistencia",
+      "value": { "ref": "o1" }
+    }
   ],
   "stdout": ""
 }

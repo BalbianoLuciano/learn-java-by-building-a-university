@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/BalbianoLuciano/learn-java-by-building-a-university/main/packages/contracts/hint.schema.json",
+  "title": "Hint",
+  "description": "Answer of GET /api/v1/challenges/{id}/hints/{level}.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["level", "text"],
+  "properties": {
+    "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+    "text": { "type": "string" }
+  }
+}

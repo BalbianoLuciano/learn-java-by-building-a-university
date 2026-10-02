@@ -182,13 +182,18 @@
     },
     "criterion": {
       "title": "Criterion",
-      "description": "An item of the learner's goal list, ticked when its check passes.",
+      "description": "An item of the learner's goal list, ticked when all its checks pass.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["check", "es"],
+      "required": ["checks", "es"],
       "properties": {
-        "check": {
-          "$ref": "#/$defs/checkId"
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/checkId"
+          }
         },
         "es": {
           "type": "string",
@@ -204,7 +209,7 @@
       "title": "Scene",
       "type": "object",
       "additionalProperties": false,
-      "required": ["bindings"],
+      "required": ["bindings", "pieces"],
       "properties": {
         "bindings": {
           "type": "array",
@@ -239,6 +244,13 @@
               }
             }
           }
+        },
+        "pieces": {
+          "description": "What the brief asks to build. Checks refer to these pieces by id.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/expectedPiece"
+          }
         }
       }
     },
@@ -261,7 +273,7 @@
           "type": "string"
         },
         "slots": {
-          "description": "Composition fields drawn as slots: field name to slot style.",
+          "description": "Composition fields drawn as slots: field name to slot name.",
           "type": "object",
           "additionalProperties": {
             "type": "string",
@@ -274,7 +286,7 @@
       "title": "Check",
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "type", "piece", "feedback"],
+      "required": ["id", "type", "feedback"],
       "properties": {
         "id": {
           "$ref": "#/$defs/checkId"
@@ -287,7 +299,7 @@
           "type": "object"
         },
         "piece": {
-          "description": "Piece affected by the check.",
+          "description": "Id of the piece of scene.pieces the check is about; absent when it is about the whole program.",
           "type": "string",
           "minLength": 1
         },
@@ -370,6 +382,39 @@
           "$ref": "#/$defs/localizedText"
         },
         "hint": {
+          "$ref": "#/$defs/localizedText"
+        }
+      }
+    },
+    "expectedPiece": {
+      "title": "ExpectedPiece",
+      "description": "An object the brief asks for. It is matched with the first object of the type that satisfies where; without where, with the first object of the type not matched yet.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "label"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/checkId"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Za-z0-9_]*$"
+        },
+        "where": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["field", "equals"],
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "equals": {
+              "type": ["string", "number", "boolean"]
+            }
+          }
+        },
+        "label": {
+          "description": "Label shown while the code has not built the piece.",
           "$ref": "#/$defs/localizedText"
         }
       }

@@ -62,8 +62,8 @@ describe('trace.schema.json', () => {
 
   it('rejects a step with a property of another event', () => {
     const trace = clone(completed) as { steps: Record<string, unknown>[] };
-    const output = trace.steps.find((step) => step['event'] === 'output')!;
-    output['method'] = 'Main.main';
+    const returned = trace.steps.find((step) => step['event'] === 'return')!;
+    returned['text'] = 'Resistencia';
     expect(validate(trace).valid).toBe(false);
   });
 
@@ -118,16 +118,18 @@ describe('result.schema.json', () => {
 
 describe('challenge.schema.json', () => {
   const validate = validatorFor('challenge.schema.json');
-  const challenge = readYaml('examples/challenge.m1-03.yaml') as Record<string, unknown>;
+  // The example of the spec is a real challenge: the published one, not a copy.
+  const published =
+    '../../content/challenges/m1-clases-y-objetos/03-la-facultad-donde-estudias/challenge.yaml';
+  const challenge = readYaml(published) as Record<string, unknown>;
 
-  it('accepts the example of the challenge format spec', () => {
+  it('accepts the challenge that the format spec shows as its example', () => {
     expect(validate(challenge)).toEqual({ valid: true, errors: [] });
   });
 
-  it('keeps the example in sync with the spec', () => {
+  it('keeps the example of the spec in sync with the published challenge', () => {
     const spec = readFileSync(`${root}../../docs/specs/challenge-format.md`, 'utf8');
-    const example = readFileSync(`${root}examples/challenge.m1-03.yaml`, 'utf8');
-    expect(spec).toContain(example);
+    expect(spec).toContain(readFileSync(`${root}${published}`, 'utf8'));
   });
 
   it('rejects a challenge without exactly three hints', () => {
@@ -143,6 +145,21 @@ describe('challenge.schema.json', () => {
     const invalid = clone(challenge) as { checks: Record<string, unknown>[] };
     invalid.checks[0]!['type'] = 'runs_fast';
     expect(validate(invalid).valid).toBe(false);
+  });
+
+  it('rejects a scene that does not say which pieces the brief asks for', () => {
+    const invalid = clone(challenge) as { scene: Record<string, unknown> };
+    delete invalid.scene['pieces'];
+    expect(validate(invalid).valid).toBe(false);
+  });
+});
+
+describe('module.schema.json', () => {
+  const validate = validatorFor('module.schema.json');
+
+  it('accepts the published module', () => {
+    const module = readYaml('../../content/challenges/m1-clases-y-objetos/module.yaml');
+    expect(validate(module)).toEqual({ valid: true, errors: [] });
   });
 });
 

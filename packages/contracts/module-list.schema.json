@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/BalbianoLuciano/learn-java-by-building-a-university/main/packages/contracts/module-list.schema.json",
+  "title": "ModuleList",
+  "description": "Answer of GET /api/v1/modules: modules and their challenges, without solutions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["modules"],
+  "properties": {
+    "modules": { "type": "array", "items": { "$ref": "#/$defs/moduleSummary" } }
+  },
+  "$defs": {
+    "moduleSummary": {
+      "title": "ModuleSummary",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "order", "title", "goal", "challenges"],
+      "properties": {
+        "id": { "type": "string" },
+        "order": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string" },
+        "goal": { "type": "string" },
+        "challenges": { "type": "array", "items": { "$ref": "#/$defs/challengeSummary" } }
+      }
+    },
+    "challengeSummary": {
+      "title": "ChallengeSummary",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "order", "title", "concept"],
+      "properties": {
+        "id": { "type": "string" },
+        "order": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string" },
+        "concept": { "type": "string" }
+      }
+    }
+  }
+}

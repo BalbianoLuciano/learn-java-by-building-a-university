@@ -5,10 +5,20 @@
   "description": "Result of a run, returned by the api to the web (docs/ARCHITECTURE.md §5.4).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["runId", "outcome", "pieces", "log", "timeline", "stdout"],
+  "required": ["runId", "outcome", "progress", "pieces", "log", "timeline", "stdout"],
   "properties": {
     "runId": { "type": "string", "minLength": 1 },
     "outcome": { "$ref": "#/$defs/state" },
+    "progress": {
+      "description": "Checks of the challenge that pass, out of all of them.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "total"],
+      "properties": {
+        "passed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      }
+    },
     "pieces": { "type": "array", "items": { "$ref": "#/$defs/piece" } },
     "log": { "type": "array", "items": { "$ref": "#/$defs/logEntry" } },
     "timeline": { "type": "array", "items": { "$ref": "#/$defs/timelineStep" } },
@@ -50,20 +60,31 @@
     },
     "piece": {
       "title": "Piece",
-      "description": "A visual element of the model: an object, class or relation.",
+      "description": "A visual element of the model: an object the brief asks for, another object the code created, or a variable.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "archetype", "state", "label"],
+      "required": ["id", "archetype", "state", "built", "label"],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "archetype": { "$ref": "#/$defs/archetype" },
         "state": { "$ref": "#/$defs/state" },
+        "built": {
+          "description": "False when the brief asks for the piece and the code did not create it.",
+          "type": "boolean"
+        },
         "label": { "type": "string" },
-        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "sourceRef": {
+          "description": "Where the code created it.",
+          "$ref": "#/$defs/sourceRef"
+        },
         "slots": {
           "description": "Composition slots of the piece, keyed by slot name.",
           "type": "object",
           "additionalProperties": { "$ref": "#/$defs/slot" }
+        },
+        "target": {
+          "description": "For a variable: the piece it points to. Absent when it points to nothing.",
+          "type": "string"
         }
       }
     },
@@ -71,9 +92,14 @@
       "title": "Slot",
       "type": "object",
       "additionalProperties": false,
-      "required": ["state"],
+      "required": ["state", "pieceIds"],
       "properties": {
-        "state": { "enum": ["filled", "missing"] }
+        "state": { "enum": ["filled", "missing"] },
+        "pieceIds": {
+          "description": "Pieces that occupy the slot.",
+          "type": "array",
+          "items": { "type": "string" }
+        }
       }
     },
     "logEntry": {
@@ -88,19 +114,107 @@
         "why": { "description": "The Java concept involved.", "type": "string", "minLength": 1 },
         "sourceRef": { "$ref": "#/$defs/sourceRef" },
         "hint": { "type": "string", "minLength": 1 },
-        "pieceId": { "type": "string", "minLength": 1 }
+        "pieceId": { "type": "string", "minLength": 1 },
+        "checkId": {
+          "description": "The check of the challenge this entry reports, if any.",
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "description": "Original text of the compiler or the JVM, shown under the message.",
+          "type": "string"
+        }
       }
+    },
+    "value": {
+      "title": "Value",
+      "description": "A Java value, as in the trace.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["int"],
+          "properties": { "int": { "type": "integer" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["double"],
+          "properties": {
+            "double": {
+              "oneOf": [{ "type": "number" }, { "enum": ["NaN", "Infinity", "-Infinity"] }]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["boolean"],
+          "properties": { "boolean": { "type": "boolean" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["char"],
+          "properties": { "char": { "type": "string", "minLength": 1, "maxLength": 1 } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["string"],
+          "properties": { "string": { "type": "string" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ref"],
+          "properties": { "ref": { "type": "string" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["null"],
+          "properties": { "null": { "const": true } }
+        }
+      ]
     },
     "timelineStep": {
       "title": "TimelineStep",
-      "description": "A step of the execution replay, tied to a line and optionally to a piece.",
+      "description": "A step of the execution, tied to a line and to the pieces it touches. name is the class created, the field or variable written, the method called or the exception thrown, depending on the event.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["index", "sourceRef"],
+      "required": ["index", "sourceRef", "event"],
       "properties": {
         "index": { "type": "integer", "minimum": 0 },
         "sourceRef": { "$ref": "#/$defs/sourceRef" },
-        "pieceId": { "type": "string", "minLength": 1 }
+        "event": {
+          "enum": [
+            "object_created",
+            "field_set",
+            "local_set",
+            "call",
+            "return",
+            "output",
+            "exception"
+          ]
+        },
+        "pieceId": {
+          "description": "The piece created, written, called or, for a local, the variable.",
+          "type": "string",
+          "minLength": 1
+        },
+        "targetPieceId": {
+          "description": "The piece a field or a variable points to after the step.",
+          "type": "string",
+          "minLength": 1
+        },
+        "name": { "type": "string" },
+        "value": { "$ref": "#/$defs/value" },
+        "text": { "description": "Output written, or message of the exception.", "type": "string" },
+        "caught": {
+          "description": "For an exception: whether the code catches it.",
+          "type": "boolean"
+        }
       }
     }
   }
