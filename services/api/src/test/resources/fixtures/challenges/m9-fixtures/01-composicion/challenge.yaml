@@ -1,0 +1,71 @@
+id: m9-01
+module: m9
+order: 1
+title:
+  es: "Una facultad con decano y departamentos"
+concept: composition
+rules: [R-FR-01, R-FR-03]
+brief:
+  es: "Desafío de prueba: una facultad con su decano y sus departamentos."
+criteria:
+  - checks: [dean-assigned]
+    es: "La facultad tiene decano"
+editable: [Main.java]
+
+scene:
+  bindings:
+    - type: UnidadAcademica
+      archetype: generic-block
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+      slots: { decano: dean, departamentos: departments }
+    - type: Decano
+      archetype: person
+      label: nombre
+    - type: Departamento
+      archetype: department
+      label: nombre
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+    - id: decano
+      type: Decano
+      label: { es: "Decano" }
+  showVariables: true
+
+checks:
+  - id: dean-assigned
+    type: object_field
+    params:
+      where: { type: FacultadRegional }
+      expect: { field: decano, notNull: true }
+    piece: fr-resistencia
+    slot: dean
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "La FR Resistencia tiene su decano." }
+        why: { es: "Guardaste un objeto `Decano` en un atributo: eso es composición." }
+      fail:
+        what: { es: "La FR Resistencia está sin decano." }
+        why: { es: "Una facultad **tiene** un decano: es composición, no herencia." }
+        hint: { es: "¿Qué atributo de `FacultadRegional` está quedando en `null`?" }
+
+  - id: rejects-nobody
+    type: throws
+    params: { type: IllegalArgumentException, caught: false }
+    feedback:
+      pass:
+        what: { es: "La facultad rechazó quedarse sin decano." }
+        why: { es: "Un método puede lanzar una excepción para avisar que no acepta un valor." }
+      fail:
+        what: { es: "Todavía nadie intentó dejar a la facultad sin decano." }
+        why: { es: "El método `asignar` lanza una excepción cuando recibe `null`." }
+        hint: { es: "¿Qué pasa si llamás a `asignar` con `null`?" }
+
+hints:
+  - es: "Pista de prueba 1."
+  - es: "Pista de prueba 2."
+  - es: "Pista de prueba 3."
