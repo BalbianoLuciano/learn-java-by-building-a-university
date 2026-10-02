@@ -1,0 +1,28 @@
+{
+  "runId": "0f8b5f0e-5d43-4c58-9f43-6f1d4d1c2a10",
+  "outcome": "incomplete",
+  "pieces": [
+    {
+      "id": "fr-resistencia",
+      "archetype": "regional-faculty",
+      "state": "incomplete",
+      "label": "FR Resistencia",
+      "sourceRef": { "file": "Main.java", "line": 5 },
+      "slots": { "dean": { "state": "missing" } }
+    }
+  ],
+  "log": [
+    {
+      "state": "incomplete",
+      "title": "La FR Resistencia está sin decano.",
+      "why": "Una facultad **tiene** un decano: es composición, no herencia.",
+      "sourceRef": { "file": "Main.java", "line": 5 },
+      "hint": "¿Qué atributo de `FacultadRegional` está quedando en `null`?",
+      "pieceId": "fr-resistencia"
+    }
+  ],
+  "timeline": [
+    { "index": 0, "sourceRef": { "file": "Main.java", "line": 5 }, "pieceId": "fr-resistencia" }
+  ],
+  "stdout": ""
+}

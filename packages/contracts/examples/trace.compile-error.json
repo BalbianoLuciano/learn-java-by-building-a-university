@@ -1,0 +1,12 @@
+{
+  "status": "compile_error",
+  "diagnostics": [
+    {
+      "file": "Main.java",
+      "line": 5,
+      "column": 5,
+      "code": "compiler.err.cant.resolve.location",
+      "message": "cannot find symbol"
+    }
+  ]
+}

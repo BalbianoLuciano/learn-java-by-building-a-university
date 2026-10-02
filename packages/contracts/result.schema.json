@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/BalbianoLuciano/learn-java-by-building-a-university/main/packages/contracts/result.schema.json",
+  "title": "RunResult",
+  "description": "Result of a run, returned by the api to the web (docs/ARCHITECTURE.md §5.4).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["runId", "outcome", "pieces", "log", "timeline", "stdout"],
+  "properties": {
+    "runId": { "type": "string", "minLength": 1 },
+    "outcome": { "$ref": "#/$defs/state" },
+    "pieces": { "type": "array", "items": { "$ref": "#/$defs/piece" } },
+    "log": { "type": "array", "items": { "$ref": "#/$defs/logEntry" } },
+    "timeline": { "type": "array", "items": { "$ref": "#/$defs/timelineStep" } },
+    "stdout": { "type": "string" }
+  },
+  "$defs": {
+    "state": {
+      "title": "State",
+      "description": "passed: correct; incomplete: something from the brief is missing; failed: it broke (docs/FEEDBACK.md §1).",
+      "enum": ["passed", "incomplete", "failed"]
+    },
+    "archetype": {
+      "title": "Archetype",
+      "description": "Scene archetype from DESIGN.md §B4.",
+      "enum": [
+        "rectorate",
+        "regional-faculty",
+        "department",
+        "career",
+        "person",
+        "inheritance-floors",
+        "slot",
+        "variable-sign",
+        "reference-link",
+        "interface-badge",
+        "generic-block"
+      ]
+    },
+    "sourceRef": {
+      "title": "SourceRef",
+      "description": "A line of the learner's code.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "line"],
+      "properties": {
+        "file": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "piece": {
+      "title": "Piece",
+      "description": "A visual element of the model: an object, class or relation.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "archetype", "state", "label"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "archetype": { "$ref": "#/$defs/archetype" },
+        "state": { "$ref": "#/$defs/state" },
+        "label": { "type": "string" },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "slots": {
+          "description": "Composition slots of the piece, keyed by slot name.",
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/slot" }
+        }
+      }
+    },
+    "slot": {
+      "title": "Slot",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": { "enum": ["filled", "missing"] }
+      }
+    },
+    "logEntry": {
+      "title": "LogEntry",
+      "description": "A log message: what happened, why, where and a hint (docs/FEEDBACK.md §3).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "title", "why"],
+      "properties": {
+        "state": { "$ref": "#/$defs/state" },
+        "title": { "description": "What happened.", "type": "string", "minLength": 1 },
+        "why": { "description": "The Java concept involved.", "type": "string", "minLength": 1 },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "hint": { "type": "string", "minLength": 1 },
+        "pieceId": { "type": "string", "minLength": 1 }
+      }
+    },
+    "timelineStep": {
+      "title": "TimelineStep",
+      "description": "A step of the execution replay, tied to a line and optionally to a piece.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "sourceRef"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "sourceRef": { "$ref": "#/$defs/sourceRef" },
+        "pieceId": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# Written by scripts/generate.mjs; checked with `pnpm generate:check`.
+src/generated/
+# Copied verbatim from docs/specs/challenge-format.md.
+examples/*.yaml
