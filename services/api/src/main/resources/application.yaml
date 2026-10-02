@@ -1,6 +1,19 @@
 spring:
   application:
     name: ljbu-api
+  mvc:
+    problemdetails:
+      enabled: true
 
 server:
   port: ${PORT:8080}
+  # Behind a proxy the address of the learner comes in X-Forwarded-For; the rate limit needs it.
+  forward-headers-strategy: native
+
+ljbu:
+  api:
+    content-dir: ${CONTENT_DIR:../../content}
+    runner-url: ${RUNNER_URL:http://localhost:8081}
+    runner-token: ${RUNNER_TOKEN:}
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}
+    rate-limit-runs-per-minute: ${RATE_LIMIT_RUNS_PER_MINUTE:10}
