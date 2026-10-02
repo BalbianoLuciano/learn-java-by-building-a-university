@@ -24,6 +24,22 @@ change requires it, write a new ADR in the same PR.
 3. Keep PRs small and focused; one milestone may take several PRs.
 4. Every PR: formatting, lint, typecheck and tests pass locally before pushing.
 
+## Commands
+
+Run the checks of every component you touched; CI runs the same ones.
+
+| Component | Check | Fix formatting |
+|---|---|---|
+| `apps/web` | `pnpm --filter @ljbu/web check` | `pnpm --filter @ljbu/web format` |
+| `packages/contracts` | `pnpm --filter @ljbu/contracts check` | `pnpm --filter @ljbu/contracts format` |
+| `services/api`, `services/runner` | `./mvnw verify` (from the service directory) | `./mvnw spotless:apply` |
+
+- After changing a schema in `packages/contracts`, run
+  `pnpm --filter @ljbu/contracts generate` and commit `src/generated/`.
+- Without a local JDK, run Maven inside Docker:
+  `docker run --rm -v "$PWD":/work -w /work eclipse-temurin:25-jdk ./mvnw verify`.
+- `docker compose up --build` starts web, api and runner.
+
 ## Language policy (ADR 0009)
 
 - Code, identifiers, API, commit messages, code comments: **English**.

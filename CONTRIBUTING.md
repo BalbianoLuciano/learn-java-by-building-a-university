@@ -25,8 +25,28 @@ especificaciones de `docs/` mandan y el código las sigue.
    `content/m1-03`.
 2. Commits con [Conventional Commits](https://www.conventionalcommits.org/es/) en inglés:
    `feat(api): evaluate shared_reference checks`.
-3. Antes de abrir el PR, corré formato, lint y tests del componente que tocaste.
+3. Antes de abrir el PR, corré formato, lint y tests del componente que tocaste (ver
+   [Comandos](#comandos)).
 4. Abrí el PR contra `main` completando la plantilla.
+
+## Comandos
+
+CI corre lo mismo en cada PR, un job por componente y solo si cambió.
+
+| Componente | Requisitos | Antes del PR |
+|---|---|---|
+| `apps/web` | Node 24, pnpm | `pnpm --filter @ljbu/web check` |
+| `packages/contracts` | Node 24, pnpm | `pnpm --filter @ljbu/contracts check` |
+| `services/api`, `services/runner` | JDK 25 | `./mvnw verify` (desde la carpeta del servicio) |
+
+- Instalación de la parte JS: `pnpm install` en la raíz.
+- Arreglar el formato: `pnpm format` (JS) y `./mvnw spotless:apply` (Java).
+- Si cambiás un schema de `packages/contracts`, regenerá los tipos con
+  `pnpm --filter @ljbu/contracts generate` y commitealos.
+- Servidor de desarrollo de la web: `pnpm --filter @ljbu/web dev`.
+- Sin JDK instalado, los comandos de Maven corren igual dentro de Docker:
+  `docker run --rm -v "$PWD":/work -w /work eclipse-temurin:25-jdk ./mvnw verify`.
+- Todo junto: `docker compose up --build`.
 
 ## Idiomas
 
