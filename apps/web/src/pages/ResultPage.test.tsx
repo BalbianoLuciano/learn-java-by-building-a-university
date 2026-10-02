@@ -14,6 +14,10 @@ import {
 import { renderApp } from '../test/render';
 
 vi.mock('../components/CodeEditor', () => ({ default: () => <textarea aria-label="editor" /> }));
+// WebGL does not exist in jsdom: the scene is covered by its own unit tests and by hand.
+vi.mock('../scene/SceneView', () => ({
+  default: ({ label }: { label: string }) => <div role="img" aria-label={label} />,
+}));
 
 const SOURCES = { 'Main.java': SOLVED_MAIN, 'FacultadRegional.java': FACULTAD };
 
@@ -28,12 +32,17 @@ describe('ResultPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows the outcome, the pieces and the log of the last run', () => {
+  it('shows the outcome, the pieces and the log of the last run', async () => {
     useResults.getState().setRun('m1-03', { result: incompleteResult, sources: SOURCES });
 
     renderApp('/desafios/m1-03/resultado');
 
     expect(screen.getByText(/Obra en construcción \(0\/2\)/)).toBeInTheDocument();
+    expect(
+      await screen.findByRole('img', {
+        name: 'Maqueta del resultado: Obra en construcción (0/2). 1 piezas. La bitácora describe cada una.',
+      }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /Resistencia regional-faculty/ }),
     ).toBeInTheDocument();

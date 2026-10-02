@@ -4,6 +4,7 @@ import { useProgress } from '../state/progress';
 import { aliasing, fakeApi, modules, passedResult, SOLVED_MAIN } from './fixtures';
 import { renderApp } from './render';
 
+vi.mock('../scene/SceneView', () => ({ default: () => <div role="img" aria-label="maqueta" /> }));
 vi.mock('../components/CodeEditor', () => ({
   default: (props: {
     path: string;

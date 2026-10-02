@@ -45,6 +45,35 @@
   line-height: var(--leading-lg);
 }
 
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.scene {
+  position: relative;
+  min-height: 360px;
+  flex: 1;
+}
+
+.piecesDetails {
+  font-size: var(--text-sm);
+}
+
+.summary {
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.summary:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .stdout {
   margin: 0;
   padding: var(--space-3) var(--space-4);
