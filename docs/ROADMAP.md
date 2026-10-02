@@ -10,17 +10,17 @@
 - [x] Specs: producto, dominio, currículo, feedback, arquitectura, seguridad, diseño.
 - [x] ADRs iniciales, licencias, guías de contribución, `AGENTS.md`.
 
-## M1 · Esqueleto del monorepo y CI
+## M1 · Esqueleto del monorepo y CI ✅
 
 **Objetivo:** las tres apps existen, compilan y CI corre en cada PR.
 
-- `services/api` y `services/runner`: Spring Boot 4, Java 25, Maven wrapper, `GET /health`,
-  Spotless, un test.
-- `apps/web`: Vite + React + TS strict, ESLint, Prettier, Vitest, una página con tokens de
-  `DESIGN.md` y modo claro/oscuro.
-- `packages/contracts`: schemas de traza, resultado y desafío; generación de tipos TS.
-- GitHub Actions: job por componente con formato, lint, tests y build.
-- `docker-compose.yml` para levantar todo en local.
+- [x] `services/api` y `services/runner`: Spring Boot 4, Java 25, Maven wrapper,
+  `GET /health`, Spotless, un test.
+- [x] `apps/web`: Vite + React + TS strict, ESLint, Prettier, Vitest, una página con tokens
+  de `DESIGN.md` y modo claro/oscuro.
+- [x] `packages/contracts`: schemas de traza, resultado y desafío; generación de tipos TS.
+- [x] GitHub Actions: job por componente con formato, lint, tests y build.
+- [x] `docker-compose.yml` para levantar todo en local.
 
 **Aceptación:** `docker compose up` levanta las tres apps; un PR con un error de formato
 falla en CI.
