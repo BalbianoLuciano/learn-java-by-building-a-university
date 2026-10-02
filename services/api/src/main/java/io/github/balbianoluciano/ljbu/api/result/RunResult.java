@@ -31,6 +31,8 @@ public record RunResult(
   /**
    * @param built false when the brief asks for the piece and the code did not create it
    * @param target for a variable, the piece it points to
+   * @param floors for inheritance-floors, the classes of the object from the top of its hierarchy
+   *     down to its own class
    */
   @JsonInclude(JsonInclude.Include.NON_NULL)
   public record Piece(
@@ -41,10 +43,11 @@ public record RunResult(
       String label,
       SourceRef sourceRef,
       Map<String, Slot> slots,
-      String target) {
+      String target,
+      List<String> floors) {
 
     public Piece withState(String newState) {
-      return new Piece(id, archetype, newState, built, label, sourceRef, slots, target);
+      return new Piece(id, archetype, newState, built, label, sourceRef, slots, target, floors);
     }
   }
 

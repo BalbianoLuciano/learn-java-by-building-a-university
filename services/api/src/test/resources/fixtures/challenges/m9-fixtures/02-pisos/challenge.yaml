@@ -1,0 +1,44 @@
+id: m9-02
+module: m9
+order: 2
+title:
+  es: "Una facultad con pisos"
+concept: inheritance
+rules: [R-FR-04]
+brief:
+  es: "Desafío de prueba: una facultad dibujada con los pisos de su herencia."
+criteria:
+  - checks: [faculty-created]
+    es: "Existe la facultad"
+editable: [Main.java]
+
+scene:
+  bindings:
+    - type: UnidadAcademica
+      archetype: generic-block
+    - type: FacultadRegional
+      archetype: inheritance-floors
+      label: nombre
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+
+checks:
+  - id: faculty-created
+    type: object_count
+    params: { type: FacultadRegional, atLeast: 1 }
+    piece: fr-resistencia
+    feedback:
+      pass:
+        what: { es: "Creaste la facultad." }
+        why: { es: "Primero se construye la planta baja, `UnidadAcademica`, y después el piso de `FacultadRegional`." }
+      fail:
+        what: { es: "Todavía no existe la facultad." }
+        why: { es: "La clase es el molde; el objeto se crea con `new`." }
+        hint: { es: "Usá `new FacultadRegional()`." }
+
+hints:
+  - es: "Pista de prueba 1."
+  - es: "Pista de prueba 2."
+  - es: "Pista de prueba 3."

@@ -29,6 +29,7 @@ public final class Scene {
 
   private static final String GENERIC_ARCHETYPE = "generic-block";
   private static final String VARIABLE_ARCHETYPE = "variable-sign";
+  private static final String FLOORS_ARCHETYPE = "inheritance-floors";
   private static final String MAIN_METHOD = "Main.main";
 
   private final Map<String, Piece> pieces = new LinkedHashMap<>();
@@ -74,6 +75,7 @@ public final class Scene {
                       RunResult.INCOMPLETE,
                       false,
                       expected.label().in(language),
+                      null,
                       null,
                       null,
                       null)));
@@ -136,8 +138,28 @@ public final class Scene {
         slots.put(slot.getValue(), new Slot(occupants.isEmpty() ? "missing" : "filled", occupants));
       }
     }
+    List<String> floors =
+        FLOORS_ARCHETYPE.equals(archetype(binding)) ? floors(object.type(), facts) : null;
     return new Piece(
-        id, archetype(binding), RunResult.PASSED, true, label, object.created(), slots, null);
+        id,
+        archetype(binding),
+        RunResult.PASSED,
+        true,
+        label,
+        object.created(),
+        slots,
+        null,
+        floors);
+  }
+
+  /** The learner classes of the object, top of the hierarchy first: one floor each. */
+  private static List<String> floors(String type, RunFacts facts) {
+    List<String> floors = new ArrayList<>();
+    for (String current = type; current != null; ) {
+      floors.addFirst(current);
+      current = facts.structure().find(current).map(info -> info.superclass()).orElse(null);
+    }
+    return floors;
   }
 
   /** The pieces a field holds: one for a reference, several for an array or a collection. */
@@ -176,7 +198,8 @@ public final class Scene {
               write.name(),
               new SourceRef(write.file(), write.line()),
               null,
-              target));
+              target,
+              null));
     }
   }
 
