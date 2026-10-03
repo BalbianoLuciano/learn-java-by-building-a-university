@@ -90,12 +90,15 @@ Queda para M6, con el contenido que los usa: las formas propias de `department`,
 y `person` (hoy se dibujan como `generic-block`), `interface-badge`, la silueta real desde
 `content/domain/` y la animación del cable al dibujarse.
 
-## M6 · Contenido: módulos 1 y 2
+## M6 · Contenido: módulos 1 y 2 ✅
 
 - 10 desafíos completos según [`CURRICULUM.md`](CURRICULUM.md).
 - Datos de `content/domain/` (30 FR, órganos, reglas).
 
 **Aceptación:** criterios de "listo" del currículo en los 10 desafíos.
+
+Hecho junto con M8 (los 20 desafíos en un PR), antes del deploy de M7. Queda abierto el
+último punto de la lista de "listo": la revisión por una persona además de quien escribió.
 
 ## M7 · Deploy y beta cerrada
 
@@ -107,10 +110,13 @@ y `person` (hoy se dibujan como `generic-block`), `interface-badge`, la silueta 
 
 ## M8 · Contenido: módulos 3 y 4 y lanzamiento v1.0
 
-- 10 desafíos restantes, arquetipos `department`, `career`, `person`, `interface-badge`.
+- 10 desafíos restantes, arquetipos `department`, `career`, `person`, `interface-badge`. ✅
 - Correcciones de la beta.
 
 **Aceptación:** los 20 desafíos listos; checklist de accesibilidad completa; release v1.0.
+
+El contenido y los arquetipos están; las correcciones de la beta, la checklist de
+accesibilidad y el release dependen de M7.
 
 ## Después de la v1
 
