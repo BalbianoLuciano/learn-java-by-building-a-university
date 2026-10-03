@@ -68,6 +68,18 @@ entries:
     why: "Al extender una clase abstracta o implementar una interfaz, la clase se compromete a escribir ese método."
     hint: "Agregá el método con la misma firma que tiene en la superclase o en la interfaz."
 
+  compiler.err.class.method.or.field.expected:
+    what: "Hay texto fuera de cualquier clase en esta línea."
+    why: "En un archivo Java, afuera de las llaves de una clase solo pueden ir `import` y la declaración de la clase."
+    hint: "Si pegaste código, fijate que no hayan entrado el nombre del archivo, las marcas ``` o texto de una explicación."
+
+  compiler.err.illegal.char:
+    match: "'(?<caracter>[^']+)'"
+    what: "Java no reconoce el carácter '{caracter}' en esta línea."
+    whatWithoutMatch: "Hay un carácter que Java no reconoce en esta línea."
+    why: "Fuera de un texto entre comillas, solo valen letras, números y los símbolos del lenguaje."
+    hint: "Si pegaste código, fijate que no hayan entrado las marcas ``` ni otros adornos."
+
   compiler.err.method.does.not.override.superclass:
     what: "Este método lleva `@Override`, pero no sobrescribe ningún método."
     why: "`@Override` le pide al compilador que verifique que existe un método con esa misma firma en la superclase o en la interfaz."

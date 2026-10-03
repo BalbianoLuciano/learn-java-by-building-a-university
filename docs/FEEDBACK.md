@@ -65,6 +65,7 @@ El catálogo cubre, como mínimo, estos errores (los textos viven en el archivo,
 |---|---|
 | Usó un nombre que no existe | `cant.resolve`, `cant.resolve.location` y sus variantes `.args` |
 | Le falta un símbolo o un valor | `expected`, `expected2`, `expected3`, `illegal.start.of.expr`, `not.stmt`, `premature.eof`, `unclosed.str.lit` |
+| Pegó texto fuera de la clase (nombre del archivo, prosa) o un carácter ajeno a Java (```) | `class.method.or.field.expected`, `illegal.char` |
 | El tipo no coincide | `prob.found.req` |
 | Llamó con argumentos que no van | `cant.apply.symbol`, `cant.apply.symbols` |
 | Tocó algo privado | `report.access` |
