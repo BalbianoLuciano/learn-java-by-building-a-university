@@ -3,8 +3,12 @@ import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
 import {
+  Career,
+  Department,
   GenericBlock,
   InheritanceFloors,
+  InterfaceBadges,
+  Person,
   Rectorate,
   RegionalFaculty,
   Scaffold,
@@ -30,6 +34,16 @@ interface Props {
   builtFloors?: number;
   onSelect: (piece: Piece) => void;
 }
+
+/** Archetypes with a shape of their own; the rest are generic blocks. */
+const DRAWN = [
+  'regional-faculty',
+  'rectorate',
+  'inheritance-floors',
+  'department',
+  'career',
+  'person',
+];
 
 /** One piece on its island: the archetype, its state and its slots (DESIGN.md §B4–B5). */
 export function PieceView({
@@ -67,7 +81,12 @@ export function PieceView({
     onSelect(piece);
   };
   const island = placement.island ?? { width: 1.8, depth: 1.8 };
-  const height = piece.archetype === 'rectorate' ? 1.9 : 1.1;
+  const height =
+    piece.archetype === 'rectorate'
+      ? 1.9
+      : piece.archetype === 'inheritance-floors'
+        ? 0.7 * (piece.floors?.length ?? 1)
+        : 1.1;
   const slots = Object.entries(piece.slots ?? {});
 
   return (
@@ -101,9 +120,11 @@ export function PieceView({
               builtFloors={builtFloors ?? piece.floors?.length ?? 1}
             />
           )}
-          {!['regional-faculty', 'rectorate', 'inheritance-floors'].includes(piece.archetype) && (
-            <GenericBlock piece={piece} look={look} />
-          )}
+          {piece.archetype === 'department' && <Department piece={piece} look={look} />}
+          {piece.archetype === 'career' && <Career piece={piece} look={look} />}
+          {piece.archetype === 'person' && <Person piece={piece} look={look} />}
+          {!DRAWN.includes(piece.archetype) && <GenericBlock piece={piece} look={look} />}
+          {!ghost && <InterfaceBadges piece={piece} look={look} y={height + 1.2} />}
           {!ghost && piece.state === 'incomplete' && slots.length === 0 && (
             <Scaffold
               size={[island.width - 0.3, height + 0.5, island.depth - 0.3]}

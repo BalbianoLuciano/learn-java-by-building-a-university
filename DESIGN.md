@@ -262,12 +262,12 @@ Todas las piezas se **generan por código** desde un catálogo en
 | `regional-faculty` | Facultad Regional | edificio de 2×2 con techo a dos aguas | cartel, cantidad de pisos |
 | `department` | Departamento | pabellón bajo | cartel |
 | `career` | Carrera | bloque con banderín | cartel |
-| `person` | Persona y subtipos | figura low-poly (cápsula + cabeza) | color de rol, accesorio |
+| `person` | Persona y subtipos | figura low-poly (cilindro + cabeza) | — |
 | `inheritance-floors` | Objeto con herencia | edificio de **pisos apilados**: planta baja = superclase, pisos superiores = subclases | un piso por nivel de la jerarquía, cada uno con su nombre de clase |
 | `slot` | Atributo de composición | pedestal o hueco junto a la pieza dueña | ocupado / vacío |
 | `variable-sign` | Variable o referencia | cartel en un poste fuera de las islas | nombre de la variable |
 | `reference-link` | Referencia | cable curvo del cartel a la pieza | — |
-| `interface-badge` | Interfaz implementada | insignia sobre el techo | nombre de la interfaz |
+| `interface-badge` | Interfaz implementada | insignia sobre el techo, una por interfaz (`interfaces` de la pieza); no es un binding: la agrega la pieza que implementa | nombre de la interfaz |
 | `generic-block` | Tipo sin binding | cubo con cartel | nombre de la clase |
 
 Los carteles son **texto HTML superpuesto** en `--font-ui`, no texto 3D: se leen nítidos,
