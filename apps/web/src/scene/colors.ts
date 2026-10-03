@@ -13,6 +13,8 @@ export interface SceneColors {
   person: string;
   link: string;
   ghost: string;
+  blueprint: string;
+  plaque: string;
   accent: string;
   success: string;
   warning: string;
@@ -32,6 +34,8 @@ const TOKENS: Record<keyof SceneColors, string> = {
   person: '--scene-person',
   link: '--scene-link',
   ghost: '--scene-ghost',
+  blueprint: '--scene-blueprint',
+  plaque: '--scene-plaque',
   accent: '--color-accent',
   success: '--color-success',
   warning: '--color-warning',

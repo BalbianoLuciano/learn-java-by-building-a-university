@@ -33,6 +33,8 @@
   --scene-person: light-dark(#f3c7a3, #c99d7c);
   --scene-link: light-dark(#7c8190, #b4b8c4);
   --scene-ghost: light-dark(rgb(255 255 255 / 0.22), rgb(255 255 255 / 0.12));
+  --scene-blueprint: light-dark(#dce7f7, #2f3a52);
+  --scene-plaque: light-dark(#fffdf7, #262a33);
 
   --font-ui: 'Inter Variable', system-ui, sans-serif;
   --font-display: 'Space Grotesk Variable', 'Inter Variable', sans-serif;

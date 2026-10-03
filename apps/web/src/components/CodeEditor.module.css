@@ -1,0 +1,9 @@
+.highlight {
+  background: var(--color-accent-soft);
+}
+
+.gutter {
+  width: 3px !important;
+  margin-left: 2px;
+  background: var(--color-accent);
+}

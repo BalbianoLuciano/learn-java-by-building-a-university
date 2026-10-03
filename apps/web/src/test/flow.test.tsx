@@ -48,10 +48,11 @@ describe('completing challenge 1.3 with the keyboard', () => {
     expect(await screen.findByText(/¡Obra terminada!/)).toBeInTheDocument();
     expect(useProgress.getState().challenges['m1-03']?.status).toBe('completed');
 
-    // Read the log and walk the timeline without the mouse.
+    // Read the log and walk the timeline without the mouse, on the same screen as the code.
     await focusAndActivate(user, 'button', 'Línea 7 de Main.java');
-    expect(screen.getByRole('figure').querySelector('[data-selected="true"]')).toHaveTextContent(
-      'miFacultad = resistencia',
+    expect(screen.getByRole('button', { name: 'Línea 7 de Main.java' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
     );
     await tabTo(user, screen.getByRole('group', { name: 'Línea de tiempo' }));
     await user.keyboard('{ArrowRight}{ArrowRight}');

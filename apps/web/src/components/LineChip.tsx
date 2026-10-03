@@ -8,7 +8,7 @@ interface Props {
   onSelect: (sourceRef: SourceRef) => void;
 }
 
-/** "L12": selecting it shows the line (DESIGN.md §A3). */
+/** "Main.java:12": selecting it shows the line (DESIGN.md §A3). */
 export function LineChip({ sourceRef, selected = false, onSelect }: Props) {
   const { t } = useTranslation();
   return (
@@ -21,7 +21,7 @@ export function LineChip({ sourceRef, selected = false, onSelect }: Props) {
         onSelect(sourceRef);
       }}
     >
-      {t('common.lineChip', { line: sourceRef.line })}
+      {t('common.lineChip', { line: sourceRef.line, file: sourceRef.file })}
     </button>
   );
 }

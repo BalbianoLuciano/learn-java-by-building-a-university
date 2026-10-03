@@ -23,7 +23,7 @@ describe('layoutScene', () => {
     expect(placements.get('rectorado')?.position).toEqual([0, 0, 0]);
     for (const faculty of faculties) {
       const [x, , z] = placements.get(faculty.id)?.position ?? [0, 0, 0];
-      expect(Math.hypot(x, z)).toBeCloseTo(4.4, 5);
+      expect(Math.hypot(x, z)).toBeCloseTo(4.8, 5);
     }
   });
 
@@ -39,7 +39,7 @@ describe('layoutScene', () => {
 
     const radii = new Set(positions.map(({ x, z }) => Math.round(Math.hypot(x, z) * 100) / 100));
     expect(radii.size).toBeGreaterThan(3);
-    expect(Math.max(...radii)).toBeLessThan(30);
+    expect(Math.max(...radii)).toBeLessThan(40);
     for (const a of positions) {
       for (const b of positions) {
         if (a !== b) {
@@ -61,7 +61,7 @@ describe('layoutScene', () => {
     const occupant = placements.get('decano');
     expect(owner?.position).toEqual([0, 0, 0]);
     expect(occupant?.owner).toBe('fr');
-    expect(Math.hypot(occupant?.position[0] ?? 0, occupant?.position[2] ?? 0)).toBeCloseTo(2.8, 5);
+    expect(Math.hypot(occupant?.position[0] ?? 0, occupant?.position[2] ?? 0)).toBeCloseTo(3.6, 5);
   });
 
   it('lines the variable signs up in front, with a stable phase per piece', () => {
@@ -71,8 +71,8 @@ describe('layoutScene', () => {
       piece('var-b', 'variable-sign'),
     ]);
 
-    expect(placements.get('var-a')?.position).toEqual([-1.1, 0, 3.9]);
-    expect(placements.get('var-b')?.position).toEqual([1.1, 0, 3.9]);
+    expect(placements.get('var-a')?.position).toEqual([-1.4, 0, 3.3]);
+    expect(placements.get('var-b')?.position).toEqual([1.4, 0, 3.3]);
     expect(placements.get('var-a')?.island).toBeUndefined();
     expect(placements.get('fr')?.phase).toBe(
       layoutScene([piece('fr', 'rectorate')]).get('fr')?.phase,

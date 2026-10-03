@@ -12,7 +12,7 @@
     "retry": "Reintentar",
     "back": "Volver",
     "line": "Línea {{line}} de {{file}}",
-    "lineChip": "L{{line}}"
+    "lineChip": "{{file}}:{{line}}"
   },
   "errors": {
     "title": "Algo no salió como esperábamos",
@@ -51,11 +51,11 @@
     "running": "Ejecutando…",
     "runShortcut": "Ctrl/Cmd + Enter",
     "resetCode": "Volver al código base",
-    "lastResult": "Ver el último resultado",
     "position": "{{order}} / {{total}}",
     "realReference": "En la UTN real",
     "realFaculty": "{{name}}: {{city}}, {{province}}",
-    "mandate": "(mandato de {{years}} años)"
+    "mandate": "(mandato de {{years}} años)",
+    "criteriaProgress": "{{done}}/{{total}}"
   },
   "hints": {
     "ask": "Pedir pista",
@@ -71,7 +71,6 @@
     "solutionTitle": "Solución"
   },
   "result": {
-    "backToCode": "Volver al código",
     "title": "Resultado",
     "outcome": {
       "passed": "¡Obra terminada!",
@@ -85,12 +84,12 @@
     "logEmpty": "No hay nada que explicar todavía.",
     "hint": "Pista",
     "detail": "Mensaje original",
-    "code": "Código",
-    "codeHint": "Elegí una entrada de la bitácora o un paso para ver su línea.",
     "stdout": "Salida del programa",
     "stdoutEmpty": "El programa no imprimió nada.",
     "sceneLabel": "Maqueta del resultado: {{headline}}. {{count}} piezas. La bitácora describe cada una.",
-    "piecesList": "Lista de piezas"
+    "piecesList": "Lista de piezas",
+    "sceneEmpty": "Ejecutá el código para ver la maqueta: los planos de tus clases, los objetos que construye el programa y sus atributos.",
+    "logBeforeRun": "Acá va a aparecer qué pasó con cada parte del pedido."
   },
   "timeline": {
     "title": "Línea de tiempo",
@@ -118,5 +117,44 @@
   "dev": {
     "fps": "{{fps}} fps · {{pieces}} piezas",
     "pieces": "Piezas"
+  },
+  "legend": {
+    "open": "¿Qué es cada forma?",
+    "title": "Cómo se ve Java en la maqueta",
+    "close": "Cerrar",
+    "items": {
+      "blueprint": {
+        "name": "Plano",
+        "text": "Una clase: el molde. Lista sus atributos y métodos, pero no se puede habitar."
+      },
+      "object": {
+        "name": "Edificio",
+        "text": "Un objeto: cada `new` construye uno a partir del plano. El cable punteado lo une a su clase."
+      },
+      "plaque": {
+        "name": "Placa",
+        "text": "Un atributo con su valor: `nombre = \"Resistencia\"`. Con reja es `private`; con bandera es `static` (vive en el plano); remachada es `final`."
+      },
+      "window": {
+        "name": "Ventanilla",
+        "text": "Un método: por donde se le habla al objeto. Se ilumina cuando corre en el paso elegido."
+      },
+      "sign": {
+        "name": "Cartel y cable",
+        "text": "Una variable y la referencia que guarda. Un cable suelto es `null`."
+      },
+      "floors": {
+        "name": "Pisos",
+        "text": "Herencia: la planta baja es la superclase; cada piso, una subclase."
+      },
+      "seal": {
+        "name": "Sello",
+        "text": "Una interfaz: un contrato que las clases firman. Los edificios que lo cumplen llevan la insignia."
+      },
+      "ghost": {
+        "name": "Silueta",
+        "text": "Lo que el pedido espera y tu código todavía no construyó."
+      }
+    }
   }
 }

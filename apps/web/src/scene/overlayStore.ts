@@ -9,11 +9,28 @@ import { createStore, type StoreApi } from 'zustand';
  * frame and moves its element, so the whole layer costs one DOM write per sign.
  */
 export type AnchorContent =
-  { kind: 'label'; text: string; ghost: boolean } | { kind: 'badge'; state: State };
+  | { kind: 'label'; text: string; ghost: boolean }
+  | { kind: 'badge'; state: State }
+  | { kind: 'chip'; chip: Chip };
+
+/**
+ * A plaque (an attribute), a window (a method) or a seal (an interface) of DESIGN.md §B4.
+ * flags: private, static, final, ref (the plaque holds a reference), abstract, missing.
+ */
+export interface Chip {
+  shape: 'plaque' | 'window' | 'seal' | 'header';
+  text: string;
+  flags: string[];
+  /** The method is running at the chosen step. */
+  lit: boolean;
+  ghost: boolean;
+}
 
 interface Anchor {
   object: THREE.Object3D;
   content: AnchorContent;
+  /** Screen offset in pixels, so stacked chips keep their spacing at any zoom. */
+  offset: [number, number];
 }
 
 interface OverlayState {

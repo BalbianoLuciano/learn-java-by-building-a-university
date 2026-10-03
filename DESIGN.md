@@ -122,46 +122,41 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
 
 ## A2. Layout
 
-### Vista de desafío (editor)
+### Vista de desafío (una sola pantalla: código y maqueta a la vez)
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│ ◂ Módulo 1 · Clases y objetos          2 / 5        ◐ tema      │  barra (56px)
-├──────────────────────────┬──────────────────────────────────────┤
-│ PEDIDO DE OBRA           │ Main.java │ FacultadRegional.java    │
-│ Título (display)         │──────────────────────────────────────│
-│ Consigna en prosa corta  │                                      │
-│                          │  editor Monaco                       │
-│ Lo que tenés que lograr  │                                      │
-│ ☐ criterio 1             │                                      │
-│ ☐ criterio 2             │                                      │
-│                          │                                      │
-│ [ Pedir pista ]          │                     [ Ejecutar ▶ ]   │
-└──────────────────────────┴──────────────────────────────────────┘
-   ~ 34%                       ~ 66%
+┌───────────────────────────────────────────────────────────────────────┐
+│ ◂ Módulo 1 · Clases y objetos   1.3 · La facultad donde estudiás   ◐  │  barra (56px)
+├────────────────────────────────┬──────────────────────────────────────┤
+│ ▸ PEDIDO DE OBRA  ☑ 1/2        │                                      │
+│ (panel desplegable: consigna,  │          maqueta 3D                  │
+│  criterios, pistas, UTN real)  │   planos al fondo · edificios con    │
+│────────────────────────────────│   placas y ventanillas · carteles    │
+│ Main.java │ FacultadRegional   │                                      │
+│────────────────────────────────│                      [ ¿Qué es? ]    │
+│                                ├──────────────────────────────────────┤
+│  editor Monaco                 │ BITÁCORA            ✅ Obra terminada│
+│                                │ ✅ FR creada            Main.java:5  │
+│                                │ 🚧 Sin provincia        Main.java:5  │
+│                                │ ─────────────────────────────────────│
+│                [ Ejecutar ▶ ]  │ ◀ ━━━━━●━━━━━━ ▶  Paso 4/9 · Main:7  │
+└────────────────────────────────┴──────────────────────────────────────┘
+   ~ 45%                              ~ 55%
 ```
 
-### Vista de resultado
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│ ◂ Volver al código     Resultado: 🚧 Incompleto (3/5)     ◐     │
-├───────────────────────────────────────────┬─────────────────────┤
-│                                           │ BITÁCORA            │
-│        maqueta 3D (fondo liso,            │ ✅ FR creada  L5    │
-│        piezas flotando)                   │ 🚧 Sin decano L5    │
-│                                           │ ❌ NullPointer L12  │
-│                                           │                     │
-│                                           │ [mini código con    │
-│                                           │  la línea elegida]  │
-├───────────────────────────────────────────┴─────────────────────┤
-│ ◀  ━━━━━━━━━●━━━━━━━━━━━━  ▶   Paso 4 / 9 · Main.java:7          │
-└─────────────────────────────────────────────────────────────────┘
-   ~ 68%                                         ~ 32%
-```
-
-- **Ancho mínimo soportado:** 360px. Por debajo de 960px los paneles se apilan
-  (pedido → editor; maqueta → bitácora) y el editor es de solo lectura cómoda.
+- **Ejecutar y ver**: al ejecutar, la maqueta y la bitácora se actualizan en el lugar; no
+  hay página de resultado. `/desafios/:id/resultado` redirige al desafío.
+- **Pedido de obra**: panel desplegable sobre el editor. Se abre solo la primera vez que se
+  entra al desafío y queda plegado después, mostrando el título y el progreso de los
+  criterios (`☑ 1/2`). Adentro: consigna, "Lo que tenés que lograr" (se tilda en vivo),
+  pistas y "En la UTN real".
+- **Maqueta**: ocupa la mitad superior derecha. Botón "¿Qué es?" abre la **leyenda** de
+  formas (B4). Clic en una pieza selecciona su línea en el editor y su entrada en la
+  bitácora; clic en una entrada o un paso selecciona la pieza.
+- **Bitácora + línea de tiempo**: mitad inferior derecha, con el encabezado de resultado.
+  El chip de línea dice **archivo y línea** (`Main.java:7`), nunca solo `L7`.
+- **Ancho mínimo soportado:** 360px. Por debajo de 960px los paneles se apilan (pedido →
+  editor → maqueta → bitácora) y el editor es de solo lectura cómoda.
 - Márgenes laterales: `--space-5` en escritorio, `--space-4` en móvil.
 - Sin scroll horizontal de página.
 
@@ -173,10 +168,11 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
 | **Botón secundario** | Fondo `--color-surface-2`, texto `--color-text`. |
 | **Pestañas de archivo** | Texto `--font-code` 13px; activa con borde inferior de 2px `--color-accent`. |
 | **Entrada de bitácora** | Ícono de estado + título (1 línea, `--text-sm` semibold) + chip de línea + explicación (máx. 3 líneas) + pista opcional. Fondo `--color-*-soft` solo en la entrada seleccionada. |
-| **Chip de línea** | `L12` en `--font-code` `--text-xs`, fondo `--color-surface-2`; al hacer clic resalta la línea y la pieza. |
+| **Chip de línea** | `Main.java:12` en `--font-code` `--text-xs`, fondo `--color-surface-2`; al hacer clic resalta la línea y la pieza. |
 | **Criterio del pedido** | Casilla que se marca sola cuando la verificación correspondiente pasa. |
 | **Línea de tiempo** | Pista de 4px, cursor de 14px, botones paso anterior/siguiente, texto `Paso n / N · Archivo:línea`. |
-| **Pista** | Panel desplegable debajo del pedido; nivel 1, 2, 3 y "Ver solución" (este último con confirmación). |
+| **Pista** | Panel desplegable dentro del pedido; nivel 1, 2, 3 y "Ver solución" (este último con confirmación). |
+| **Leyenda** | Panel sobre la maqueta con una fila por forma de B4 (miniatura + nombre + una oración). |
 
 Íconos: **Lucide** (licencia ISC), trazo 1.75px, 18px. Estados:
 `circle-check` ✅ · `construction` 🚧 · `circle-x` ❌.
@@ -215,8 +211,9 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
 - Cada pieza se apoya sobre su propia **isla flotante**: una losa de 0.3 de alto con
   bordes biselados.
 - Separación mínima entre islas: 1 unidad.
-- Distribución automática: el Rectorado al centro; Facultades Regionales en anillo
-  alrededor (anillos concéntricos cuando no entran en uno); lo que pertenece a una FR
+- Distribución automática: los **planos en una fila al fondo** (los apilados por herencia
+  ocupan una columna); el Rectorado al centro; Facultades Regionales en anillo alrededor
+  (anillos concéntricos cuando no entran en uno); lo que pertenece a una FR
   (departamentos, carreras, personas) junto a la isla de su FR; las variables en una fila
   al frente.
 
@@ -241,6 +238,8 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
 | `scene-person` | `#F3C7A3` | `#C99D7C` | personas (figuras) |
 | `scene-link` | `#7C8190` | `#B4B8C4` | cables de referencias |
 | `scene-ghost` | blanco 22% | blanco 12% | silueta de la UTN real |
+| `scene-blueprint` | `#DCE7F7` | `#2F3A52` | papel de los planos (clases) |
+| `scene-plaque` | `#FFFDF7` | `#262A33` | placas de atributos en las fachadas |
 
 La escena no tiene fondo propio: es transparente sobre `--color-bg`.
 
@@ -251,30 +250,57 @@ La escena no tiene fondo propio: es transparente sobre `--color-bg`.
 - **Sombras de contacto** difusas bajo cada isla, sobre un plano invisible, para reforzar
   que flota.
 
-## B4. Arquetipos
+## B4. Lenguaje visual: cómo se ve Java
 
-Todas las piezas se **generan por código** desde un catálogo en
-`apps/web/src/scene/archetypes/`. Ningún archivo de modelo externo en la v1.
+La maqueta muestra **dos cosas a la vez**: la UTN (qué construyó el alumno) y **Java** (con
+qué lo construyó). Cada concepto del lenguaje tiene **una** forma, siempre la misma en los
+20 desafíos, y la leyenda de la interfaz las lista. Regla: si dos cosas son distintas en
+Java, se ven distintas; si se ven distintas, son distintas en Java.
 
-| Arquetipo | Representa | Forma | Parámetros |
-|---|---|---|---|
-| `rectorate` | Rectorado | edificio ancho de 3 pisos con frontón | cartel |
-| `regional-faculty` | Facultad Regional | edificio de 2×2 con techo a dos aguas | cartel, cantidad de pisos |
-| `department` | Departamento | pabellón bajo | cartel |
-| `career` | Carrera | bloque con banderín | cartel |
-| `person` | Persona y subtipos | figura low-poly (cilindro + cabeza) | — |
-| `inheritance-floors` | Objeto con herencia | edificio de **pisos apilados**: planta baja = superclase, pisos superiores = subclases | un piso por nivel de la jerarquía, cada uno con su nombre de clase |
-| `slot` | Atributo de composición | pedestal o hueco junto a la pieza dueña | ocupado / vacío |
-| `variable-sign` | Variable o referencia | cartel en un poste fuera de las islas | nombre de la variable |
-| `reference-link` | Referencia | cable curvo del cartel a la pieza | — |
-| `interface-badge` | Interfaz implementada | insignia sobre el techo, una por interfaz (`interfaces` de la pieza); no es un binding: la agrega la pieza que implementa | nombre de la interfaz |
-| `generic-block` | Tipo sin binding | cubo con cartel | nombre de la clase |
+| Concepto de Java | Forma | Detalle |
+|---|---|---|
+| **Clase** | **Plano** (`blueprint`): panel de obra parado al fondo de la escena, uno por clase, en una fila | Cabecera con el nombre; debajo, una placa por atributo (`nombre: String`) y una ventanilla por método. Datos de `result.classes` |
+| **Objeto / instancia** | **Edificio sobre su isla**, con un **cable fino punteado** hasta su plano | El `new` lo construye a partir del plano (B6). `piece.type` dice cuál |
+| **Atributo** (de instancia) | **Placa en la fachada**: `nombre = "Resistencia"` | Una por atributo, en el orden de la clase (heredados primero). El valor sale de `piece.fields` al final y de los `field_set` de la línea de tiempo durante la reproducción; sin valor todavía: `nombre = ?` |
+| `private` | Placa **detrás de una reja** (ícono `lock`) | Se lee, no se toca desde afuera |
+| `public` | Placa a la vista (sin ícono) | Package-private se dibuja como `public` con ícono `lock-open` atenuado |
+| **Método** | **Ventanilla** en la fachada con su nombre: `getNombre()` | `public` al frente; `private` al costado. Se **ilumina** (`--color-accent`) mientras corre en el paso actual de la línea de tiempo (`call` con `pieceId`) |
+| `static` | Placa o ventanilla con **bandera** (ícono `flag`), **en el plano**, no en los edificios | Pertenece a la clase: un solo valor compartido |
+| `final` | Placa **remachada** (ícono `pin`) | No cambia después de asignarse |
+| **Variable / referencia** | **Cartel en un poste** fuera de las islas + **cable** al edificio (`variable-sign`, `reference-link`) | `null`: cable que termina suelto |
+| **Atributo que es una referencia** (composición) | Placa con **enchufe** del que sale un cable al edificio referenciado | Es un atributo más; el cable va de la placa, no del techo |
+| **Colección** | Placa con enchufe múltiple: un cable por elemento dibujado | `List<Departamento>` con tres cables |
+| **Herencia** | Edificio de **pisos** (`inheritance-floors`: planta baja = superclase) **y planos apilados** (el plano de la subclase sobre el de la superclase) | Las placas heredadas van en la planta baja |
+| `abstract` | Plano con **borde punteado** y sello "ABSTRACTA"; método abstracto: ventanilla tapiada | No genera edificios |
+| **Interfaz** | **Sello** (`interface-seal`): un panel redondo aparte, con sus ventanillas vacías; cada plano que la implementa lleva una **insignia** con su nombre, y sus edificios también (`interface-badge`) | No tiene atributos ni objetos: es un contrato |
+| **Constructor** | **Grúa** sobre la isla mientras corre (`call` de `Clase.<init>`) | Con `super()`, construye primero la planta baja |
 
-Los carteles son **texto HTML superpuesto** en `--font-ui`, no texto 3D: se leen nítidos,
-se traducen y siguen el tema. Van en una sola capa sobre el canvas (`scene/overlay.tsx`):
-cada cartel se ancla a un objeto de la escena y un único bucle los reposiciona por cuadro.
-No se usa `<Html>` de drei: crea un root de React por cartel y, con React 19, desmontarlos
-durante un render deja carteles vacíos.
+### Arquetipos de la UTN (la forma del edificio)
+
+Qué edificio se dibuja lo decide el **binding** del desafío; lo de arriba (placas,
+ventanillas, cable al plano) se dibuja **sobre cualquier arquetipo**.
+
+| Arquetipo | Representa | Forma |
+|---|---|---|
+| `rectorate` | Rectorado | edificio ancho de 3 pisos con frontón |
+| `regional-faculty` | Facultad Regional | edificio de 2×2 con techo a dos aguas |
+| `department` | Departamento | pabellón bajo |
+| `career` | Carrera | bloque con banderín |
+| `person` | Persona y subtipos | figura low-poly (cilindro + cabeza) |
+| `inheritance-floors` | Objeto con herencia | pisos apilados, uno por clase de la jerarquía |
+| `slot` | Atributo de composición | pedestal junto a la pieza dueña (ocupado / vacío) |
+| `variable-sign`, `reference-link` | Variable, referencia | cartel en poste, cable curvo |
+| `interface-badge` | Interfaz implementada | insignia sobre el techo, una por interfaz; la agrega la pieza, no es binding |
+| `generic-block` | Tipo sin binding | cubo |
+
+Todas las piezas se **generan por código** desde `apps/web/src/scene/archetypes/`. Ningún
+archivo de modelo externo en la v1.
+
+Los carteles, placas, ventanillas y sellos son **texto HTML superpuesto** en `--font-ui`,
+no texto 3D: se leen nítidos, se traducen y siguen el tema. Van en una sola capa sobre el
+canvas (`scene/overlay.tsx`): cada uno se ancla a un objeto de la escena y un único bucle
+los reposiciona por cuadro. No se usa `<Html>` de drei: crea un root de React por cartel y,
+con React 19, desmontarlos durante un render deja carteles vacíos.
 
 ## B5. Estados de una pieza
 
@@ -293,7 +319,9 @@ Una referencia `null` se dibuja como cable que termina suelto en el aire.
 | Animación | Detalle |
 |---|---|
 | Flotación | Cada isla sube y baja 0.05 unidades, período 6 s, con desfase aleatorio estable |
-| Construcción | Al reproducir un paso, la pieza crece desde la isla (escala Y 0→1) en `--duration-slow` con `--ease-out` |
+| Construcción | Al reproducir un paso, la pieza crece desde la isla (escala Y 0→1) en `--duration-slow` con `--ease-out`; mientras corre el constructor hay una grúa sobre la isla |
+| Placas | Cada `field_set` hace aparecer o cambiar la placa del atributo en la fachada |
+| Ventanillas | La ventanilla del método que corre en el paso actual se ilumina |
 | Herencia | Los pisos se construyen **de abajo hacia arriba**, en el orden real de los constructores (`super()` primero) |
 | Referencia | El cable se "dibuja" del cartel a la pieza en `--duration-base` |
 | Selección | Elevación suave en `--duration-fast` |

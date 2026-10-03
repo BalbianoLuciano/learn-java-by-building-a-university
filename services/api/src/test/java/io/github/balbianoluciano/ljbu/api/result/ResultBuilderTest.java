@@ -6,12 +6,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.github.balbianoluciano.ljbu.api.content.Challenge;
 import io.github.balbianoluciano.ljbu.api.content.Content;
 import io.github.balbianoluciano.ljbu.api.content.SourceFile;
+import io.github.balbianoluciano.ljbu.api.result.RunResult.FieldValue;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.LogEntry;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.Piece;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.Slot;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.SourceRef;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.TimelineStep;
 import io.github.balbianoluciano.ljbu.api.support.TestContent;
+import io.github.balbianoluciano.ljbu.api.trace.Value;
 import java.nio.file.Path;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,7 +53,12 @@ class ResultBuilderTest {
                 null,
                 null,
                 null,
-                null));
+                null,
+                "FacultadRegional",
+                List.of(
+                    new FieldValue("nombre", new Value.StringValue("Resistencia"), null, null),
+                    new FieldValue("ciudad", new Value.StringValue("Resistencia"), null, null),
+                    new FieldValue("provincia", new Value.StringValue("Chaco"), null, null))));
     assertThat(result.log())
         .extracting(LogEntry::checkId)
         .containsExactly("alias-declared", "province-through-alias");
@@ -140,6 +147,8 @@ class ResultBuilderTest {
                 null,
                 null,
                 null,
+                null,
+                "FacultadRegional",
                 null));
   }
 
@@ -249,6 +258,23 @@ class ResultBuilderTest {
 
     assertThat(piece(result, "decano").interfaces()).containsExactly("CargoElectivo");
     assertThat(piece(runSolution(content, ALIASING), "fr-resistencia").interfaces()).isNull();
+  }
+
+  @Test
+  void theResultCarriesTheLearnerClassesAndTheFieldsOfEachObject() {
+    RunResult result = runSolution(fixtures, COMPOSITION);
+
+    assertThat(result.classes())
+        .extracting(info -> info.name())
+        .contains("UnidadAcademica", "FacultadRegional", "Decano", "Departamento");
+    assertThat(piece(result, "fr-resistencia").type()).isEqualTo("FacultadRegional");
+    assertThat(piece(result, "fr-resistencia").fields())
+        .extracting(FieldValue::name, FieldValue::pieceId, FieldValue::pieceIds)
+        .containsExactly(
+            org.assertj.core.groups.Tuple.tuple("nombre", null, null),
+            org.assertj.core.groups.Tuple.tuple("decano", "decano", null),
+            org.assertj.core.groups.Tuple.tuple("departamentos", null, List.of("departamento-1")));
+    assertThat(piece(result, "var-resistencia").type()).isNull();
   }
 
   @Test

@@ -103,6 +103,12 @@ export const passedResult: RunResult = {
       built: true,
       label: 'Resistencia',
       sourceRef: { file: 'Main.java', line: 3 },
+      type: 'FacultadRegional',
+      fields: [
+        { name: 'nombre', value: { string: 'Resistencia' } },
+        { name: 'ciudad', value: { string: 'Resistencia' } },
+        { name: 'provincia', value: { string: 'Chaco' } },
+      ],
     },
     {
       id: 'var-resistencia',
@@ -169,6 +175,45 @@ export const passedResult: RunResult = {
     },
   ],
   stdout: '',
+  classes: [
+    {
+      name: 'FacultadRegional',
+      kind: 'class',
+      abstract: false,
+      superclass: null,
+      interfaces: [],
+      file: 'FacultadRegional.java',
+      line: 1,
+      fields: [
+        {
+          name: 'nombre',
+          type: 'String',
+          visibility: 'package',
+          final: false,
+          static: false,
+          line: 2,
+        },
+        {
+          name: 'ciudad',
+          type: 'String',
+          visibility: 'package',
+          final: false,
+          static: false,
+          line: 3,
+        },
+        {
+          name: 'provincia',
+          type: 'String',
+          visibility: 'package',
+          final: false,
+          static: false,
+          line: 4,
+        },
+      ],
+      constructors: [{ parameterTypes: [], visibility: 'public', line: 1 }],
+      methods: [],
+    },
+  ],
 };
 
 export const incompleteResult: RunResult = {

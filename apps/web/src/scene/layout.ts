@@ -1,4 +1,4 @@
-import type { Piece } from '@ljbu/contracts';
+import type { ClassInfo, Piece } from '@ljbu/contracts';
 
 /** Where a piece stands in the model (DESIGN.md §B2): 1 unit = 1 grid module. */
 export interface Placement {
@@ -16,10 +16,10 @@ export interface Placement {
 /** Height of the sign of a variable, where its cable starts. */
 export const SIGN_TOP = 1.2;
 
-const RING_SPACING = 3.4;
-const MIN_RING_RADIUS = 3.2;
-const RING_GAP = 3.2;
-const SIGN_SPACING = 2.2;
+const RING_SPACING = 4.6;
+const MIN_RING_RADIUS = 3.6;
+const RING_GAP = 3.8;
+const SIGN_SPACING = 2.8;
 
 function footprint(piece: Piece): { width: number; depth: number } {
   switch (piece.archetype) {
@@ -130,7 +130,7 @@ export function layoutScene(pieces: Piece[]): Map<string, Placement> {
     }
     ids.forEach((id, index) => {
       const angle = Math.PI / 4 + (index / Math.max(ids.length, 3)) * Math.PI * 2;
-      const distance = (home.island?.width ?? 2) / 2 + 1.6;
+      const distance = (home.island?.width ?? 2) / 2 + 2.4;
       placements.set(id, {
         id,
         position: [
@@ -146,7 +146,7 @@ export function layoutScene(pieces: Piece[]): Map<string, Placement> {
   }
 
   // Signs stand in a row in front of everything, outside the islands.
-  const front = Math.max(radius, 1.5) + 2.4;
+  const front = Math.max(radius, 1.5) + 1.8;
   signs.forEach((piece, index) => {
     const x = (index - (signs.length - 1) / 2) * SIGN_SPACING;
     placements.set(piece.id, { id: piece.id, position: [x, 0, front], phase: phaseOf(piece.id) });
@@ -156,7 +156,7 @@ export function layoutScene(pieces: Piece[]): Map<string, Placement> {
 }
 
 /** Center and radius of a sphere around every placement, to frame the camera. */
-export function boundsOf(placements: Iterable<Placement>): {
+export function boundsOf(placements: Iterable<Pick<Placement, 'position' | 'island'>>): {
   center: [number, number, number];
   radius: number;
 } {
@@ -180,4 +180,71 @@ export function boundsOf(placements: Iterable<Placement>): {
     center: [(minX + maxX) / 2, 0.8, (minZ + maxZ) / 2],
     radius: Math.max(2.6, Math.hypot(width, depth) / 2 + 0.6),
   };
+}
+
+/** Where the blueprint of a class stands (DESIGN.md §B4): a row at the back, stacked by inheritance. */
+export interface BlueprintPlacement {
+  name: string;
+  position: [number, number, number];
+  /** Height of the panel, which grows with its attributes and methods. */
+  height: number;
+  /** Footprint, so the camera frames the row of blueprints too. */
+  island: { width: number; depth: number };
+}
+
+export const BLUEPRINT_WIDTH = 3.6;
+const BLUEPRINT_SPACING = 5.2;
+const BLUEPRINT_GAP = 0.3;
+/** 20px per row at BASE_ZOOM (overlay.tsx). */
+const BLUEPRINT_ROW_HEIGHT = 0.5;
+
+export function blueprintHeight(info: ClassInfo): number {
+  const rows = info.fields.length + info.methods.length + info.constructors.length;
+  return 1.0 + Math.min(8, Math.max(1, rows)) * BLUEPRINT_ROW_HEIGHT;
+}
+
+/**
+ * Classes in a row behind everything else, interfaces (seals) at the right end. A subclass
+ * stands on top of its superclass, in the same column.
+ */
+export function layoutBlueprints(
+  classes: ClassInfo[],
+  back: number,
+): Map<string, BlueprintPlacement> {
+  const placements = new Map<string, BlueprintPlacement>();
+  const byName = new Map(classes.map((info) => [info.name, info]));
+  const roots = classes.filter(
+    (info) => info.kind !== 'interface' && (!info.superclass || !byName.has(info.superclass)),
+  );
+  const seals = classes.filter((info) => info.kind === 'interface');
+  const columns = roots.length + seals.length;
+  let column = 0;
+  const place = (info: ClassInfo, x: number, y: number) => {
+    const height = blueprintHeight(info);
+    placements.set(info.name, {
+      name: info.name,
+      position: [x, y, back],
+      height,
+      island: { width: BLUEPRINT_WIDTH, depth: 0.4 },
+    });
+    classes
+      .filter((child) => child.superclass === info.name)
+      .forEach((child, index) => {
+        place(child, x + index * BLUEPRINT_SPACING, y + height + BLUEPRINT_GAP);
+      });
+  };
+  for (const root of roots) {
+    place(root, (column - (columns - 1) / 2) * BLUEPRINT_SPACING, 0);
+    column++;
+  }
+  for (const seal of seals) {
+    placements.set(seal.name, {
+      name: seal.name,
+      position: [(column - (columns - 1) / 2) * BLUEPRINT_SPACING, 0, back],
+      height: blueprintHeight(seal),
+      island: { width: BLUEPRINT_WIDTH, depth: 0.4 },
+    });
+    column++;
+  }
+  return placements;
 }

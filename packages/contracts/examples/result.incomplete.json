@@ -1,7 +1,10 @@
 {
   "runId": "0f8b5f0e-5d43-4c58-9f43-6f1d4d1c2a10",
   "outcome": "incomplete",
-  "progress": { "passed": 1, "total": 2 },
+  "progress": {
+    "passed": 1,
+    "total": 2
+  },
   "pieces": [
     {
       "id": "fr-resistencia",
@@ -9,8 +12,37 @@
       "state": "incomplete",
       "built": true,
       "label": "Resistencia",
-      "sourceRef": { "file": "Main.java", "line": 5 },
-      "slots": { "dean": { "state": "missing", "pieceIds": [] } }
+      "sourceRef": {
+        "file": "Main.java",
+        "line": 5
+      },
+      "slots": {
+        "dean": {
+          "state": "missing",
+          "pieceIds": []
+        }
+      },
+      "type": "FacultadRegional",
+      "fields": [
+        {
+          "name": "nombre",
+          "value": {
+            "string": "Resistencia"
+          }
+        },
+        {
+          "name": "ciudad",
+          "value": {
+            "string": "Resistencia"
+          }
+        },
+        {
+          "name": "provincia",
+          "value": {
+            "null": true
+          }
+        }
+      ]
     },
     {
       "id": "var-resistencia",
@@ -18,7 +50,10 @@
       "state": "passed",
       "built": true,
       "label": "resistencia",
-      "sourceRef": { "file": "Main.java", "line": 5 },
+      "sourceRef": {
+        "file": "Main.java",
+        "line": 5
+      },
       "target": "fr-resistencia"
     }
   ],
@@ -27,7 +62,10 @@
       "state": "incomplete",
       "title": "La FR Resistencia está sin decano.",
       "why": "Una facultad **tiene** un decano: es composición, no herencia.",
-      "sourceRef": { "file": "Main.java", "line": 5 },
+      "sourceRef": {
+        "file": "Main.java",
+        "line": 5
+      },
       "hint": "¿Qué atributo de `FacultadRegional` está quedando en `null`?",
       "pieceId": "fr-resistencia",
       "checkId": "dean-assigned"
@@ -36,7 +74,10 @@
       "state": "passed",
       "title": "La FR Resistencia ya existe.",
       "why": "Cada `new` construye un objeto nuevo a partir de la clase.",
-      "sourceRef": { "file": "Main.java", "line": 5 },
+      "sourceRef": {
+        "file": "Main.java",
+        "line": 5
+      },
       "pieceId": "fr-resistencia",
       "checkId": "faculty-created"
     }
@@ -44,20 +85,73 @@
   "timeline": [
     {
       "index": 0,
-      "sourceRef": { "file": "Main.java", "line": 5 },
+      "sourceRef": {
+        "file": "Main.java",
+        "line": 5
+      },
       "event": "object_created",
       "pieceId": "fr-resistencia",
       "name": "FacultadRegional"
     },
     {
       "index": 1,
-      "sourceRef": { "file": "Main.java", "line": 5 },
+      "sourceRef": {
+        "file": "Main.java",
+        "line": 5
+      },
       "event": "local_set",
       "pieceId": "var-resistencia",
       "targetPieceId": "fr-resistencia",
       "name": "resistencia",
-      "value": { "ref": "o1" }
+      "value": {
+        "ref": "o1"
+      }
     }
   ],
-  "stdout": ""
+  "stdout": "",
+  "classes": [
+    {
+      "name": "FacultadRegional",
+      "kind": "class",
+      "abstract": false,
+      "superclass": null,
+      "interfaces": [],
+      "file": "FacultadRegional.java",
+      "line": 1,
+      "fields": [
+        {
+          "name": "nombre",
+          "type": "String",
+          "visibility": "package",
+          "final": false,
+          "static": false,
+          "line": 2
+        },
+        {
+          "name": "ciudad",
+          "type": "String",
+          "visibility": "package",
+          "final": false,
+          "static": false,
+          "line": 3
+        },
+        {
+          "name": "provincia",
+          "type": "String",
+          "visibility": "package",
+          "final": false,
+          "static": false,
+          "line": 4
+        }
+      ],
+      "constructors": [
+        {
+          "parameterTypes": [],
+          "visibility": "public",
+          "line": 1
+        }
+      ],
+      "methods": []
+    }
+  ]
 }

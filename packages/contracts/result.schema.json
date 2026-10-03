@@ -5,7 +5,7 @@
   "description": "Result of a run, returned by the api to the web (docs/ARCHITECTURE.md §5.4).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["runId", "outcome", "progress", "pieces", "log", "timeline", "stdout"],
+  "required": ["runId", "outcome", "progress", "pieces", "log", "timeline", "stdout", "classes"],
   "properties": {
     "runId": {
       "type": "string",
@@ -50,6 +50,13 @@
     },
     "stdout": {
       "type": "string"
+    },
+    "classes": {
+      "description": "The learner classes and interfaces of the program, in source order; empty when it did not compile.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/classInfo"
+      }
     }
   },
   "$defs": {
@@ -143,6 +150,38 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        },
+        "type": {
+          "description": "The learner class of the object (the blueprint it was built from); absent for variable signs.",
+          "type": "string"
+        },
+        "fields": {
+          "description": "The values of the object's fields at the end of the run, in declaration order (inherited fields first).",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "value"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "$ref": "#/$defs/value"
+              },
+              "pieceId": {
+                "description": "For a reference to a drawn object, its piece.",
+                "type": "string"
+              },
+              "pieceIds": {
+                "description": "For a collection or an array, the pieces of its elements, in order.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
@@ -342,6 +381,169 @@
           "type": "boolean"
         }
       }
+    },
+    "classInfo": {
+      "title": "ClassInfo",
+      "description": "A learner class, as the runner extracted it: the blueprint the model draws. Types are written with simple names and their type arguments, e.g. List<Departamento>.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "abstract",
+        "superclass",
+        "interfaces",
+        "file",
+        "line",
+        "fields",
+        "constructors",
+        "methods"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": ["class", "interface", "enum", "record"]
+        },
+        "abstract": {
+          "type": "boolean"
+        },
+        "superclass": {
+          "description": "Null when the class has no explicit superclass.",
+          "type": ["string", "null"]
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "file": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fieldInfo"
+          }
+        },
+        "constructors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/constructorInfo"
+          }
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/methodInfo"
+          }
+        }
+      }
+    },
+    "fieldInfo": {
+      "title": "FieldInfo",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "visibility", "final", "static", "line"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility"
+        },
+        "final": {
+          "type": "boolean"
+        },
+        "static": {
+          "type": "boolean"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "constructorInfo": {
+      "title": "ConstructorInfo",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parameterTypes", "visibility", "line"],
+      "properties": {
+        "parameterTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility"
+        },
+        "line": {
+          "description": "Line of the declaration; the line of the class for an implicit constructor.",
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "methodInfo": {
+      "title": "MethodInfo",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "returnType",
+        "parameterTypes",
+        "visibility",
+        "static",
+        "abstract",
+        "override",
+        "line"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "returnType": {
+          "type": "string"
+        },
+        "parameterTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "visibility": {
+          "$ref": "#/$defs/visibility"
+        },
+        "static": {
+          "type": "boolean"
+        },
+        "abstract": {
+          "type": "boolean"
+        },
+        "override": {
+          "description": "True when the method is annotated with @Override in the source.",
+          "type": "boolean"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "visibility": {
+      "title": "Visibility",
+      "enum": ["public", "protected", "package", "private"]
     }
   }
 }

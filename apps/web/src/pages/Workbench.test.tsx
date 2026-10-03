@@ -13,7 +13,13 @@ import {
 } from '../test/fixtures';
 import { renderApp } from '../test/render';
 
-vi.mock('../components/CodeEditor', () => ({ default: () => <textarea aria-label="editor" /> }));
+const highlighted = vi.fn();
+vi.mock('../components/CodeEditor', () => ({
+  default: ({ path, highlightLine }: { path: string; highlightLine?: number }) => {
+    highlighted(path, highlightLine);
+    return <textarea aria-label={path} />;
+  },
+}));
 // WebGL does not exist in jsdom: the scene is covered by its own unit tests and by hand.
 vi.mock('../scene/SceneView', () => ({
   default: ({ label }: { label: string }) => <div role="img" aria-label={label} />,
@@ -21,31 +27,34 @@ vi.mock('../scene/SceneView', () => ({
 
 const SOURCES = { 'Main.java': SOLVED_MAIN, 'FacultadRegional.java': FACULTAD };
 
-describe('ResultPage', () => {
-  it('goes back to the editor when there is no result to show', async () => {
+/** The challenge screen after a run: model, log and timeline next to the code (DESIGN.md §A2). */
+describe('Workbench with a result', () => {
+  beforeEach(() => {
     fakeApi({ '/modules': modules, '/challenges/m1-03': aliasing });
+    highlighted.mockClear();
+  });
 
+  it('redirects the old result route to the challenge', async () => {
     renderApp('/desafios/m1-03/resultado');
 
     expect(
       await screen.findByRole('heading', { level: 1, name: 'La facultad donde estudiás' }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/Ejecutá el código para ver la maqueta/)).toBeInTheDocument();
   });
 
-  it('shows the outcome, the pieces and the log of the last run', async () => {
+  it('shows the outcome, the model and the log of the last run next to the code', async () => {
     useResults.getState().setRun('m1-03', { result: incompleteResult, sources: SOURCES });
 
-    renderApp('/desafios/m1-03/resultado');
+    renderApp('/desafios/m1-03');
 
-    expect(screen.getByText(/Obra en construcción \(0\/2\)/)).toBeInTheDocument();
+    expect(await screen.findByText(/Obra en construcción \(0\/2\)/)).toBeInTheDocument();
     expect(
       await screen.findByRole('img', {
         name: 'Maqueta del resultado: Obra en construcción (0/2). 1 piezas. La bitácora describe cada una.',
       }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /Resistencia regional-faculty/ }),
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Main.java')).toBeInTheDocument();
     const log = within(screen.getByRole('complementary'));
     const entries = log.getAllByRole('listitem');
     expect(entries).toHaveLength(2);
@@ -53,30 +62,28 @@ describe('ResultPage', () => {
     expect(entries[0]).toHaveTextContent(
       'Pista: ¿Qué tenés que poner a la derecha del = para no crear otra facultad?',
     );
+    // The brief stays folded once there is a result; its summary still shows the progress.
+    expect(screen.getByText('0/2')).toBeInTheDocument();
   });
 
-  it('shows the line a log entry points to when its chip is chosen', async () => {
+  it('highlights the line a log entry points to in the editor when its chip is chosen', async () => {
     useResults.getState().setRun('m1-03', { result: passedResult, sources: SOURCES });
     const user = userEvent.setup();
-    renderApp('/desafios/m1-03/resultado');
+    renderApp('/desafios/m1-03');
 
-    await user.click(screen.getByRole('button', { name: 'Línea 8 de Main.java' }));
+    const chip = await screen.findByRole('button', { name: 'Línea 8 de Main.java' });
+    expect(chip).toHaveTextContent('Main.java:8');
+    await user.click(chip);
 
-    const code = screen.getByRole('figure');
-    expect(code).toHaveTextContent('Main.java');
-    const highlighted = code.querySelector('[data-selected="true"]');
-    expect(highlighted).toHaveTextContent('miFacultad.provincia = "Chaco";');
-    expect(screen.getByRole('button', { name: 'Línea 8 de Main.java' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
+    expect(highlighted).toHaveBeenLastCalledWith('Main.java', 8);
+    expect(chip).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('walks the execution with the arrow keys', async () => {
     useResults.getState().setRun('m1-03', { result: passedResult, sources: SOURCES });
     const user = userEvent.setup();
-    renderApp('/desafios/m1-03/resultado');
-    const timeline = screen.getByRole('group', { name: 'Línea de tiempo' });
+    renderApp('/desafios/m1-03');
+    const timeline = await screen.findByRole('group', { name: 'Línea de tiempo' });
 
     timeline.focus();
     await user.keyboard('{ArrowRight}{ArrowRight}{ArrowRight}');
@@ -84,18 +91,25 @@ describe('ResultPage', () => {
     expect(
       screen.getByText(/Paso 3 \/ 4 · Main\.java:7 · La variable miFacultad recibió un valor/),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /miFacultad variable-sign/ })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-    expect(screen.getByRole('figure').querySelector('[data-selected="true"]')).toHaveTextContent(
-      'miFacultad = resistencia',
-    );
+    expect(highlighted).toHaveBeenLastCalledWith('Main.java', 7);
+  });
+
+  it('opens the legend of the model', async () => {
+    useResults.getState().setRun('m1-03', { result: passedResult, sources: SOURCES });
+    const user = userEvent.setup();
+    renderApp('/desafios/m1-03');
+
+    await user.click(await screen.findByRole('button', { name: '¿Qué es cada forma?' }));
+
+    const legend = screen.getByRole('dialog', { name: 'Cómo se ve Java en la maqueta' });
+    expect(within(legend).getByText('Plano')).toBeInTheDocument();
+    expect(within(legend).getByText('Ventanilla')).toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {
     useResults.getState().setRun('m1-03', { result: incompleteResult, sources: SOURCES });
-    const { container } = renderApp('/desafios/m1-03/resultado');
+    const { container } = renderApp('/desafios/m1-03');
+    await screen.findByText(/Obra en construcción/);
 
     expect(await axe(container)).toHaveNoViolations();
   });

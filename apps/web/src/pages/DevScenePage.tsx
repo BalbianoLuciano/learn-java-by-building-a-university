@@ -3,7 +3,7 @@ import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Selection } from '../components/result/selection';
 import { TopBar } from '../components/TopBar';
-import styles from './ResultPage.module.css';
+import styles from './ChallengePage.module.css';
 
 const SceneView = lazy(() => import('../scene/SceneView'));
 
@@ -70,6 +70,7 @@ function syntheticResult(faculties: number, extras: number): RunResult {
     log: [],
     timeline: [],
     stdout: '',
+    classes: [],
   };
 }
 
@@ -89,7 +90,7 @@ export function DevScenePage() {
   return (
     <>
       <TopBar back={{ to: '/', label: 'dev' }} center={<FpsMeter onFps={setFps} />} />
-      <main id="content" className={styles.layout}>
+      <main id="content" className={styles.workbench}>
         <section className={styles.model}>
           <p>
             {t('dev.fps', { fps, pieces: result.pieces.length })} ·{' '}

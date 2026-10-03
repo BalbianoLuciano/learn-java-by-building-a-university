@@ -1,4 +1,4 @@
-import type { Piece } from '@ljbu/contracts';
+import type { ClassInfo, Piece } from '@ljbu/contracts';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
@@ -15,9 +15,10 @@ import {
 } from './archetypes/Buildings';
 import { Island } from './archetypes/Island';
 import { StateBadge } from './overlay';
-import { Pedestal } from './archetypes/Links';
+import { Facade } from './archetypes/Facade';
 import type { SceneColors } from './colors';
 import type { Placement } from './layout';
+import type { FieldState } from './replay';
 
 interface Props {
   piece: Piece;
@@ -25,8 +26,12 @@ interface Props {
   colors: SceneColors;
   /** Whether the piece exists at this moment of the replay; otherwise it is a silhouette. */
   visible: boolean;
-  /** Slots of the piece that are filled at this moment. */
-  filledSlots: Set<string>;
+  /** The learner classes, for the plaques and windows of the facade. */
+  classes: Map<string, ClassInfo>;
+  /** The value of each attribute at this moment. */
+  fields: Map<string, FieldState> | undefined;
+  /** The method running on the object at this moment. */
+  running: string | undefined;
   selected: boolean;
   float: boolean;
   animate: boolean;
@@ -45,13 +50,15 @@ const DRAWN = [
   'person',
 ];
 
-/** One piece on its island: the archetype, its state and its slots (DESIGN.md §B4–B5). */
+/** One piece on its island: the archetype, its state and its facade (DESIGN.md §B4–B5). */
 export function PieceView({
   piece,
   placement,
   colors,
   visible,
-  filledSlots,
+  classes,
+  fields,
+  running,
   selected,
   float,
   animate,
@@ -81,13 +88,19 @@ export function PieceView({
     onSelect(piece);
   };
   const island = placement.island ?? { width: 1.8, depth: 1.8 };
+  const missing = new Set(
+    piece.state === 'incomplete' && fields
+      ? [...fields]
+          .filter(([, field]) => field.value === null || 'null' in field.value)
+          .map(([name]) => name)
+      : [],
+  );
   const height =
     piece.archetype === 'rectorate'
       ? 1.9
       : piece.archetype === 'inheritance-floors'
         ? 0.7 * (piece.floors?.length ?? 1)
         : 1.1;
-  const slots = Object.entries(piece.slots ?? {});
 
   return (
     <group
@@ -125,7 +138,7 @@ export function PieceView({
           {piece.archetype === 'person' && <Person piece={piece} look={look} />}
           {!DRAWN.includes(piece.archetype) && <GenericBlock piece={piece} look={look} />}
           {!ghost && <InterfaceBadges piece={piece} look={look} y={height + 1.2} />}
-          {!ghost && piece.state === 'incomplete' && slots.length === 0 && (
+          {!ghost && piece.state === 'incomplete' && (
             <Scaffold
               size={[island.width - 0.3, height + 0.5, island.depth - 0.3]}
               position={[0, (height + 0.5) / 2, 0]}
@@ -134,28 +147,20 @@ export function PieceView({
           )}
         </group>
         {!ghost && <StateBadge id={`${piece.id}:badge`} state={piece.state} y={height + 2.0} />}
-        {!ghost &&
-          slots.map(([name, slot], index) => {
-            const angle = Math.PI / 4 + (index / Math.max(slots.length, 3)) * Math.PI * 2;
-            const distance = island.width / 2 + 0.9;
-            const occupied = slot.pieceIds.some((occupant) => filledSlots.has(occupant));
-            return (
-              <group
-                key={name}
-                position={[Math.cos(angle) * distance, 0, Math.sin(angle) * distance]}
-              >
-                <Pedestal
-                  id={`${piece.id}:slot:${name}`}
-                  colors={colors}
-                  empty={!occupied}
-                  label={name}
-                />
-                {!occupied && (
-                  <Scaffold size={[0.7, 0.9, 0.7]} position={[0, 0.65, 0]} color={colors.warning} />
-                )}
-              </group>
-            );
-          })}
+        {!ghost && (
+          <Facade
+            piece={piece}
+            classes={classes}
+            fields={fields}
+            running={running}
+            missing={missing}
+            height={height}
+            width={island.width - 0.5}
+            depth={island.depth - 0.6}
+            ghost={ghost}
+            colors={colors}
+          />
+        )}
       </Island>
     </group>
   );
