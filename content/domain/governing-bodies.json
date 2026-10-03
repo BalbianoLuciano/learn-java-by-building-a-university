@@ -1,0 +1,74 @@
+[
+  {
+    "id": "asamblea-universitaria",
+    "name": "Asamblea Universitaria",
+    "kind": "collegiate",
+    "composition": "Rector, Decanos y miembros del Consejo Superior y de todos los Consejos Directivos",
+    "mandateInYears": null,
+    "source": "Estatuto Universitario, arts. 45, 46 y 104",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "consejo-superior",
+    "name": "Consejo Superior",
+    "kind": "collegiate",
+    "composition": "Rector, Decanos de todas las Facultades Regionales, 15 docentes, 5 graduados, 5 estudiantes y 5 no docentes; los consejeros de claustro duran 2 años",
+    "mandateInYears": 2,
+    "source": "Estatuto Universitario, arts. 45, 105 y 107",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "rector",
+    "name": "Rector",
+    "kind": "unipersonal",
+    "composition": "Argentino, de al menos 30 años, profesor o ex profesor de universidad nacional; lo elige la Asamblea Universitaria",
+    "mandateInYears": 4,
+    "source": "Estatuto Universitario, arts. 45, 46, 66 y 67",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "asamblea-de-facultad-regional",
+    "name": "Asamblea de la Facultad Regional",
+    "kind": "collegiate",
+    "composition": "Decano, Consejo Directivo, Directores de Departamento y Consejos Departamentales; elige Decano y Vicedecano",
+    "mandateInYears": null,
+    "source": "Estatuto Universitario, arts. 45, 78 y 106",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "consejo-directivo",
+    "name": "Consejo Directivo",
+    "kind": "collegiate",
+    "composition": "Decano; un docente por Departamento; un estudiante y un graduado cada dos Departamentos (uno más si son impares); un no docente; uno o dos docentes del padrón general",
+    "mandateInYears": null,
+    "source": "Estatuto Universitario, arts. 45 y 108",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "decano",
+    "name": "Decano",
+    "kind": "unipersonal",
+    "composition": "Profesor con al menos 3 años de antigüedad docente; lo elige la Asamblea de la Facultad Regional",
+    "mandateInYears": 4,
+    "source": "Estatuto Universitario, arts. 45, 78 y 86",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "consejo-departamental",
+    "name": "Consejo Departamental",
+    "kind": "collegiate",
+    "composition": "Director de Departamento, 5 docentes, 3 estudiantes y 2 graduados",
+    "mandateInYears": null,
+    "source": "Estatuto Universitario, arts. 45 y 110",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  },
+  {
+    "id": "director-de-departamento",
+    "name": "Director de Departamento",
+    "kind": "unipersonal",
+    "composition": "Profesor del Departamento; lo elige el Consejo Departamental",
+    "mandateInYears": 4,
+    "source": "Estatuto Universitario, arts. 45, 95 y 126",
+    "url": "https://web.frtl.utn.edu.ar/wp-content/uploads/2021/10/Estatuto_Universitario_2011.pdf"
+  }
+]

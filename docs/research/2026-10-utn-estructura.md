@@ -55,12 +55,23 @@ Mendoza, Neuquén, Paraná, Rafaela, Reconquista, Resistencia, Rosario, San Fran
 San Nicolás, San Rafael, Santa Cruz, Santa Fe, Tierra del Fuego (Río Grande),
 Trenque Lauquen, Tucumán, Venado Tuerto, Villa María.
 
-La página de Sedes da la dirección y la ciudad de cada FR, pero no la provincia. La
-provincia se toma de la página oficial de cada provincia, que nombra su capital:
-Resistencia es la capital de Chaco ([argentina.gob.ar/chaco](https://www.argentina.gob.ar/chaco)),
-Córdoba la de Córdoba ([argentina.gob.ar/cordoba](https://www.argentina.gob.ar/cordoba)) y
-Mendoza la de Mendoza ([argentina.gob.ar/mendoza](https://www.argentina.gob.ar/mendoza)).
-Consultadas el 2026-10-02.
+La página de Sedes da la dirección y la ciudad de cada FR, pero no la provincia. Para
+cada FR, `content/domain/regional-faculties.json` cita una segunda fuente que la nombra:
+el sitio de la FR cuando imprime su dirección completa (p. ej. FR Avellaneda: "Av. Mitre
+750, Avellaneda, Buenos Aires"), la página oficial de la provincia cuando la ciudad es su
+capital ([argentina.gob.ar/chaco](https://www.argentina.gob.ar/chaco), Córdoba, Mendoza,
+La Rioja, Santa Fe) o una página municipal (Puerto Madryn, Reconquista, Tigre para General
+Pacheco, Mar del Plata). Casos a tener en cuenta: la FR La Plata figura en Sedes con
+dirección en La Plata, pero su sitio dice Berisso (el predio está en el límite); la FR
+Neuquén está en Plaza Huincul y su sitio la llama "Facultad Regional del Neuquén"; la FR
+Santa Cruz está en Río Gallegos; la FR Tierra del Fuego, en Río Grande; la FR Tucumán, en
+San Miguel de Tucumán; la FR Delta, en Campana; la FR Chubut, en Puerto Madryn. Consultadas
+el 2026-10-02.
+
+**Regionales Académicas hoy.** Ni la página de Sedes ni la Institucional ni el
+[2º Informe de Autoevaluación Institucional (2020)](https://estructurarut.utn.edu.ar/images/UVyT/Evaluaciones/2020---Informe-Autoevaluacin---UTN.pdf)
+nombran ninguna Regional Académica vigente: cuentan 30 FR, el INSPT, el Rectorado y el
+CTDR. Las anteriores (Chubut, La Rioja, Reconquista, Mar del Plata) fueron elevadas a FR.
 
 ## 3. Gobierno de una Facultad Regional
 
