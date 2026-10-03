@@ -137,6 +137,13 @@
           "items": {
             "type": "string"
           }
+        },
+        "interfaces": {
+          "description": "The learner interfaces the class of the object implements, directly or through its superclasses: one badge each.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

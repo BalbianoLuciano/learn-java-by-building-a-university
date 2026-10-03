@@ -44,10 +44,12 @@ public record RunResult(
       SourceRef sourceRef,
       Map<String, Slot> slots,
       String target,
-      List<String> floors) {
+      List<String> floors,
+      List<String> interfaces) {
 
     public Piece withState(String newState) {
-      return new Piece(id, archetype, newState, built, label, sourceRef, slots, target, floors);
+      return new Piece(
+          id, archetype, newState, built, label, sourceRef, slots, target, floors, interfaces);
     }
   }
 

@@ -1,0 +1,101 @@
+id: m2-03
+module: m2
+order: 3
+title:
+  es: "Requisitos para ser Rector"
+concept: constructor-validation
+rules: [R-RECT-01]
+brief:
+  es: |
+    Según el Estatuto (art. 66), para ser Rector hay que ser argentino, tener al menos 30
+    años y ser o haber sido profesor universitario.
+
+    Completá el constructor de `CargoDeRector` para que **rechace** a quien no cumpla:
+    si la persona no cumple alguno de los tres requisitos, lanzá
+    `IllegalArgumentException` con un mensaje. Si cumple, guardala en `titular`.
+    El `main` ya prueba con una candidata válida y con un candidato de 29 años.
+criteria:
+  - checks: [constructor-with-person]
+    es: "`CargoDeRector` se construye con una `Persona`"
+  - checks: [valid-accepted]
+    es: "La candidata que cumple queda como titular"
+  - checks: [invalid-rejected]
+    es: "El candidato de 29 años es rechazado con `IllegalArgumentException`"
+editable: [CargoDeRector.java]
+
+scene:
+  bindings:
+    - type: Persona
+      archetype: person
+      label: nombre
+    - type: CargoDeRector
+      archetype: generic-block
+      slots: { titular: holder }
+  pieces:
+    - id: cargo-rector
+      type: CargoDeRector
+      label: { es: "Cargo de Rector" }
+    - id: candidata
+      type: Persona
+      where: { field: nombre, equals: "Marta Quiroga" }
+      label: { es: "Marta Quiroga" }
+    - id: candidato
+      type: Persona
+      where: { field: nombre, equals: "Julián Páez" }
+      label: { es: "Julián Páez" }
+  showVariables: true
+
+checks:
+  - id: constructor-with-person
+    type: constructor
+    params:
+      class: CargoDeRector
+      parameterTypes: [Persona]
+    piece: cargo-rector
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "El cargo de Rector se construye a partir de una persona." }
+        why: { es: "El constructor es el único punto de entrada: todo lo que se verifique ahí vale para cualquier cargo que se cree." }
+      fail:
+        what: { es: "`CargoDeRector` necesita un constructor que reciba una `Persona`." }
+        why: { es: "Sin ese constructor no hay dónde comprobar los requisitos antes de aceptar al titular." }
+        hint: { es: "`CargoDeRector(Persona candidato) { … }`." }
+
+  - id: valid-accepted
+    type: object_field
+    params:
+      where: { type: CargoDeRector }
+      expect: { field: titular, notNull: true }
+    piece: cargo-rector
+    slot: holder
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Marta Quiroga cumple los requisitos y quedó como titular del cargo." }
+        why: { es: "Cuando la verificación pasa, el constructor sigue y guarda a la persona en el atributo." }
+      fail:
+        what: { es: "El cargo quedó sin titular, aunque Marta Quiroga cumple los tres requisitos." }
+        why: { es: "Si ninguna condición falla, el constructor tiene que guardar al candidato: `this.titular = candidato`." }
+        hint: { es: "¿Después de los `if` que rechazan, el constructor asigna `titular`?" }
+
+  - id: invalid-rejected
+    type: throws
+    params:
+      type: IllegalArgumentException
+      caught: true
+    piece: cargo-rector
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Julián Páez, de 29 años, fue rechazado: el cargo nunca llegó a existir." }
+        why: { es: "Lanzar una excepción en el constructor corta el `new`: no queda ningún objeto a medio construir." }
+      fail:
+        what: { es: "El cargo aceptó a Julián Páez, que tiene 29 años." }
+        why: { es: "Validar en el constructor significa rechazar con `throw` antes de guardar nada." }
+        hint: { es: "¿Qué pasa en tu constructor cuando `candidato.getEdad()` es menor que 30?" }
+
+hints:
+  - es: "Un constructor puede negarse a construir: `throw new IllegalArgumentException(\"…\")` corta el `new` y no deja ningún objeto."
+  - es: "Son tres condiciones, cada una con su `if`: nacionalidad distinta de \"argentina\", edad menor que 30, no fue profesor."
+  - es: "Primero los tres `if` con `throw`, y recién al final `this.titular = candidato;`."

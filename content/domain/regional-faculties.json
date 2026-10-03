@@ -1,12 +1,62 @@
 [
   {
-    "id": "resistencia",
-    "name": "Facultad Regional Resistencia",
-    "city": "Resistencia",
-    "province": "Chaco",
+    "id": "avellaneda",
+    "name": "Facultad Regional Avellaneda",
+    "city": "Avellaneda",
+    "province": "Buenos Aires",
     "sources": [
       "https://www.utn.edu.ar/es/la-universidad/sedes",
-      "https://www.argentina.gob.ar/chaco"
+      "https://www.fra.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "bahia-blanca",
+    "name": "Facultad Regional Bahía Blanca",
+    "city": "Bahía Blanca",
+    "province": "Buenos Aires",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frbb.utn.edu.ar/frbb/institucional/"
+    ]
+  },
+  {
+    "id": "buenos-aires",
+    "name": "Facultad Regional Buenos Aires",
+    "city": "Buenos Aires",
+    "province": "Ciudad Autónoma de Buenos Aires",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frba.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "chubut",
+    "name": "Facultad Regional Chubut",
+    "city": "Puerto Madryn",
+    "province": "Chubut",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.madryn.gob.ar/"
+    ]
+  },
+  {
+    "id": "concepcion-del-uruguay",
+    "name": "Facultad Regional Concepción del Uruguay",
+    "city": "Concepción del Uruguay",
+    "province": "Entre Ríos",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frcu.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "concordia",
+    "name": "Facultad Regional Concordia",
+    "city": "Concordia",
+    "province": "Entre Ríos",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frcon.utn.edu.ar/"
     ]
   },
   {
@@ -20,6 +70,66 @@
     ]
   },
   {
+    "id": "delta",
+    "name": "Facultad Regional Delta",
+    "city": "Campana",
+    "province": "Buenos Aires",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frd.utn.edu.ar/wp-content/uploads/2022/05/Brochure-Universidad-Tecnologica-Nacional-Facultad-Regional-Delta-v3.pdf"
+    ]
+  },
+  {
+    "id": "general-pacheco",
+    "name": "Facultad Regional General Pacheco",
+    "city": "General Pacheco",
+    "province": "Buenos Aires",
+    "sources": [
+      "https://www.frgp.utn.edu.ar/contacto/directo",
+      "https://www.tigre.gob.ar/tigre/actualidad"
+    ]
+  },
+  {
+    "id": "haedo",
+    "name": "Facultad Regional Haedo",
+    "city": "Haedo",
+    "province": "Buenos Aires",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frh.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "la-plata",
+    "name": "Facultad Regional La Plata",
+    "city": "La Plata",
+    "province": "Buenos Aires",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frlp.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "la-rioja",
+    "name": "Facultad Regional La Rioja",
+    "city": "La Rioja",
+    "province": "La Rioja",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.argentina.gob.ar/la-rioja"
+    ]
+  },
+  {
+    "id": "mar-del-plata",
+    "name": "Facultad Regional Mar del Plata",
+    "city": "Mar del Plata",
+    "province": "Buenos Aires",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.turismomardelplata.gob.ar/ASP/EN/La-ciudad.htm"
+    ]
+  },
+  {
     "id": "mendoza",
     "name": "Facultad Regional Mendoza",
     "city": "Mendoza",
@@ -27,6 +137,166 @@
     "sources": [
       "https://www.utn.edu.ar/es/la-universidad/sedes",
       "https://www.argentina.gob.ar/mendoza"
+    ]
+  },
+  {
+    "id": "neuquen",
+    "name": "Facultad Regional Neuquén",
+    "city": "Plaza Huincul",
+    "province": "Neuquén",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frn.utn.edu.ar/index.php/secretarias/"
+    ]
+  },
+  {
+    "id": "parana",
+    "name": "Facultad Regional Paraná",
+    "city": "Paraná",
+    "province": "Entre Ríos",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frp.utn.edu.ar/info2/"
+    ]
+  },
+  {
+    "id": "rafaela",
+    "name": "Facultad Regional Rafaela",
+    "city": "Rafaela",
+    "province": "Santa Fe",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://utnrafaela.com.ar/sitio/"
+    ]
+  },
+  {
+    "id": "reconquista",
+    "name": "Facultad Regional Reconquista",
+    "city": "Reconquista",
+    "province": "Santa Fe",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://reconquista.gob.ar/"
+    ]
+  },
+  {
+    "id": "resistencia",
+    "name": "Facultad Regional Resistencia",
+    "city": "Resistencia",
+    "province": "Chaco",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.argentina.gob.ar/chaco"
+    ]
+  },
+  {
+    "id": "rosario",
+    "name": "Facultad Regional Rosario",
+    "city": "Rosario",
+    "province": "Santa Fe",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://dasuten.frro.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "san-francisco",
+    "name": "Facultad Regional San Francisco",
+    "city": "San Francisco",
+    "province": "Córdoba",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://sanfrancisco.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "san-nicolas",
+    "name": "Facultad Regional San Nicolás",
+    "city": "San Nicolás de los Arroyos",
+    "province": "Buenos Aires",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://bicyt.conicet.gov.ar/fichas/u/cit-san-nicolas"
+    ]
+  },
+  {
+    "id": "san-rafael",
+    "name": "Facultad Regional San Rafael",
+    "city": "San Rafael",
+    "province": "Mendoza",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frsr.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "santa-cruz",
+    "name": "Facultad Regional Santa Cruz",
+    "city": "Río Gallegos",
+    "province": "Santa Cruz",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frsc.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "santa-fe",
+    "name": "Facultad Regional Santa Fe",
+    "city": "Santa Fe",
+    "province": "Santa Fe",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.argentina.gob.ar/santafe"
+    ]
+  },
+  {
+    "id": "tierra-del-fuego",
+    "name": "Facultad Regional Tierra del Fuego",
+    "city": "Río Grande",
+    "province": "Tierra del Fuego",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frtdf.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "trenque-lauquen",
+    "name": "Facultad Regional Trenque Lauquen",
+    "city": "Trenque Lauquen",
+    "province": "Buenos Aires",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://web.frtl.utn.edu.ar/45-2/contactos/"
+    ]
+  },
+  {
+    "id": "tucuman",
+    "name": "Facultad Regional Tucumán",
+    "city": "San Miguel de Tucumán",
+    "province": "Tucumán",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://frt.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "venado-tuerto",
+    "name": "Facultad Regional Venado Tuerto",
+    "city": "Venado Tuerto",
+    "province": "Santa Fe",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://frvt.utn.edu.ar/"
+    ]
+  },
+  {
+    "id": "villa-maria",
+    "name": "Facultad Regional Villa María",
+    "city": "Villa María",
+    "province": "Córdoba",
+    "sources": [
+      "https://www.utn.edu.ar/es/la-universidad/sedes",
+      "https://www.frvm.utn.edu.ar/"
     ]
   }
 ]

@@ -35,6 +35,7 @@ export function matte(
 
 export const UNIT_BOX = new THREE.BoxGeometry(1, 1, 1);
 export const UNIT_CYLINDER = new THREE.CylinderGeometry(0.5, 0.5, 1, 12);
+export const UNIT_SPHERE = new THREE.SphereGeometry(0.5, 8, 6);
 export const UNIT_TORUS = new THREE.TorusGeometry(1, 0.04, 6, 32);
 
 /** A triangular prism: a gable roof when laid along the x axis. Base on y = 0. */

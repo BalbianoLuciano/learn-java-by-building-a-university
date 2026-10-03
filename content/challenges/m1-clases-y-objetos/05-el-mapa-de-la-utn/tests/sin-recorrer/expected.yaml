@@ -1,0 +1,5 @@
+outcome: incomplete
+log:
+  - check: last-described
+    state: incomplete
+    title: "El programa no imprimió \"FR Santa Fe (Santa Fe, Santa Fe)\"."

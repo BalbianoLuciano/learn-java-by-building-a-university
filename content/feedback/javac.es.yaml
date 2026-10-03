@@ -68,6 +68,11 @@ entries:
     why: "Al extender una clase abstracta o implementar una interfaz, la clase se compromete a escribir ese método."
     hint: "Agregá el método con la misma firma que tiene en la superclase o en la interfaz."
 
+  compiler.err.method.does.not.override.superclass:
+    what: "Este método lleva `@Override`, pero no sobrescribe ningún método."
+    why: "`@Override` le pide al compilador que verifique que existe un método con esa misma firma en la superclase o en la interfaz."
+    hint: "Revisá el nombre y los parámetros del método, o si la clase declara `extends` o `implements`."
+
   compiler.err.abstract.cant.be.instantiated:
     match: '(?<clase>\S+) is abstract'
     what: "No se puede crear un objeto de `{clase}` con `new`."

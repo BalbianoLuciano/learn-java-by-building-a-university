@@ -2,7 +2,7 @@ import { Edges } from '@react-three/drei';
 import type { Piece } from '@ljbu/contracts';
 import * as THREE from 'three';
 import type { SceneColors } from '../colors';
-import { GABLE, matte, UNIT_BOX, UNIT_CYLINDER } from '../materials';
+import { GABLE, matte, UNIT_BOX, UNIT_CYLINDER, UNIT_SPHERE } from '../materials';
 import { Label } from '../overlay';
 
 /** How a building is painted: as built, broken, or as the silhouette of what should be there. */
@@ -119,6 +119,120 @@ export function Rectorate({ piece, look }: { piece: Piece; look: Look }) {
         </group>
       )}
       <Label id={`${piece.id}:label`} text={piece.label} y={height + 1.0} ghost={look.ghost} />
+    </group>
+  );
+}
+
+/** Departamento de Enseñanza: a low pavilion with a flat roof (DESIGN.md §B4). */
+export function Department({ piece, look }: { piece: Piece; look: Look }) {
+  const height = look.failed ? 0.4 : 0.7;
+  return (
+    <group>
+      <mesh
+        geometry={UNIT_BOX}
+        material={paint(look.colors.wall, look)}
+        position={[0, height / 2, 0]}
+        scale={[1.5, height, 1.0]}
+        castShadow
+        receiveShadow
+      />
+      <mesh
+        geometry={UNIT_BOX}
+        material={paint(look.colors.department, look)}
+        position={[0, height + 0.06, 0]}
+        scale={[1.6, 0.12, 1.1]}
+        castShadow
+      />
+      {look.failed && (
+        <group position={[0, 0, 0.51]}>
+          <Crack width={0.9} height={height} />
+        </group>
+      )}
+      <Label id={`${piece.id}:label`} text={piece.label} y={height + 0.6} ghost={look.ghost} />
+    </group>
+  );
+}
+
+/** Carrera: a block with a pennant on a pole. */
+export function Career({ piece, look }: { piece: Piece; look: Look }) {
+  const height = look.failed ? 0.5 : 0.9;
+  return (
+    <group>
+      <mesh
+        geometry={UNIT_BOX}
+        material={paint(look.colors.career, look)}
+        position={[0, height / 2, 0]}
+        scale={[1.0, height, 1.0]}
+        castShadow
+        receiveShadow
+      />
+      <mesh
+        geometry={UNIT_CYLINDER}
+        material={paint(look.colors.link, look)}
+        position={[0.3, height + 0.45, 0.3]}
+        scale={[0.05, 0.9, 0.05]}
+        castShadow
+      />
+      <mesh
+        geometry={GABLE}
+        material={paint(look.colors.career, look)}
+        position={[0.49, height + 0.75, 0.3]}
+        rotation={[0, 0, -Math.PI / 2]}
+        scale={[0.3, 0.36, 0.04]}
+        castShadow
+      />
+      {look.failed && (
+        <group position={[0, 0, 0.51]}>
+          <Crack width={0.6} height={height} />
+        </group>
+      )}
+      <Label id={`${piece.id}:label`} text={piece.label} y={height + 1.4} ghost={look.ghost} />
+    </group>
+  );
+}
+
+/** Persona: a low-poly figure, a capsule-like body with a head. */
+export function Person({ piece, look }: { piece: Piece; look: Look }) {
+  const bodyHeight = 0.7;
+  return (
+    <group scale={look.failed ? [1, 0.6, 1] : [1, 1, 1]}>
+      <mesh
+        geometry={UNIT_CYLINDER}
+        material={paint(look.colors.person, look)}
+        position={[0, bodyHeight / 2, 0]}
+        scale={[0.5, bodyHeight, 0.5]}
+        castShadow
+        receiveShadow
+      />
+      <mesh
+        geometry={UNIT_SPHERE}
+        material={paint(look.colors.wall, look)}
+        position={[0, bodyHeight + 0.26, 0]}
+        scale={[0.42, 0.42, 0.42]}
+        castShadow
+      />
+      <Label id={`${piece.id}:label`} text={piece.label} y={bodyHeight + 0.9} ghost={look.ghost} />
+    </group>
+  );
+}
+
+/** The interfaces a piece implements: one badge over its roof per interface (DESIGN.md §B4). */
+export function InterfaceBadges({ piece, look, y }: { piece: Piece; look: Look; y: number }) {
+  const interfaces = piece.interfaces ?? [];
+  return (
+    <group>
+      {interfaces.map((name, index) => (
+        <group key={name} position={[(index - (interfaces.length - 1) / 2) * 0.9, y, 0]}>
+          <mesh
+            geometry={UNIT_CYLINDER}
+            material={paint(look.colors.accent, look)}
+            scale={[0.36, 0.08, 0.36]}
+            rotation={[Math.PI / 2, 0, 0]}
+            castShadow
+          />
+          <Label id={`${piece.id}:interface:${name}`} text={name} y={0.3} ghost={look.ghost} />
+        </group>
+      ))}
     </group>
   );
 }

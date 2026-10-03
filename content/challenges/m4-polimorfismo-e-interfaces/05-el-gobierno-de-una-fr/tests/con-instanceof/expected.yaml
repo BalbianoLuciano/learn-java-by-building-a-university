@@ -1,0 +1,9 @@
+outcome: incomplete
+log:
+  - check: collegiate-dispatched
+    state: incomplete
+    title: "`describirGobierno()` no le pidió a ningún órgano colegiado su `describirComposicion()`."
+  - check: unipersonal-dispatched
+    state: incomplete
+  - check: assembly-printed
+    state: passed

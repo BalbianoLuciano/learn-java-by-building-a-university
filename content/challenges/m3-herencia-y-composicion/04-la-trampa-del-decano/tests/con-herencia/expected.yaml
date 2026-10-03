@@ -1,0 +1,11 @@
+outcome: incomplete
+log:
+  - check: holder-field
+    state: incomplete
+  - check: two-professors
+    state: incomplete
+    title: "Hay 4 \"profesores\" porque cada `CargoDeDecano` hereda de `Profesor`."
+  - check: first-dean
+    state: incomplete
+  - check: current-dean
+    state: incomplete

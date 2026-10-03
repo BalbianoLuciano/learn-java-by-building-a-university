@@ -69,6 +69,7 @@ El catálogo cubre, como mínimo, estos errores (los textos viven en el archivo,
 | Llamó con argumentos que no van | `cant.apply.symbol`, `cant.apply.symbols` |
 | Tocó algo privado | `report.access` |
 | No implementó un método abstracto, o instanció una clase abstracta | `does.not.override.abstract`, `abstract.cant.be.instantiated` |
+| Puso `@Override` en un método que no sobrescribe nada | `method.does.not.override.superclass` |
 | Reasignó un `final` | `cant.assign.val.to.var` |
 | Le falta un `return` | `missing.ret.stmt` |
 | Usó el objeto antes de `super(...)` | `cant.ref.before.ctor.called` |

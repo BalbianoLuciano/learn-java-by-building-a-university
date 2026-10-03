@@ -30,10 +30,12 @@ class ContentLoaderTest {
   void loadsTheContentOfTheRepository() {
     Content loaded = new ContentLoader().load(content);
 
-    assertThat(loaded.modules()).extracting(ModuleSpec::id).containsExactly("m1");
+    assertThat(loaded.modules()).extracting(ModuleSpec::id).containsExactly("m1", "m2", "m3", "m4");
     assertThat(loaded.challengesOf("m1"))
         .extracting(Challenge::id)
-        .containsExactly("m1-01", "m1-02", "m1-03");
+        .containsExactly("m1-01", "m1-02", "m1-03", "m1-04", "m1-05");
+    assertThat(loaded.modules())
+        .allSatisfy(module -> assertThat(loaded.challengesOf(module.id())).hasSize(5));
     assertThat(loaded.challenge("m1-03").orElseThrow().variants())
         .containsKeys("segunda-facultad", "sin-usar-el-alias");
     assertThat(loaded.domain().rules()).hasSize(18);
@@ -193,7 +195,7 @@ class ContentLoaderTest {
         "domain/regional-faculties.json",
         json -> json.replaceFirst("(?s)\"sources\": \\[.*?\\]", "\"sources\": []"));
 
-    assertInvalid("resistencia has no source");
+    assertInvalid("avellaneda has no source");
   }
 
   private void edit(String file, UnaryOperator<String> change) {

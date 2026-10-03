@@ -57,7 +57,7 @@ class ApiTest {
         .bodyJson()
         .extractingPath("$.modules[0].challenges[*].id")
         .asArray()
-        .containsExactly("m1-01", "m1-02", "m1-03");
+        .containsExactly("m1-01", "m1-02", "m1-03", "m1-04", "m1-05");
   }
 
   @Test

@@ -1,0 +1,82 @@
+id: m2-01
+module: m2
+order: 1
+title:
+  es: "La FR nace con nombre"
+concept: constructors
+rules: [R-UNI-02]
+brief:
+  es: |
+    Hasta ahora cada facultad nacía vacía y había que cargarle los datos de a uno.
+    Dale a `FacultadRegional` un **constructor** que reciba `nombre`, `ciudad` y
+    `provincia` y los guarde en el objeto.
+
+    Después, en `main`, creá la FR Resistencia (ciudad Resistencia, provincia Chaco) en una
+    sola línea, usando el constructor.
+criteria:
+  - checks: [constructor-declared]
+    es: "`FacultadRegional` tiene un constructor con nombre, ciudad y provincia"
+  - checks: [resistencia-complete]
+    es: "La FR Resistencia nace con sus tres datos"
+editable: [FacultadRegional.java, Main.java]
+
+scene:
+  bindings:
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: constructor-declared
+    type: constructor
+    params:
+      class: FacultadRegional
+      parameterTypes: [String, String, String]
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`FacultadRegional` tiene un constructor que recibe nombre, ciudad y provincia." }
+        why: { es: "El constructor se ejecuta en cada `new` y es el lugar para dejar el objeto completo desde el principio." }
+      fail:
+        what: { es: "`FacultadRegional` todavía no tiene un constructor con tres `String`." }
+        why: { es: "Un constructor se llama igual que la clase, no tiene tipo de retorno y recibe lo que el objeto necesita para nacer." }
+        hint: { es: "Dentro de la clase: `FacultadRegional(String nombre, String ciudad, String provincia) { … }`." }
+
+  - id: resistencia-complete
+    type: object_field
+    params:
+      where: { type: FacultadRegional }
+      expect:
+        - { field: nombre, equals: "Resistencia" }
+        - { field: ciudad, equals: "Resistencia" }
+        - { field: provincia, equals: "Chaco" }
+    piece: fr-resistencia
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "La FR Resistencia nació con nombre, ciudad y provincia." }
+        why: { es: "Dentro del constructor, `this.nombre = nombre` guarda el parámetro en el atributo del objeto nuevo." }
+      fail:
+        what: { es: "A la FR Resistencia le falta tener bien cargado: {missing}." }
+        why: { es: "Un parámetro del constructor no se guarda solo: hay que asignarlo al atributo, y `this.` distingue uno del otro." }
+        hint: { es: "¿Cada parámetro del constructor termina en un `this.atributo = parametro`?" }
+    traps:
+      - when:
+          type: object_count
+          params: { type: FacultadRegional, equals: 0 }
+        what: { es: "Todavía no se creó ninguna facultad." }
+        why: { es: "El constructor solo corre cuando `main` hace `new FacultadRegional(…)` con los tres datos." }
+        hint: { es: "En `main`: `FacultadRegional resistencia = new FacultadRegional(\"Resistencia\", \"Resistencia\", \"Chaco\");`." }
+
+hints:
+  - es: "Un constructor es un método especial que corre en cada `new`: se llama como la clase y no declara tipo de retorno."
+  - es: "Los parámetros se pueden llamar igual que los atributos; `this.nombre` es el atributo y `nombre` solo, el parámetro."
+  - es: "Con el constructor hecho, `new FacultadRegional(\"Resistencia\", \"Resistencia\", \"Chaco\")` crea la facultad completa en una línea."

@@ -141,6 +141,13 @@ la misma. Así la herencia entre roles nunca obliga a "transformar" un objeto.
 
 Las claves de los archivos van en inglés; los valores que ve el alumno, en español.
 
-Hoy `regional-faculties.json` tiene solo las FR que usan los desafíos escritos
-(Resistencia, Córdoba y Mendoza), cada una verificada contra sus fuentes; las demás y
-`governing-bodies.json` llegan con el hito M6. La api rechaza una FR sin fuente.
+`regional-faculties.json` tiene las 30 FR con ciudad y provincia, cada una con la página
+de Sedes de la UTN y una segunda fuente (el sitio de la FR o una página oficial) que nombra
+la provincia; las fuentes se verificaron el 2026-10-02. La api rechaza una FR sin fuente.
+`governing-bodies.json` tiene los ocho órganos del art. 45 con su composición y mandato.
+
+**Regionales Académicas.** El Estatuto las contempla (arts. 5 y 112), pero hoy no existe
+ninguna: las que hubo pasaron a ser Facultades Regionales (la última, Mar del Plata, por
+Res. AU 1/2017), y las páginas institucionales de la UTN y su informe de autoevaluación de
+2020 no nombran ninguna. Los desafíos que necesitan una Regional Académica usan una **de
+ejemplo**, y la consigna lo dice.

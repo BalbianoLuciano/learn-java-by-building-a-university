@@ -1,0 +1,6 @@
+id: m4
+order: 4
+title:
+  es: "Polimorfismo e interfaces"
+goal:
+  es: "Que el mismo mensaje produzca respuestas distintas según el objeto, y que las interfaces describan capacidades compartidas por clases no relacionadas."

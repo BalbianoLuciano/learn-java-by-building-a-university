@@ -1,0 +1,130 @@
+id: m2-02
+module: m2
+order: 2
+title:
+  es: "Nadie toca el padrón por la ventana"
+concept: encapsulation
+rules: [R-UNI-02]
+brief:
+  es: |
+    Cualquier parte del programa puede hacer `resistencia.nombre = "otra cosa"`. Cerrá esa
+    ventana: declará `private` los tres atributos de `FacultadRegional` y agregá los
+    métodos `getNombre()`, `getCiudad()` y `getProvincia()` para leerlos.
+
+    En `main`, imprimí el nombre de la facultad usando el getter.
+criteria:
+  - checks: [fields-private]
+    es: "`nombre`, `ciudad` y `provincia` son `private`"
+  - checks: [get-name, get-city, get-province]
+    es: "Los tres getters existen y son públicos"
+  - checks: [name-printed]
+    es: "`main` imprime el nombre a través de `getNombre()`"
+editable: [FacultadRegional.java, Main.java]
+
+scene:
+  bindings:
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: fields-private
+    type: field
+    params:
+      class: FacultadRegional
+      names: [nombre, ciudad, provincia]
+      visibility: private
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Los atributos de la facultad quedaron cerrados: nadie los toca desde afuera." }
+        why: { es: "`private` hace que solo el código de la propia clase pueda leer o cambiar un atributo." }
+      fail:
+        what: { es: "Todavía se puede entrar por la ventana: no es `private`: {missing}." }
+        why: { es: "Sin `private`, cualquier clase puede escribir el atributo y saltarse las reglas de la facultad." }
+        hint: { es: "Poné `private` delante del tipo de cada atributo: `private String nombre;`." }
+
+  - id: get-name
+    type: method
+    params:
+      class: FacultadRegional
+      name: getNombre
+      parameterTypes: []
+      returnType: String
+      visibility: public
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`getNombre()` es la ventanilla para leer el nombre." }
+        why: { es: "Un getter público permite leer un atributo privado sin permitir cambiarlo." }
+      fail:
+        what: { es: "Falta un `getNombre()` público que devuelva un `String`." }
+        why: { es: "Con el atributo privado, la única forma de leerlo desde afuera es un método público que lo devuelva." }
+        hint: { es: "`public String getNombre() { return nombre; }`." }
+
+  - id: get-city
+    type: method
+    params:
+      class: FacultadRegional
+      name: getCiudad
+      parameterTypes: []
+      returnType: String
+      visibility: public
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`getCiudad()` es la ventanilla para leer la ciudad." }
+        why: { es: "Cada atributo privado que haga falta leer tiene su getter." }
+      fail:
+        what: { es: "Falta un `getCiudad()` público que devuelva un `String`." }
+        why: { es: "Un getter por atributo: así la clase decide qué se puede leer." }
+        hint: { es: "Copiá la forma de `getNombre()` cambiando el atributo." }
+
+  - id: get-province
+    type: method
+    params:
+      class: FacultadRegional
+      name: getProvincia
+      parameterTypes: []
+      returnType: String
+      visibility: public
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`getProvincia()` es la ventanilla para leer la provincia." }
+        why: { es: "Los getters muestran el estado; como no hay setters, nadie lo cambia después del constructor." }
+      fail:
+        what: { es: "Falta un `getProvincia()` público que devuelva un `String`." }
+        why: { es: "Un getter por atributo: así la clase decide qué se puede leer." }
+        hint: { es: "Copiá la forma de `getNombre()` cambiando el atributo." }
+
+  - id: name-printed
+    type: stdout_contains
+    params:
+      text: "Resistencia"
+    piece: fr-resistencia
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "`main` imprimió el nombre de la facultad a través de su getter." }
+        why: { es: "Desde afuera de la clase, el nombre se lee con `getNombre()`; el atributo ya no es visible." }
+      fail:
+        what: { es: "`main` todavía no imprime el nombre de la facultad." }
+        why: { es: "Con el atributo privado, `resistencia.nombre` ya no compila: se lee con `resistencia.getNombre()`." }
+        hint: { es: "`System.out.println(resistencia.getNombre());`." }
+
+hints:
+  - es: "Encapsular es decidir desde la clase qué se puede ver y qué se puede cambiar de un objeto."
+  - es: "`private` cierra el atributo; un método `public` que lo devuelve lo abre solo para lectura."
+  - es: "Declará `private String nombre;` (y los otros dos), escribí `public String getNombre() { return nombre; }` y usalo en `main`."

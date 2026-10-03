@@ -1,0 +1,139 @@
+id: m3-02
+module: m3
+order: 2
+title:
+  es: "Primero la planta baja"
+concept: super-constructor
+rules: [R-FR-04]
+brief:
+  es: |
+    Ahora las unidades académicas nacen completas. Dale a `UnidadAcademica` un constructor
+    con `nombre`, `ciudad` y `provincia`, y hacé que `FacultadRegional` y
+    `RegionalAcademica` reciban esos datos y se los pasen a la superclase con
+    `super(...)`. La Regional Académica además recibe la facultad de la que depende.
+
+    Mirá después la línea de tiempo: la planta baja (`UnidadAcademica`) se construye
+    antes que el piso de la subclase.
+criteria:
+  - checks: [base-constructor]
+    es: "`UnidadAcademica` tiene un constructor con nombre, ciudad y provincia"
+  - checks: [faculty-delegates, regional-delegates]
+    es: "Las subclases llaman a `super(...)` con los datos"
+  - checks: [faculty-complete, regional-complete]
+    es: "Las dos unidades nacen con sus datos y la RA con su facultad"
+editable: [UnidadAcademica.java, FacultadRegional.java, RegionalAcademica.java]
+
+scene:
+  bindings:
+    - type: UnidadAcademica
+      archetype: generic-block
+      label: nombre
+    - type: FacultadRegional
+      archetype: inheritance-floors
+      label: nombre
+    - type: RegionalAcademica
+      archetype: inheritance-floors
+      label: nombre
+      slots: { facultadDeQueDepende: faculty }
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+    - id: ra-ejemplo
+      type: RegionalAcademica
+      label: { es: "Regional Académica" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: base-constructor
+    type: constructor
+    params:
+      class: UnidadAcademica
+      parameterTypes: [String, String, String]
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`UnidadAcademica` construye la planta baja: nombre, ciudad y provincia." }
+        why: { es: "La superclase es responsable de inicializar sus propios atributos; las subclases le piden que lo haga." }
+      fail:
+        what: { es: "`UnidadAcademica` todavía no tiene un constructor con tres `String`." }
+        why: { es: "Si la superclase no tiene ese constructor, las subclases no tienen a quién pasarle los datos comunes." }
+        hint: { es: "`UnidadAcademica(String nombre, String ciudad, String provincia) { this.nombre = nombre; … }`." }
+
+  - id: faculty-delegates
+    type: constructor
+    params:
+      class: FacultadRegional
+      parameterTypes: [String, String, String]
+      delegatesTo: super
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "El constructor de `FacultadRegional` llamó primero al de `UnidadAcademica`." }
+        why: { es: "`super(...)` tiene que ser la primera instrucción: la parte heredada se construye antes que la propia." }
+      fail:
+        what: { es: "`FacultadRegional` no tiene un constructor con tres `String` que delegue en `super(...)`." }
+        why: { es: "Los atributos heredados los inicializa la superclase; la subclase le pasa los datos con `super(nombre, ciudad, provincia)`." }
+        hint: { es: "`FacultadRegional(String nombre, String ciudad, String provincia) { super(nombre, ciudad, provincia); }`." }
+
+  - id: regional-delegates
+    type: constructor
+    params:
+      class: RegionalAcademica
+      parameterTypes: [String, String, String, FacultadRegional]
+      delegatesTo: super
+    piece: ra-ejemplo
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`RegionalAcademica` construyó primero la planta baja y después guardó su facultad." }
+        why: { es: "Después de `super(...)`, el constructor sigue con lo propio de la subclase." }
+      fail:
+        what: { es: "`RegionalAcademica` no tiene un constructor con los tres datos y la facultad que delegue en `super(...)`." }
+        why: { es: "La RA le pasa a la superclase lo común y se queda con `facultadDeQueDepende`, que es solo suyo." }
+        hint: { es: "Cuatro parámetros: primero `super(nombre, ciudad, provincia);`, después `this.facultadDeQueDepende = facultad;`." }
+
+  - id: faculty-complete
+    type: object_field
+    params:
+      where: { type: FacultadRegional }
+      expect:
+        - { field: nombre, equals: "FR Resistencia" }
+        - { field: ciudad, equals: "Resistencia" }
+        - { field: provincia, equals: "Chaco" }
+    piece: fr-resistencia
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "La FR Resistencia nació con sus tres datos." }
+        why: { es: "Los guardó el constructor de `UnidadAcademica`, aunque el objeto sea una `FacultadRegional`." }
+      fail:
+        what: { es: "A la FR Resistencia le falta tener bien cargado: {missing}." }
+        why: { es: "Si `super(...)` no recibe los parámetros correctos, los atributos heredados quedan vacíos." }
+        hint: { es: "¿Le pasás a `super(...)` los tres parámetros, en orden?" }
+
+  - id: regional-complete
+    type: object_field
+    params:
+      where: { type: RegionalAcademica }
+      expect:
+        - { field: nombre, equals: "Regional Académica de ejemplo" }
+        - { field: facultadDeQueDepende, notNull: true }
+    piece: ra-ejemplo
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "La Regional Académica nació con su nombre y con la facultad de la que depende." }
+        why: { es: "Primero la superclase guardó lo común; después la subclase guardó lo suyo." }
+      fail:
+        what: { es: "A la Regional Académica le falta tener bien cargado: {missing}." }
+        why: { es: "Lo común va por `super(...)`; `facultadDeQueDepende` se asigna después, en el propio constructor." }
+        hint: { es: "Después de `super(...)`, asigná `this.facultadDeQueDepende = facultad;`." }
+
+hints:
+  - es: "Un objeto de una subclase se construye en dos partes: primero la de la superclase, después la propia."
+  - es: "Cuando la superclase tiene un constructor con parámetros, la subclase está obligada a llamarlo con `super(...)` en la primera línea."
+  - es: "Escribí el constructor en `UnidadAcademica`, y en cada subclase uno que reciba los datos y haga `super(nombre, ciudad, provincia);`."

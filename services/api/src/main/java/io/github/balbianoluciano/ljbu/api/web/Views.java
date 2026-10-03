@@ -37,9 +37,13 @@ public final class Views {
 
   public record Rule(String id, String statement, String source, String url) {}
 
-  public record RealReference(List<RegionalFaculty> regionalFaculties) {}
+  public record RealReference(
+      List<RegionalFaculty> regionalFaculties, List<GoverningBody> governingBodies) {}
 
   public record RegionalFaculty(String id, String name, String city, String province) {}
+
+  public record GoverningBody(
+      String id, String name, String kind, String composition, Integer mandateInYears) {}
 
   public record Hint(int level, String text) {}
 

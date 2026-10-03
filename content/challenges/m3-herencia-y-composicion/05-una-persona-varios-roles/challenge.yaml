@@ -1,0 +1,143 @@
+id: m3-05
+module: m3
+order: 5
+title:
+  es: "Integrador: una persona, varios roles"
+concept: inheritance-plus-composition
+rules: [R-ROL-01, R-ROL-02, R-CLA-02]
+brief:
+  es: |
+    Juana es estudiante y, a la vez, Ayudante de 2ª (un cargo docente reservado para
+    alumnos, art. 36). Pero vota en un solo claustro (art. 114).
+
+    1. `Estudiante` y `Auxiliar` **extienden** `Rol`, que guarda el claustro
+       ("estudiantes" o "docentes").
+    2. `Persona` **tiene** una `List<Rol> roles`; un solo `agregarRol(Rol)` reemplaza a
+       los dos de ahora.
+    3. `elegirClaustro(String)` guarda el claustro elegido solo si la persona tiene un rol
+       de ese claustro; si no, lanza `IllegalArgumentException`.
+criteria:
+  - checks: [student-extends, assistant-extends]
+    es: "`Estudiante` y `Auxiliar` son roles"
+  - checks: [roles-list]
+    es: "Una persona tiene una lista de roles"
+  - checks: [electoral-chosen]
+    es: "Juana eligió votar como estudiante"
+  - checks: [wrong-rejected]
+    es: "Elegir un claustro que no le corresponde es rechazado"
+editable: [Estudiante.java, Auxiliar.java, Persona.java]
+
+scene:
+  bindings:
+    - type: Persona
+      archetype: person
+      label: nombre
+      slots: { roles: roles }
+    - type: Rol
+      archetype: generic-block
+      label: claustro
+    - type: Estudiante
+      archetype: inheritance-floors
+      label: claustro
+    - type: Auxiliar
+      archetype: inheritance-floors
+      label: categoria
+  pieces:
+    - id: juana
+      type: Persona
+      label: { es: "Juana Soto" }
+    - id: rol-estudiante
+      type: Estudiante
+      label: { es: "Estudiante" }
+    - id: rol-auxiliar
+      type: Auxiliar
+      label: { es: "Ayudante de 2ª" }
+  showVariables: true
+
+checks:
+  - id: student-extends
+    type: extends
+    params:
+      class: Estudiante
+      superclass: Rol
+    piece: rol-estudiante
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Ser estudiante es un rol." }
+        why: { es: "Entre roles sí hay herencia: todo rol tiene un claustro, y cada tipo de rol agrega lo suyo." }
+      fail:
+        what: { es: "`Estudiante` todavía no extiende `Rol`." }
+        why: { es: "Un `Estudiante` **es** un `Rol`: pertenece de forma permanente a la categoría, así que acá la herencia es correcta." }
+        hint: { es: "`public class Estudiante extends Rol` y, en el constructor, `super(\"estudiantes\")`." }
+
+  - id: assistant-extends
+    type: extends
+    params:
+      class: Auxiliar
+      superclass: Rol
+    piece: rol-auxiliar
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Ser auxiliar docente también es un rol, del claustro docente." }
+        why: { es: "Dos subclases de `Rol` con claustros distintos: la misma persona puede tener las dos." }
+      fail:
+        what: { es: "`Auxiliar` todavía no extiende `Rol`." }
+        why: { es: "Un `Auxiliar` **es** un `Rol` del claustro docente, con su categoría (JTP, Ayudante de 1ª o de 2ª)." }
+        hint: { es: "`public class Auxiliar extends Rol` y, en el constructor, `super(\"docentes\")` antes de guardar la categoría." }
+
+  - id: roles-list
+    type: field
+    params:
+      class: Persona
+      name: roles
+      type: List<Rol>
+    piece: juana
+    slot: roles
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Juana **tiene** roles: una lista que puede crecer." }
+        why: { es: "La persona no hereda de ningún rol: los tiene. Así puede ser estudiante y auxiliar a la vez, y dejar de serlo." }
+      fail:
+        what: { es: "`Persona` todavía no tiene un atributo `roles` de tipo `List<Rol>`." }
+        why: { es: "Si `Persona` heredara de `Estudiante`, no podría ser también `Auxiliar`: por eso los roles van por composición." }
+        hint: { es: "`List<Rol> roles = new ArrayList<>();` y `agregarRol` hace `roles.add(rol)`." }
+
+  - id: electoral-chosen
+    type: object_field
+    params:
+      where: { type: Persona }
+      expect: { field: claustroElectoral, equals: "estudiantes" }
+    piece: juana
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Juana vota en el claustro de estudiantes." }
+        why: { es: "`elegirClaustro` recorrió sus roles, encontró uno de ese claustro y guardó la elección." }
+      fail:
+        what: { es: "Juana todavía no tiene su claustro electoral." }
+        why: { es: "Para guardar la elección, `elegirClaustro` tiene que verificar que algún rol de la lista sea de ese claustro." }
+        hint: { es: "Recorré `roles` con un `for`; si `rol.claustro.equals(claustro)`, guardá `claustroElectoral` y terminá." }
+
+  - id: wrong-rejected
+    type: throws
+    params:
+      type: IllegalArgumentException
+      caught: true
+    piece: juana
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Juana no puede votar como graduada: no tiene ese rol." }
+        why: { es: "La regla de un solo claustro, y solo uno propio, vive dentro de `Persona`: nadie puede saltearla." }
+      fail:
+        what: { es: "`elegirClaustro(\"graduados\")` fue aceptado, pero Juana no es graduada." }
+        why: { es: "Si ningún rol coincide con el claustro pedido, el método tiene que lanzar `IllegalArgumentException`." }
+        hint: { es: "Después del `for`, si no encontraste el claustro: `throw new IllegalArgumentException(…)`." }
+
+hints:
+  - es: "Herencia entre roles (un estudiante ES un rol); composición entre persona y roles (una persona TIENE roles)."
+  - es: "Cada subclase de `Rol` llama a `super(claustro)` con su claustro fijo; `Persona` guarda `List<Rol> roles`."
+  - es: "`elegirClaustro`: `for (Rol rol : roles) { if (rol.claustro.equals(claustro)) { claustroElectoral = claustro; return; } }` y después el `throw`."

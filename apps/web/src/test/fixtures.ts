@@ -87,6 +87,7 @@ export const aliasing: ChallengeView = {
         province: 'Chaco',
       },
     ],
+    governingBodies: [],
   },
 };
 

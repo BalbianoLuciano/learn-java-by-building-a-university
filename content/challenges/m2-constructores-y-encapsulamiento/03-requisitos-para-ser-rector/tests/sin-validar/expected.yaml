@@ -1,0 +1,5 @@
+outcome: incomplete
+log:
+  - check: invalid-rejected
+    state: incomplete
+    title: "El cargo aceptó a Julián Páez, que tiene 29 años."

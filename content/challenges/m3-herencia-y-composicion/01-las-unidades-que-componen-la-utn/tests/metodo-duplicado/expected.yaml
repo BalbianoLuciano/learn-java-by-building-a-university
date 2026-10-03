@@ -1,0 +1,5 @@
+outcome: incomplete
+log:
+  - check: describe-inherited-by-faculty
+    state: incomplete
+    title: "`FacultadRegional` sigue teniendo su propio `describir()`."

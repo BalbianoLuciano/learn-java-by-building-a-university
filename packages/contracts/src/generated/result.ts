@@ -92,6 +92,10 @@ export interface Piece {
    * @minItems 1
    */
   floors?: string[];
+  /**
+   * The learner interfaces the class of the object implements, directly or through its superclasses: one badge each.
+   */
+  interfaces?: string[];
 }
 /**
  * Where the code created it.

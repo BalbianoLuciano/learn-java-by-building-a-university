@@ -335,8 +335,11 @@ frenado una excepción o un límite: lo construido hasta ahí también recibe su
   ([`DESIGN.md`](../DESIGN.md) §B).
 - Tipos sin binding se dibujan con el arquetipo genérico `generic-block`.
 - Para `inheritance-floors` la api agrega `floors`: las clases del objeto desde la cima de
-  la jerarquía hasta la propia, un piso cada una.
-- La **silueta real** se arma con datos de `content/domain/`.
+  la jerarquía hasta la propia, un piso cada una. Para toda pieza agrega `interfaces`: las
+  interfaces del alumno que implementa su clase (o una superclase), una insignia cada una.
+- La **silueta real** se arma con datos de `content/domain/`: `realReference` del desafío
+  nombra FR (`regional-faculties.json`) y órganos (`governing-bodies.json`); la api los
+  resuelve y la vista del desafío los muestra con ciudad, provincia, composición y mandato.
 - En la web (`apps/web/src/scene/`): `layout.ts` ubica las piezas (Rectorado al centro,
   anillos, ocupantes de slots junto a su dueño, variables al frente); `replay.ts` deriva
   de la línea de tiempo qué existe en cada paso (objetos creados, a qué apunta cada

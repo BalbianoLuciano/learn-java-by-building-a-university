@@ -1,0 +1,153 @@
+id: m4-02
+module: m4
+order: 2
+title:
+  es: "Colegiados y unipersonales"
+concept: polymorphism-override
+rules: [R-GOB-01]
+brief:
+  es: |
+    Los órganos del art. 45 son de dos clases: **colegiados** (Consejo Superior, Consejos
+    Directivos… con varios integrantes) y **unipersonales** (Rector, Decanos… una sola
+    persona a cargo).
+
+    `OrganoColegiado` y `OrganoUnipersonal` ya extienden `OrganoDeGobierno`, pero las dos
+    responden con el texto genérico de la superclase. Sobrescribí `describirComposicion()`
+    en cada una: el colegiado dice cuántos integrantes tiene; el unipersonal, quién lo
+    ocupa.
+criteria:
+  - checks: [collegiate-overrides, unipersonal-overrides]
+    es: "Cada subclase sobrescribe `describirComposicion()` con `@Override`"
+  - checks: [collegiate-dispatched, unipersonal-dispatched]
+    es: "El mismo mensaje ejecuta la versión de cada clase"
+  - checks: [collegiate-printed, unipersonal-printed]
+    es: "El programa describe el Consejo Directivo y el Decanato"
+editable: [OrganoColegiado.java, OrganoUnipersonal.java]
+
+scene:
+  bindings:
+    - type: OrganoDeGobierno
+      archetype: generic-block
+      label: nombre
+    - type: OrganoColegiado
+      archetype: inheritance-floors
+      label: nombre
+    - type: OrganoUnipersonal
+      archetype: inheritance-floors
+      label: nombre
+  pieces:
+    - id: consejo-directivo
+      type: OrganoColegiado
+      label: { es: "Consejo Directivo" }
+    - id: decanato
+      type: OrganoUnipersonal
+      label: { es: "Decanato" }
+  showVariables: true
+
+checks:
+  - id: collegiate-overrides
+    type: method
+    params:
+      class: OrganoColegiado
+      name: describirComposicion
+      parameterTypes: []
+      returnType: String
+      override: true
+    piece: consejo-directivo
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`OrganoColegiado` tiene su propia versión de `describirComposicion()`." }
+        why: { es: "Sobrescribir es definir en la subclase un método con la misma firma que el de la superclase." }
+      fail:
+        what: { es: "`OrganoColegiado` todavía no sobrescribe `describirComposicion()`." }
+        why: { es: "Para que un colegiado responda distinto, hay que redefinir el método con la misma firma y marcarlo con `@Override`." }
+        hint: { es: "`@Override String describirComposicion() { return \"Órgano colegiado de \" + integrantes.size() + \" integrantes\"; }`." }
+
+  - id: unipersonal-overrides
+    type: method
+    params:
+      class: OrganoUnipersonal
+      name: describirComposicion
+      parameterTypes: []
+      returnType: String
+      override: true
+    piece: decanato
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`OrganoUnipersonal` tiene su propia versión de `describirComposicion()`." }
+        why: { es: "Dos subclases pueden sobrescribir el mismo método de maneras distintas: eso es polimorfismo." }
+      fail:
+        what: { es: "`OrganoUnipersonal` todavía no sobrescribe `describirComposicion()`." }
+        why: { es: "Si no se redefine, el objeto responde con el texto genérico heredado." }
+        hint: { es: "`@Override String describirComposicion() { return \"Órgano unipersonal a cargo de \" + titular; }`." }
+
+  - id: collegiate-dispatched
+    type: call_dispatch
+    params:
+      method: describirComposicion
+      receiverType: OrganoColegiado
+      implementation: OrganoColegiado
+    piece: consejo-directivo
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Al pedirle la composición al Consejo Directivo, corrió la versión de `OrganoColegiado`." }
+        why: { es: "Java elige el método según la clase del **objeto**, aunque la variable sea de tipo `OrganoDeGobierno`." }
+      fail:
+        what: { es: "Al Consejo Directivo le corrió el `describirComposicion()` de la superclase, no el suyo." }
+        why: { es: "Un método que no coincide exactamente en nombre y parámetros no sobrescribe: es un método nuevo que nadie llama." }
+        hint: { es: "Poné `@Override` encima del método: si el nombre o los parámetros no coinciden, el compilador te avisa." }
+
+  - id: unipersonal-dispatched
+    type: call_dispatch
+    params:
+      method: describirComposicion
+      receiverType: OrganoUnipersonal
+      implementation: OrganoUnipersonal
+    piece: decanato
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Al pedirle la composición al Decanato, corrió la versión de `OrganoUnipersonal`." }
+        why: { es: "La misma llamada, `organo.describirComposicion()`, ejecutó código distinto según el objeto." }
+      fail:
+        what: { es: "Al Decanato le corrió el `describirComposicion()` de la superclase, no el suyo." }
+        why: { es: "Un método que no coincide exactamente en nombre y parámetros no sobrescribe: es un método nuevo que nadie llama." }
+        hint: { es: "Poné `@Override` encima del método: si el nombre o los parámetros no coinciden, el compilador te avisa." }
+
+  - id: collegiate-printed
+    type: stdout_contains
+    params:
+      text: "colegiado de 5 integrantes"
+    piece: consejo-directivo
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El Consejo Directivo del ejemplo se describió con sus 5 integrantes." }
+        why: { es: "La versión del colegiado usa la lista `integrantes`, que la superclase no conoce." }
+      fail:
+        what: { es: "El programa no imprimió \"colegiado de 5 integrantes\"." }
+        why: { es: "La versión de `OrganoColegiado` tiene que armar el texto con `integrantes.size()`." }
+        hint: { es: "El texto esperado es `\"Órgano colegiado de \" + integrantes.size() + \" integrantes\"`." }
+
+  - id: unipersonal-printed
+    type: stdout_contains
+    params:
+      text: "a cargo de Ana Lema"
+    piece: decanato
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El Decanato se describió con su titular." }
+        why: { es: "La versión del unipersonal usa `titular`, que solo existe en esa subclase." }
+      fail:
+        what: { es: "El programa no imprimió \"a cargo de Ana Lema\"." }
+        why: { es: "La versión de `OrganoUnipersonal` tiene que armar el texto con `titular`." }
+        hint: { es: "El texto esperado es `\"Órgano unipersonal a cargo de \" + titular`." }
+
+hints:
+  - es: "Sobrescribir (override) es volver a definir en la subclase un método heredado, con la misma firma, para que haga otra cosa."
+  - es: "`@Override` no cambia el comportamiento: le pide al compilador que verifique que de verdad estás sobrescribiendo."
+  - es: "En cada subclase, escribí `@Override` y `String describirComposicion()` devolviendo el texto con sus propios atributos."

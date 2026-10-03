@@ -1,0 +1,157 @@
+id: m3-04
+module: m3
+order: 4
+title:
+  es: "La trampa del Decano"
+concept: composition-over-inheritance
+rules: [R-ROL-01, R-FR-02]
+brief:
+  es: |
+    En este código, `CargoDeDecano extends Profesor`: el cargo *es* un profesor. Parece
+    cómodo, hasta que el mandato termina. Ana Lema fue decana desde 2018; en 2022 asume
+    Luis Ferro, y Ana sigue siendo profesora de la facultad.
+
+    Refactorizá: `CargoDeDecano` deja de heredar y pasa a **tener** un `titular` de tipo
+    `Profesor` y un año `desde`. En `main`, nombrá a Ana en 2018, reemplazala por Luis en
+    2022 e imprimí que Ana "sigue siendo profesora".
+criteria:
+  - checks: [holder-field]
+    es: "`CargoDeDecano` tiene un `titular` de tipo `Profesor`"
+  - checks: [two-professors]
+    es: "Hay exactamente dos profesores: Ana y Luis"
+  - checks: [first-dean, current-dean]
+    es: "Ana fue decana desde 2018 y Luis lo es desde 2022"
+  - checks: [still-professor]
+    es: "Ana sigue siendo profesora"
+editable: [CargoDeDecano.java, FacultadRegional.java, Main.java]
+
+scene:
+  bindings:
+    - type: Profesor
+      archetype: person
+      label: nombre
+    - type: CargoDeDecano
+      archetype: generic-block
+      slots: { titular: holder }
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+      slots: { decano: dean }
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+    - id: ana
+      type: Profesor
+      where: { field: nombre, equals: "Ana Lema" }
+      label: { es: "Ana Lema" }
+    - id: luis
+      type: Profesor
+      where: { field: nombre, equals: "Luis Ferro" }
+      label: { es: "Luis Ferro" }
+    - id: cargo-2018
+      type: CargoDeDecano
+      where: { field: desde, equals: 2018 }
+      label: { es: "Decanato 2018" }
+    - id: cargo-2022
+      type: CargoDeDecano
+      where: { field: desde, equals: 2022 }
+      label: { es: "Decanato 2022" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: holder-field
+    type: field
+    params:
+      class: CargoDeDecano
+      name: titular
+      type: Profesor
+    piece: cargo-2022
+    slot: holder
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "El cargo de decano **tiene** un titular." }
+        why: { es: "Un cargo dura un período y lo ocupa una persona: es composición. La persona existe antes y después del cargo." }
+      fail:
+        what: { es: "`CargoDeDecano` todavía no tiene un atributo `titular` de tipo `Profesor`." }
+        why: { es: "Si el cargo hereda de `Profesor`, al terminar el mandato no hay forma de \"desheredar\" al objeto: Java no cambia la clase de un objeto." }
+        hint: { es: "Sacá `extends Profesor` y agregá `Profesor titular;` junto con `int desde;`." }
+
+  - id: two-professors
+    type: object_count
+    params:
+      type: Profesor
+      equals: 2
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "Hay dos profesores: Ana y Luis, y ningún cargo se cuenta como persona." }
+        why: { es: "Al no heredar, un `CargoDeDecano` ya no **es** un `Profesor`; tiene uno." }
+      fail:
+        what: { es: "Tendría que haber 2 profesores y hay {count}." }
+        why: { es: "Un objeto cuenta como `Profesor` si su clase es `Profesor` o hereda de ella." }
+        hint: { es: "¿Cuántos `new Profesor(…)` hay en `main`, y hay alguna clase que todavía extienda `Profesor`?" }
+    traps:
+      - when:
+          type: extends
+          params: { class: CargoDeDecano, superclass: Profesor }
+        what: { es: "Hay {count} \"profesores\" porque cada `CargoDeDecano` hereda de `Profesor`." }
+        why: { es: "Con herencia, cada vez que se nombra un decano aparece un profesor nuevo que no existe: el cargo no es una persona." }
+        hint: { es: "Sacá `extends Profesor` de `CargoDeDecano` y guardá a la persona en un atributo." }
+
+  - id: first-dean
+    type: shared_reference
+    params:
+      a: { local: ana, in: Main.main }
+      b: { object: { type: CargoDeDecano, field: desde, equals: 2018 }, field: titular }
+    piece: cargo-2018
+    slot: holder
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El decanato de 2018 tiene como titular a Ana: la misma Ana que es profesora." }
+        why: { es: "El cargo guarda una referencia a la persona, no una copia ni un objeto nuevo." }
+      fail:
+        what: { es: "El decanato de 2018 no apunta a la profesora Ana Lema." }
+        why: { es: "El titular tiene que ser el mismo objeto `Profesor` que ya existe: se pasa la variable `ana`, no sus datos." }
+        hint: { es: "`new CargoDeDecano(ana, 2018)`: el constructor recibe la persona." }
+
+  - id: current-dean
+    type: shared_reference
+    params:
+      a: { local: luis, in: Main.main }
+      b: { object: { type: CargoDeDecano, field: desde, equals: 2022 }, field: titular }
+    piece: cargo-2022
+    slot: holder
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Desde 2022 el decano es Luis: cambió el cargo, no las personas." }
+        why: { es: "Reemplazar `decano` por un cargo nuevo deja a Ana intacta como profesora." }
+      fail:
+        what: { es: "No hay un decanato desde 2022 cuyo titular sea Luis Ferro." }
+        why: { es: "Nombrar un nuevo decano es crear un nuevo `CargoDeDecano` con esa persona y asignarlo a la facultad." }
+        hint: { es: "`resistencia.decano = new CargoDeDecano(luis, 2022);`." }
+
+  - id: still-professor
+    type: stdout_contains
+    params:
+      text: "sigue siendo profesora"
+    piece: ana
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Ana Lema sigue siendo profesora después de dejar el decanato." }
+        why: { es: "El objeto `Profesor` de Ana nunca cambió: solo dejó de estar referenciado por el cargo actual." }
+      fail:
+        what: { es: "El programa no imprimió que Ana sigue siendo profesora." }
+        why: { es: "Con composición, `ana` sigue siendo el mismo objeto `Profesor` de siempre, y se puede mostrar." }
+        hint: { es: "`System.out.println(ana.nombre + \" sigue siendo profesora\");` después de nombrar a Luis." }
+
+hints:
+  - es: "Preguntate: ¿un cargo de decano ES un profesor, o lo OCUPA un profesor por un tiempo? \"Ocupa\" es composición."
+  - es: "`CargoDeDecano` deja de extender `Profesor` y guarda `Profesor titular` e `int desde`; su constructor recibe las dos cosas."
+  - es: "En `main`: `resistencia.decano = new CargoDeDecano(ana, 2018);` y después `resistencia.decano = new CargoDeDecano(luis, 2022);`."

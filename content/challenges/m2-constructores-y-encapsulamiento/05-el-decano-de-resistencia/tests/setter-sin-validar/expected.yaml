@@ -1,0 +1,4 @@
+outcome: failed
+log:
+  - check: invalid-rejected
+    state: incomplete

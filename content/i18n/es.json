@@ -52,7 +52,10 @@
     "runShortcut": "Ctrl/Cmd + Enter",
     "resetCode": "Volver al código base",
     "lastResult": "Ver el último resultado",
-    "position": "{{order}} / {{total}}"
+    "position": "{{order}} / {{total}}",
+    "realReference": "En la UTN real",
+    "realFaculty": "{{name}}: {{city}}, {{province}}",
+    "mandate": "(mandato de {{years}} años)"
   },
   "hints": {
     "ask": "Pedir pista",

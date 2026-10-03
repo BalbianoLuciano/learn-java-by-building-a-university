@@ -1,0 +1,134 @@
+id: m1-04
+module: m1
+order: 4
+title:
+  es: "Un solo Rectorado"
+concept: shared-references
+rules: [R-UNI-01, R-UNI-02]
+brief:
+  es: |
+    La UTN tiene un único Rectorado, en Sarmiento 440, Ciudad Autónoma de Buenos Aires.
+    Creá **un** objeto `Rectorado` con esa `direccion` y hacé que las tres facultades
+    apunten a él en su atributo `rectorado`.
+
+    Después imprimí "Mismo Rectorado" solo si `resistencia.rectorado == cordoba.rectorado`.
+criteria:
+  - checks: [one-rectorate, rectorate-address]
+    es: "Existe un único Rectorado, con su dirección"
+  - checks: [shared-rectorate]
+    es: "Las tres facultades apuntan al mismo Rectorado"
+  - checks: [same-object-printed]
+    es: "El programa comprueba con `==` que es el mismo objeto"
+editable: [Main.java]
+
+scene:
+  bindings:
+    - type: Rectorado
+      archetype: rectorate
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+      slots: { rectorado: rectorate }
+  pieces:
+    - id: rectorado
+      type: Rectorado
+      label: { es: "Rectorado" }
+    - id: fr-resistencia
+      type: FacultadRegional
+      where: { field: nombre, equals: "Resistencia" }
+      label: { es: "FR Resistencia" }
+    - id: fr-cordoba
+      type: FacultadRegional
+      where: { field: nombre, equals: "Córdoba" }
+      label: { es: "FR Córdoba" }
+    - id: fr-mendoza
+      type: FacultadRegional
+      where: { field: nombre, equals: "Mendoza" }
+      label: { es: "FR Mendoza" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia, cordoba, mendoza]
+
+checks:
+  - id: one-rectorate
+    type: object_count
+    params:
+      type: Rectorado
+      equals: 1
+    piece: rectorado
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "Hay un solo Rectorado, como en la UTN real." }
+        why: { es: "Un único `new Rectorado()` crea un único objeto; varias variables pueden apuntar a él." }
+      fail:
+        what: { es: "La UTN tiene un Rectorado y tu programa creó {count}." }
+        why: { es: "Cada `new` construye un objeto nuevo; para compartir uno se asigna su referencia." }
+        hint: { es: "¿Cuántas veces aparece `new Rectorado()` en tu `main`?" }
+    traps:
+      - when:
+          type: object_count
+          params: { type: Rectorado, atLeast: 2 }
+        what: { es: "Creaste {count} rectorados: cada facultad tiene el suyo." }
+        why: { es: "Tres `new Rectorado()` son tres edificios distintos, aunque tengan la misma dirección." }
+        hint: { es: "Creá el Rectorado una vez, en una variable, y asigná esa variable a las tres facultades." }
+
+  - id: rectorate-address
+    type: object_field
+    params:
+      where: { type: Rectorado }
+      expect: { field: direccion, equals: "Sarmiento 440" }
+    piece: rectorado
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El Rectorado tiene su dirección: Sarmiento 440." }
+        why: { es: "Un objeto guarda su estado en sus atributos, igual que una facultad." }
+      fail:
+        what: { es: "Al Rectorado le falta tener bien cargado: {missing}." }
+        why: { es: "Un atributo `String` vale `null` hasta que le asignás un texto." }
+        hint: { es: "Asigná `\"Sarmiento 440\"` al atributo `direccion` a través de la variable del Rectorado." }
+
+  - id: shared-rectorate
+    type: shared_reference
+    params:
+      all: { type: FacultadRegional, field: rectorado }
+    piece: rectorado
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Las tres facultades apuntan al mismo Rectorado." }
+        why: { es: "Asignar una referencia a tres atributos no copia el objeto: son tres cables al mismo edificio." }
+      fail:
+        what: { es: "No todas las facultades apuntan al mismo Rectorado." }
+        why: { es: "Un atributo de tipo objeto guarda una referencia; si es `null` o apunta a otro objeto, el cable va a otro lado." }
+        hint: { es: "Las tres líneas `….rectorado = …` tienen que tener la misma variable a la derecha del `=`." }
+    traps:
+      - when:
+          type: object_field
+          params:
+            where: { type: FacultadRegional }
+            all: true
+            expect: { field: rectorado, isNull: true }
+        what: { es: "Ninguna facultad tiene cargado su Rectorado todavía." }
+        why: { es: "El atributo `rectorado` nace en `null`: hay que asignarle la referencia en cada facultad." }
+        hint: { es: "Para cada facultad, escribí `variable.rectorado = ` y la variable del Rectorado." }
+
+  - id: same-object-printed
+    type: stdout_contains
+    params:
+      text: "Mismo Rectorado"
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El programa confirmó con `==` que es el mismo Rectorado." }
+        why: { es: "Entre objetos, `==` compara referencias: es `true` solo si las dos apuntan al mismo objeto." }
+      fail:
+        what: { es: "El programa no imprimió \"Mismo Rectorado\"." }
+        why: { es: "`==` entre dos referencias es `true` cuando apuntan al mismo objeto, no cuando los datos coinciden." }
+        hint: { es: "Compará `resistencia.rectorado == cordoba.rectorado` dentro de un `if` y, si es `true`, imprimí el texto." }
+
+hints:
+  - es: "Un atributo puede ser de tipo objeto: `rectorado` guarda una referencia a un `Rectorado`, no una copia."
+  - es: "Creá el Rectorado una sola vez en una variable y asigná esa variable al atributo `rectorado` de cada facultad."
+  - es: "Con `if (resistencia.rectorado == cordoba.rectorado)` podés imprimir \"Mismo Rectorado\": las dos referencias apuntan al mismo objeto."
