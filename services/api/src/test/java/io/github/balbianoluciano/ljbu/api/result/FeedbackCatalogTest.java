@@ -68,6 +68,13 @@ class FeedbackCatalogTest {
                     "public class Concreto extends Organo { Concreto() { super(\"x\"); } }")),
             "`Concreto` no implementa `describir`."),
         arguments(
+            "override of nothing",
+            List.of(
+                mainWithBody(""),
+                ORGANO,
+                concreto("@Override String describirr() { return \"x\"; }")),
+            "Este método lleva `@Override`, pero no sobrescribe ningún método."),
+        arguments(
             "abstract class instantiated",
             List.of(mainWithBody("new Organo(\"x\");"), ORGANO),
             "No se puede crear un objeto de `Organo` con `new`."),
