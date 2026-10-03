@@ -1,0 +1,129 @@
+id: m3-03
+module: m3
+order: 3
+title:
+  es: "La FR tiene departamentos"
+concept: composition-with-collections
+rules: [R-FR-03]
+brief:
+  es: |
+    Una FR se organiza en Departamentos de Enseñanza (art. 92): uno de materias básicas y
+    uno por cada carrera, y la cantidad varía según la facultad. `FacultadRegional` hoy
+    tiene tres atributos fijos y se queda sin lugar en el cuarto.
+
+    Reemplazalos por una lista: `List<Departamento> departamentos`, creada vacía con
+    `new ArrayList<>()`. `agregarDepartamento` agrega a la lista y
+    `cantidadDeDepartamentos` devuelve su tamaño. El `main` carga tres departamentos de
+    la FR Buenos Aires.
+criteria:
+  - checks: [list-field]
+    es: "`departamentos` es una `List<Departamento>`"
+  - checks: [add-method, three-departments]
+    es: "Los tres departamentos se agregan a la lista"
+  - checks: [count-printed]
+    es: "La facultad informa cuántos departamentos tiene"
+editable: [FacultadRegional.java]
+
+scene:
+  bindings:
+    - type: UnidadAcademica
+      archetype: generic-block
+      label: nombre
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+      slots: { departamentos: departments }
+    - type: Departamento
+      archetype: department
+      label: nombre
+  pieces:
+    - id: fr-buenos-aires
+      type: FacultadRegional
+      label: { es: "FR Buenos Aires" }
+    - id: dep-basicas
+      type: Departamento
+      where: { field: nombre, equals: "Ciencias Básicas" }
+      label: { es: "Ciencias Básicas" }
+    - id: dep-sistemas
+      type: Departamento
+      where: { field: nombre, equals: "Sistemas" }
+      label: { es: "Sistemas" }
+    - id: dep-quimica
+      type: Departamento
+      where: { field: nombre, equals: "Química" }
+      label: { es: "Química" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [buenos-aires]
+
+checks:
+  - id: list-field
+    type: field
+    params:
+      class: FacultadRegional
+      name: departamentos
+      type: List<Departamento>
+    piece: fr-buenos-aires
+    slot: departments
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "La facultad guarda sus departamentos en una lista: entran los que hagan falta." }
+        why: { es: "Una `List` crece a medida que se agregan elementos; tres atributos fijos no." }
+      fail:
+        what: { es: "`FacultadRegional` todavía no tiene un atributo `departamentos` de tipo `List<Departamento>`." }
+        why: { es: "Cuando una clase **tiene varios** de algo y no se sabe cuántos, el atributo es una colección." }
+        hint: { es: "`List<Departamento> departamentos = new ArrayList<>();` e importá `java.util.List` y `java.util.ArrayList`." }
+
+  - id: add-method
+    type: method
+    params:
+      class: FacultadRegional
+      name: agregarDepartamento
+      parameterTypes: [Departamento]
+    piece: fr-buenos-aires
+    slot: departments
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`agregarDepartamento` suma un departamento a la facultad." }
+        why: { es: "La lista es privada a la clase; el método es la puerta por la que entran los departamentos." }
+      fail:
+        what: { es: "Falta el método `agregarDepartamento(Departamento)`." }
+        why: { es: "Es el método que `main` usa para cargar cada departamento en la facultad." }
+        hint: { es: "`void agregarDepartamento(Departamento departamento) { departamentos.add(departamento); }`." }
+
+  - id: three-departments
+    type: object_count
+    params:
+      type: Departamento
+      equals: 3
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "Hay tres departamentos, los tres de la FR Buenos Aires." }
+        why: { es: "Los objetos `Departamento` existen aparte; la lista guarda referencias a ellos." }
+      fail:
+        what: { es: "Tendría que haber 3 departamentos y hay {count}." }
+        why: { es: "Los crea `main`; la facultad solo guarda referencias en su lista." }
+        hint: { es: "Revisá que `agregarDepartamento` no cree departamentos nuevos ni descarte los que recibe." }
+
+  - id: count-printed
+    type: stdout_contains
+    params:
+      text: "tiene 3 departamentos"
+    piece: fr-buenos-aires
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La FR Buenos Aires tiene 3 departamentos." }
+        why: { es: "`departamentos.size()` cuenta lo que hay en la lista, sin importar cuántos sean." }
+      fail:
+        what: { es: "El programa no imprimió que la facultad tiene 3 departamentos." }
+        why: { es: "`cantidadDeDepartamentos()` tiene que devolver el tamaño de la lista." }
+        hint: { es: "`return departamentos.size();`." }
+
+hints:
+  - es: "Composición con colecciones: cuando un objeto tiene varios de algo, el atributo es una lista, no una serie de atributos numerados."
+  - es: "Declará `List<Departamento> departamentos = new ArrayList<>();` y usá `add` y `size`."
+  - es: "Borrá `departamento1`, `departamento2` y `departamento3`; `agregarDepartamento` hace `departamentos.add(departamento)` y `cantidadDeDepartamentos` devuelve `departamentos.size()`."

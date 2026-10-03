@@ -1,0 +1,6 @@
+id: m3
+order: 3
+title:
+  es: "Herencia y composición"
+goal:
+  es: "Distinguir \"es un\" de \"tiene un\" con la estructura real de la UTN, y ver que la parte de la superclase se construye primero."

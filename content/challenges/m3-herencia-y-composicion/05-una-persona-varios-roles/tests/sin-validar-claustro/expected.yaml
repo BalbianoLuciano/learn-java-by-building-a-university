@@ -1,0 +1,7 @@
+outcome: incomplete
+log:
+  - check: electoral-chosen
+    state: incomplete
+  - check: wrong-rejected
+    state: incomplete
+    title: "`elegirClaustro(\"graduados\")` fue aceptado, pero Juana no es graduada."

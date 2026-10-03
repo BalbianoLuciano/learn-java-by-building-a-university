@@ -1,0 +1,136 @@
+id: m3-01
+module: m3
+order: 1
+title:
+  es: "Las unidades que componen la UTN"
+concept: inheritance
+rules: [R-FR-04]
+brief:
+  es: |
+    Según el art. 5 del Estatuto, componen la UTN el Rectorado, las Facultades Regionales
+    y las Regionales Académicas. Una FR y una RA **son** unidades académicas: las dos tienen
+    nombre, ciudad y provincia, y las dos saben describirse.
+
+    Hoy `FacultadRegional` y `RegionalAcademica` repiten esos atributos y el método
+    `describir()`. Hacé que las dos **extiendan** `UnidadAcademica` y borrá lo que ya
+    heredan. `RegionalAcademica` conserva lo que es solo suyo: `facultadDeQueDepende`.
+criteria:
+  - checks: [faculty-extends, regional-extends]
+    es: "`FacultadRegional` y `RegionalAcademica` extienden `UnidadAcademica`"
+  - checks: [describe-inherited-by-faculty, describe-inherited-by-regional]
+    es: "`describir()` está escrito una sola vez, en `UnidadAcademica`"
+  - checks: [regional-depends-on-faculty]
+    es: "La Regional Académica sigue dependiendo de la FR Resistencia"
+editable: [FacultadRegional.java, RegionalAcademica.java]
+
+scene:
+  bindings:
+    - type: UnidadAcademica
+      archetype: generic-block
+      label: nombre
+    - type: FacultadRegional
+      archetype: inheritance-floors
+      label: nombre
+    - type: RegionalAcademica
+      archetype: inheritance-floors
+      label: nombre
+      slots: { facultadDeQueDepende: faculty }
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+    - id: ra-ejemplo
+      type: RegionalAcademica
+      label: { es: "Regional Académica" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: faculty-extends
+    type: extends
+    params:
+      class: FacultadRegional
+      superclass: UnidadAcademica
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Una Facultad Regional **es** una unidad académica." }
+        why: { es: "`extends` hace que la subclase reciba los atributos y métodos de la superclase sin volver a escribirlos." }
+      fail:
+        what: { es: "`FacultadRegional` todavía no extiende `UnidadAcademica`." }
+        why: { es: "Cuando la relación es \"es un\" (toda FR es una unidad académica), la herencia evita repetir lo común." }
+        hint: { es: "`public class FacultadRegional extends UnidadAcademica { … }`." }
+
+  - id: regional-extends
+    type: extends
+    params:
+      class: RegionalAcademica
+      superclass: UnidadAcademica
+    piece: ra-ejemplo
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Una Regional Académica también **es** una unidad académica." }
+        why: { es: "Dos subclases distintas pueden heredar de la misma superclase: comparten lo común y guardan lo propio." }
+      fail:
+        what: { es: "`RegionalAcademica` todavía no extiende `UnidadAcademica`." }
+        why: { es: "La RA comparte con la FR todo lo de \"unidad académica\"; lo que la distingue queda en su propia clase." }
+        hint: { es: "`public class RegionalAcademica extends UnidadAcademica { … }`." }
+
+  - id: describe-inherited-by-faculty
+    type: call_dispatch
+    params:
+      method: describir
+      receiverType: FacultadRegional
+      implementation: UnidadAcademica
+    piece: fr-resistencia
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`resistencia.describir()` ejecutó el método heredado de `UnidadAcademica`." }
+        why: { es: "La subclase no lo redefine, así que Java busca el método en la superclase." }
+      fail:
+        what: { es: "`FacultadRegional` sigue teniendo su propio `describir()`." }
+        why: { es: "Si la subclase repite el método, hay dos copias que mantener; heredarlo alcanza." }
+        hint: { es: "Borrá `describir()` (y los tres atributos) de `FacultadRegional`: ya vienen de la superclase." }
+
+  - id: describe-inherited-by-regional
+    type: call_dispatch
+    params:
+      method: describir
+      receiverType: RegionalAcademica
+      implementation: UnidadAcademica
+    piece: ra-ejemplo
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "La Regional Académica también se describe con el método heredado." }
+        why: { es: "Un método escrito en la superclase sirve para todas las subclases." }
+      fail:
+        what: { es: "`RegionalAcademica` sigue teniendo su propio `describir()`." }
+        why: { es: "Si la subclase repite el método, hay dos copias que mantener; heredarlo alcanza." }
+        hint: { es: "Borrá `describir()` y los tres atributos repetidos de `RegionalAcademica`." }
+
+  - id: regional-depends-on-faculty
+    type: shared_reference
+    params:
+      a: { local: resistencia, in: Main.main }
+      b: { object: { type: RegionalAcademica }, field: facultadDeQueDepende }
+    piece: ra-ejemplo
+    slot: faculty
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La Regional Académica depende de la FR Resistencia." }
+        why: { es: "`facultadDeQueDepende` es propio de la RA: una FR no depende de nadie (art. 112)." }
+      fail:
+        what: { es: "La Regional Académica perdió su referencia a la FR Resistencia." }
+        why: { es: "Al heredar se borra lo repetido, no lo propio: `facultadDeQueDepende` tiene que quedar en `RegionalAcademica`." }
+        hint: { es: "Conservá el atributo `FacultadRegional facultadDeQueDepende;` en `RegionalAcademica`." }
+
+hints:
+  - es: "Herencia: cuando toda X es una Y, X puede extender Y y recibir sus atributos y métodos."
+  - es: "Después de `extends UnidadAcademica`, los atributos `nombre`, `ciudad`, `provincia` y el método `describir()` ya existen en la subclase: borralos."
+  - es: "`RegionalAcademica` queda solo con `extends UnidadAcademica` y el atributo `facultadDeQueDepende`; `FacultadRegional` queda vacía por ahora."

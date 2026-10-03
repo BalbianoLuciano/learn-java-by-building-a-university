@@ -1,0 +1,5 @@
+outcome: incomplete
+log:
+  - check: list-field
+    state: incomplete
+    title: "`FacultadRegional` todavía no tiene un atributo `departamentos` de tipo `List<Departamento>`."
