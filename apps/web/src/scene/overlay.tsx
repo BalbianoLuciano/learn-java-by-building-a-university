@@ -134,7 +134,10 @@ export function OverlayDriver() {
       if (element.style.transform !== transform) {
         element.style.transform = transform;
       }
-      const zIndex = String(Math.round((1 - projected.z) * 500));
+      // Chips stack by depth; the open bubble always sits above every one of them.
+      const zIndex = String(
+        anchor.content.kind === 'bubble' ? 2000 : Math.round((1 - projected.z) * 500),
+      );
       if (element.style.zIndex !== zIndex) {
         element.style.zIndex = zIndex;
       }
