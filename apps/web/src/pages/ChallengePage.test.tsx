@@ -44,7 +44,10 @@ describe('ChallengePage', () => {
     ).toBeInTheDocument();
     await screen.findByLabelText('Main.java');
     expect(screen.getByText(/Declará una variable/)).toBeInTheDocument();
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getAllByRole('listitem')).toHaveLength(4);
+    expect(
+      screen.getByText('Facultad Regional Resistencia: Resistencia, Chaco'),
+    ).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: /Main\.java/ })).toHaveAttribute(
       'aria-selected',
       'true',

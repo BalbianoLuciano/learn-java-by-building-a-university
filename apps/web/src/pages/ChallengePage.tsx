@@ -149,6 +149,31 @@ function Workbench({ challenge }: { challenge: ChallengeView }) {
               </ul>
             </>
           )}
+          {(challenge.realReference.regionalFaculties.length > 0 ||
+            challenge.realReference.governingBodies.length > 0) && (
+            <>
+              <h2 className={styles.subtitle}>{t('challenge.realReference')}</h2>
+              <ul className={styles.rules}>
+                {challenge.realReference.regionalFaculties.map((faculty) => (
+                  <li key={faculty.id}>
+                    {t('challenge.realFaculty', {
+                      name: faculty.name,
+                      city: faculty.city,
+                      province: faculty.province,
+                    })}
+                  </li>
+                ))}
+                {challenge.realReference.governingBodies.map((body) => (
+                  <li key={body.id}>
+                    {body.name}: {body.composition}
+                    {body.mandateInYears !== null && body.mandateInYears !== undefined
+                      ? ` ${t('challenge.mandate', { years: body.mandateInYears })}`
+                      : ''}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           <HintsPanel
             challengeId={challenge.id}
             hintCount={challenge.hintCount}
