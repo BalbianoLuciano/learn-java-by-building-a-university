@@ -1,0 +1,142 @@
+id: m1-05
+module: m1
+order: 5
+title:
+  es: "Integrador: el mapa de la UTN"
+concept: object-arrays-and-instance-methods
+rules: [R-UNI-01, R-UNI-02]
+brief:
+  es: |
+    Ya tenés cinco facultades y el Rectorado. Para recorrerlas como un mapa:
+
+    1. Dale a `FacultadRegional` un método `describir()` que devuelva un `String` con la
+       forma `FR Rosario (Rosario, Santa Fe)`.
+    2. En `main`, guardá las cinco facultades en un arreglo `FacultadRegional[]` y
+       recorrelo imprimiendo lo que devuelve `describir()` de cada una.
+criteria:
+  - checks: [describe-method]
+    es: "`FacultadRegional` tiene el método `describir()`"
+  - checks: [first-described, last-described]
+    es: "El programa imprime la descripción de las cinco facultades"
+  - checks: [five-faculties, one-rectorate]
+    es: "Siguen existiendo cinco facultades y un Rectorado"
+editable: [FacultadRegional.java, Main.java]
+
+scene:
+  bindings:
+    - type: Rectorado
+      archetype: rectorate
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+      slots: { rectorado: rectorate }
+  pieces:
+    - id: rectorado
+      type: Rectorado
+      label: { es: "Rectorado" }
+    - id: fr-resistencia
+      type: FacultadRegional
+      where: { field: nombre, equals: "Resistencia" }
+      label: { es: "FR Resistencia" }
+    - id: fr-cordoba
+      type: FacultadRegional
+      where: { field: nombre, equals: "Córdoba" }
+      label: { es: "FR Córdoba" }
+    - id: fr-mendoza
+      type: FacultadRegional
+      where: { field: nombre, equals: "Mendoza" }
+      label: { es: "FR Mendoza" }
+    - id: fr-rosario
+      type: FacultadRegional
+      where: { field: nombre, equals: "Rosario" }
+      label: { es: "FR Rosario" }
+    - id: fr-santa-fe
+      type: FacultadRegional
+      where: { field: nombre, equals: "Santa Fe" }
+      label: { es: "FR Santa Fe" }
+  showVariables: false
+  realReference:
+    regionalFaculties: [resistencia, cordoba, mendoza, rosario, santa-fe]
+
+checks:
+  - id: describe-method
+    type: method
+    params:
+      class: FacultadRegional
+      name: describir
+      parameterTypes: []
+      returnType: String
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`FacultadRegional` sabe describirse: tiene el método `describir()`." }
+        why: { es: "Un método de instancia trabaja con los atributos del objeto sobre el que se lo llama." }
+      fail:
+        what: { es: "`FacultadRegional` todavía no tiene un método `describir()` que devuelva un `String`." }
+        why: { es: "Un método de instancia se declara dentro de la clase y puede usar `nombre`, `ciudad` y `provincia` del objeto." }
+        hint: { es: "Dentro de la clase: `String describir() { return … }`, armando el texto con los atributos." }
+
+  - id: first-described
+    type: stdout_contains
+    params:
+      text: "FR Resistencia (Resistencia, Chaco)"
+    piece: fr-resistencia
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La FR Resistencia aparece en el mapa con su ciudad y su provincia." }
+        why: { es: "Al llamar `describir()` sobre esa facultad, el método leyó los atributos de ese objeto." }
+      fail:
+        what: { es: "El programa no imprimió \"FR Resistencia (Resistencia, Chaco)\"." }
+        why: { es: "`describir()` tiene que devolver el texto con esa forma, y `main` tiene que imprimir lo que devuelve." }
+        hint: { es: "El texto se arma con `\"FR \" + nombre + \" (\" + ciudad + \", \" + provincia + \")\"`." }
+
+  - id: last-described
+    type: stdout_contains
+    params:
+      text: "FR Santa Fe (Santa Fe, Santa Fe)"
+    piece: fr-santa-fe
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La FR Santa Fe también está en el mapa: el recorrido llegó hasta la última." }
+        why: { es: "Un `for` sobre el arreglo llama al mismo método sobre cada objeto, y cada uno responde con sus datos." }
+      fail:
+        what: { es: "El programa no imprimió \"FR Santa Fe (Santa Fe, Santa Fe)\"." }
+        why: { es: "Si el recorrido no llega a todas las posiciones del arreglo, algunas facultades quedan fuera del mapa." }
+        hint: { es: "¿El arreglo tiene las cinco facultades y el `for` recorre hasta `facultades.length`?" }
+
+  - id: five-faculties
+    type: object_count
+    params:
+      type: FacultadRegional
+      equals: 5
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "Hay cinco facultades: cinco objetos en el arreglo." }
+        why: { es: "Un arreglo de objetos guarda referencias; los objetos siguen siendo los que creaste con `new`." }
+      fail:
+        what: { es: "El mapa necesita 5 facultades y tu programa creó {count}." }
+        why: { es: "Guardar una facultad en un arreglo no la copia ni la crea: el arreglo solo guarda referencias." }
+        hint: { es: "Cargá en el arreglo las variables que ya existen, sin volver a usar `new`." }
+
+  - id: one-rectorate
+    type: shared_reference
+    params:
+      all: { type: FacultadRegional, field: rectorado }
+    piece: rectorado
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Las cinco facultades siguen apuntando al mismo Rectorado." }
+        why: { es: "Recorrer las facultades no cambia sus referencias: el Rectorado sigue siendo uno." }
+      fail:
+        what: { es: "No todas las facultades apuntan al mismo Rectorado." }
+        why: { es: "Cada facultad guarda una referencia al Rectorado en su atributo `rectorado`." }
+        hint: { es: "Revisá que no hayas borrado las líneas `….rectorado = rectorado`." }
+
+hints:
+  - es: "Un método de instancia se escribe dentro de la clase, sin `static`, y usa los atributos del objeto sobre el que se llama."
+  - es: "`FacultadRegional[] facultades = { resistencia, cordoba, … };` arma el arreglo con las variables que ya tenés."
+  - es: "`for (FacultadRegional f : facultades) { System.out.println(f.describir()); }` recorre el arreglo y llama al método sobre cada objeto."

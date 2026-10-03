@@ -1,0 +1,9 @@
+outcome: incomplete
+log:
+  - check: one-rectorate
+    state: incomplete
+    title: "Creaste 3 rectorados: cada facultad tiene el suyo."
+  - check: shared-rectorate
+    state: incomplete
+  - check: same-object-printed
+    state: incomplete
