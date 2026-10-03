@@ -204,7 +204,10 @@ function ChipView({ chip }: { chip: Chip }) {
       {flags.has('private') && <Lock size={12} strokeWidth={2} aria-hidden />}
       {flags.has('static') && <Flag size={12} strokeWidth={2} aria-hidden />}
       {flags.has('final') && <Pin size={12} strokeWidth={2} aria-hidden />}
-      <span className={styles.chipText}>{chip.text}</span>
+      <span className={styles.chipText}>
+        {chip.text}
+        {chip.sub && <span className={styles.chipSub}>{chip.sub}</span>}
+      </span>
       {flags.has('ref') && <Plug size={12} strokeWidth={2} aria-hidden />}
     </span>
   );

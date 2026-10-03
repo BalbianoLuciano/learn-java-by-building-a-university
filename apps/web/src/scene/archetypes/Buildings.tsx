@@ -36,7 +36,7 @@ function Crack({ width, height }: { width: number; height: number }) {
 }
 
 /** Facultad Regional: a two-by-two building with a gable roof (DESIGN.md §B4). */
-export function RegionalFaculty({ piece, look }: { piece: Piece; look: Look }) {
+export function RegionalFaculty({ look }: { piece: Piece; look: Look }) {
   const height = look.failed ? 0.6 : 1.1;
   return (
     <group>
@@ -62,18 +62,12 @@ export function RegionalFaculty({ piece, look }: { piece: Piece; look: Look }) {
           <Crack width={1} height={height} />
         </group>
       )}
-      <Label
-        id={`${piece.id}:label`}
-        text={piece.label}
-        y={height + (look.failed ? 0.4 : 0.9)}
-        ghost={look.ghost}
-      />
     </group>
   );
 }
 
 /** Rectorado: a wide three-story building with a pediment. */
-export function Rectorate({ piece, look }: { piece: Piece; look: Look }) {
+export function Rectorate({ look }: { piece: Piece; look: Look }) {
   const height = look.failed ? 1.0 : 1.9;
   return (
     <group>
@@ -118,13 +112,12 @@ export function Rectorate({ piece, look }: { piece: Piece; look: Look }) {
           <Crack width={1.4} height={height} />
         </group>
       )}
-      <Label id={`${piece.id}:label`} text={piece.label} y={height + 1.0} ghost={look.ghost} />
     </group>
   );
 }
 
 /** Departamento de Enseñanza: a low pavilion with a flat roof (DESIGN.md §B4). */
-export function Department({ piece, look }: { piece: Piece; look: Look }) {
+export function Department({ look }: { piece: Piece; look: Look }) {
   const height = look.failed ? 0.4 : 0.7;
   return (
     <group>
@@ -148,13 +141,12 @@ export function Department({ piece, look }: { piece: Piece; look: Look }) {
           <Crack width={0.9} height={height} />
         </group>
       )}
-      <Label id={`${piece.id}:label`} text={piece.label} y={height + 0.6} ghost={look.ghost} />
     </group>
   );
 }
 
 /** Carrera: a block with a pennant on a pole. */
-export function Career({ piece, look }: { piece: Piece; look: Look }) {
+export function Career({ look }: { piece: Piece; look: Look }) {
   const height = look.failed ? 0.5 : 0.9;
   return (
     <group>
@@ -186,13 +178,12 @@ export function Career({ piece, look }: { piece: Piece; look: Look }) {
           <Crack width={0.6} height={height} />
         </group>
       )}
-      <Label id={`${piece.id}:label`} text={piece.label} y={height + 1.4} ghost={look.ghost} />
     </group>
   );
 }
 
 /** Persona: a low-poly figure, a capsule-like body with a head. */
-export function Person({ piece, look }: { piece: Piece; look: Look }) {
+export function Person({ look }: { piece: Piece; look: Look }) {
   const bodyHeight = 0.7;
   return (
     <group scale={look.failed ? [1, 0.6, 1] : [1, 1, 1]}>
@@ -211,7 +202,6 @@ export function Person({ piece, look }: { piece: Piece; look: Look }) {
         scale={[0.42, 0.42, 0.42]}
         castShadow
       />
-      <Label id={`${piece.id}:label`} text={piece.label} y={bodyHeight + 0.9} ghost={look.ghost} />
     </group>
   );
 }
@@ -238,7 +228,7 @@ export function InterfaceBadges({ piece, look, y }: { piece: Piece; look: Look; 
 }
 
 /** A type without a binding: a cube with a sign. */
-export function GenericBlock({ piece, look }: { piece: Piece; look: Look }) {
+export function GenericBlock({ look }: { piece: Piece; look: Look }) {
   const height = look.failed ? 0.6 : 1.1;
   return (
     <group>
@@ -255,7 +245,6 @@ export function GenericBlock({ piece, look }: { piece: Piece; look: Look }) {
           <Crack width={0.7} height={height} />
         </group>
       )}
-      <Label id={`${piece.id}:label`} text={piece.label} y={height + 0.5} ghost={look.ghost} />
     </group>
   );
 }
@@ -296,12 +285,6 @@ export function InheritanceFloors({
           />
         </group>
       ))}
-      <Label
-        id={`${piece.id}:label`}
-        text={piece.label}
-        y={builtFloors * floorHeight + 0.5}
-        ghost={look.ghost}
-      />
     </group>
   );
 }

@@ -20,8 +20,10 @@ export type AnchorContent =
  * window (a method). flags: private, static, final, ref, abstract, missing, null.
  */
 export interface Chip {
-  shape: 'plaque' | 'window' | 'seal' | 'header' | 'tag' | 'plate';
+  shape: 'plaque' | 'window' | 'seal' | 'header' | 'tag' | 'plate' | 'nameplate';
   text: string;
+  /** A second line, smaller: the serial under the name of a building. */
+  sub?: string;
   flags: string[];
   /** The method is running, or the attribute was just written, at the chosen step. */
   lit: boolean;

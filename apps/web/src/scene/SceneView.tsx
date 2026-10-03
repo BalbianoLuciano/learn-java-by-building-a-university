@@ -1,19 +1,14 @@
 import type { Piece, RunResult } from '@ljbu/contracts';
-import {
-  ContactShadows,
-  Line,
-  MapControls,
-  OrthographicCamera,
-  RoundedBox,
-} from '@react-three/drei';
+import { ContactShadows, MapControls, OrthographicCamera, RoundedBox } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import type { Selection } from '../components/result/selection';
 import { Blueprint, Seal } from './archetypes/Blueprint';
+import { Conduit } from './archetypes/Conduit';
 import { useSceneColors } from './colors';
-import { heightOf, serialsOf, type BubbleTexts } from './java';
+import { serialsOf, type BubbleTexts } from './java';
 import { layoutScene, type BlueprintPlacement, type Placement } from './layout';
 import { matte, UNIT_BOX } from './materials';
 import { useReducedMotion } from './motion';
@@ -298,7 +293,7 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
           receiveShadow
         />
       )}
-      {/* Every object hangs from its blueprint: a dotted line, class to instance. */}
+      {/* Every object is plugged into its blueprint by a conduit on the ground. */}
       {result.pieces.map((piece) => {
         const placement = placements.get(piece.id);
         const blueprint = piece.type ? blueprints.get(piece.type) : undefined;
@@ -306,26 +301,16 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
           return null;
         }
         const island = placement.island ?? { width: 1.8, depth: 1.8 };
-        const chosen = selection.pieceId === piece.id;
-        const scale = placement.owner ? 0.62 : 1;
+        const creating =
+          state.running.get(piece.id) === '<init>' ||
+          (state.focus?.pieceId === piece.id && state.focus.field === undefined);
         return (
-          <Line
+          <Conduit
             key={`${piece.id}<${blueprint.name}`}
-            points={[
-              [
-                placement.position[0],
-                0.32 + heightOf(piece) * scale + 0.1,
-                placement.position[2] - (island.depth / 2) * 0.5,
-              ],
-              [blueprint.position[0], blueprint.position[1] + 0.9, blueprint.position[2] + 0.3],
-            ]}
-            color={chosen ? colors.accent : colors.link}
-            lineWidth={chosen ? 1.5 : 1}
-            dashed
-            dashSize={0.2}
-            gapSize={0.16}
-            transparent
-            opacity={chosen ? 1 : 0.55}
+            from={[blueprint.position[0], 0, blueprint.position[2] + blueprint.island.depth / 2]}
+            to={[placement.position[0], 0, placement.position[2] - island.depth / 2]}
+            lit={creating || selection.pieceId === piece.id}
+            colors={colors}
           />
         );
       })}

@@ -161,21 +161,22 @@ export function PieceView({
           </group>
           {!ghost && running === '<init>' && <Crane height={height} colors={colors} />}
         </group>
-        {/* The serial plate hangs under the name of the building. */}
-        {!ghost && serial !== undefined && piece.type && (
-          <ChipAnchor
-            id={`${piece.id}:plate`}
-            position={[0, (height + 0.9) * scale, 0]}
-            offset={[0, 24]}
-            chip={{
-              shape: 'plate',
-              text: texts.serial(piece.type, serial),
-              flags: [],
-              lit: false,
-              ghost: false,
-            }}
-          />
-        )}
+        {/* The nameplate: the name of the building and, under it, its serial. */}
+        <ChipAnchor
+          id={`${piece.id}:nameplate`}
+          position={[0, (height + 0.9) * scale, 0]}
+          chip={{
+            shape: 'nameplate',
+            text: piece.label,
+            sub:
+              !ghost && serial !== undefined && piece.type
+                ? texts.serial(piece.type, serial)
+                : undefined,
+            flags: [],
+            lit: false,
+            ghost,
+          }}
+        />
         {/* Variables hang as tags from the front-left corner, one under the other. */}
         {!ghost &&
           tags.map((tag, index) => (
