@@ -1,0 +1,5 @@
+outcome: incomplete
+log:
+  - check: resistencia-complete
+    state: incomplete
+    title: "A la FR Resistencia le falta tener bien cargado: `nombre`, `ciudad`, `provincia`."

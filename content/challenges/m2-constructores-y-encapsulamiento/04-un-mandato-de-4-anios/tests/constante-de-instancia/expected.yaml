@@ -1,0 +1,5 @@
+outcome: incomplete
+log:
+  - check: constant-declared
+    state: incomplete
+    title: "`MANDATO_EN_ANIOS` existe, pero no es `static final`."

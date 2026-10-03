@@ -1,0 +1,103 @@
+id: m2-04
+module: m2
+order: 4
+title:
+  es: "Un mandato de 4 años"
+concept: static-final-constants
+rules: [R-RECT-02]
+brief:
+  es: |
+    El mandato del Rector dura 4 años (art. 67) y es el mismo para todos los cargos: no es
+    un dato de cada objeto, es una regla de la clase.
+
+    En `CargoDeRector`, reemplazá el atributo `mandatoEnAnios` por una constante
+    `MANDATO_EN_ANIOS` (`static final int`, con valor 4) y completá `anioDeFin()` para que
+    devuelva el año en que termina el mandato: `desde` más la constante.
+criteria:
+  - checks: [constant-declared]
+    es: "`MANDATO_EN_ANIOS` es una constante `static final` que vale para toda la clase"
+  - checks: [end-year-method, end-year-printed]
+    es: "`anioDeFin()` calcula el fin del mandato"
+editable: [CargoDeRector.java]
+
+scene:
+  bindings:
+    - type: Persona
+      archetype: person
+      label: nombre
+    - type: CargoDeRector
+      archetype: generic-block
+      slots: { titular: holder }
+  pieces:
+    - id: cargo-rector
+      type: CargoDeRector
+      label: { es: "Cargo de Rector" }
+    - id: rectora
+      type: Persona
+      label: { es: "Marta Quiroga" }
+  showVariables: true
+
+checks:
+  - id: constant-declared
+    type: field
+    params:
+      class: CargoDeRector
+      name: MANDATO_EN_ANIOS
+      type: int
+      static: true
+      final: true
+    piece: cargo-rector
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`MANDATO_EN_ANIOS` es una constante de la clase: un solo valor para todos los cargos." }
+        why: { es: "`static` la saca de cada objeto y la pone en la clase; `final` impide cambiarla." }
+      fail:
+        what: { es: "Falta la constante o no está bien declarada: {missing}." }
+        why: { es: "Un valor que es igual para todos los objetos y nunca cambia se declara `static final`, con nombre en mayúsculas." }
+        hint: { es: "`static final int MANDATO_EN_ANIOS = 4;`, fuera de cualquier método." }
+    traps:
+      - when:
+          type: field
+          params: { class: CargoDeRector, name: MANDATO_EN_ANIOS, type: int }
+        what: { es: "`MANDATO_EN_ANIOS` existe, pero no es `static final`." }
+        why: { es: "Sin `static`, cada cargo tendría su propia copia; sin `final`, alguien podría cambiarla." }
+        hint: { es: "Agregá `static final` entre la visibilidad y el tipo." }
+
+  - id: end-year-method
+    type: method
+    params:
+      class: CargoDeRector
+      name: anioDeFin
+      parameterTypes: []
+      returnType: int
+    piece: cargo-rector
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`anioDeFin()` existe y devuelve un `int`." }
+        why: { es: "El fin del mandato no se guarda: se calcula a partir de `desde` y de la constante." }
+      fail:
+        what: { es: "Falta un método `anioDeFin()` que devuelva un `int`." }
+        why: { es: "Un dato que se deduce de otros se calcula en un método, así nunca queda desactualizado." }
+        hint: { es: "`int anioDeFin() { return … }`." }
+
+  - id: end-year-printed
+    type: stdout_contains
+    params:
+      text: "Fin del mandato: 2026"
+    piece: cargo-rector
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Un mandato que empezó en 2022 termina en 2026." }
+        why: { es: "`desde + MANDATO_EN_ANIOS` usa el dato del objeto y la regla de la clase." }
+      fail:
+        what: { es: "El programa no imprimió \"Fin del mandato: 2026\"." }
+        why: { es: "`anioDeFin()` tiene que sumar al año de inicio los 4 años de la constante." }
+        hint: { es: "¿`anioDeFin()` devuelve `desde + MANDATO_EN_ANIOS`?" }
+
+hints:
+  - es: "Un atributo `static` pertenece a la clase, no a cada objeto; con `final` se vuelve una constante y se nombra en MAYÚSCULAS."
+  - es: "Borrá `int mandatoEnAnios = 4;` y declará `static final int MANDATO_EN_ANIOS = 4;` en su lugar."
+  - es: "En `anioDeFin()`, `return desde + MANDATO_EN_ANIOS;`: el año de inicio es del objeto; la duración, de la clase."

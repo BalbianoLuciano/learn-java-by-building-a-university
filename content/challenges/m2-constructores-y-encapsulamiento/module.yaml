@@ -1,0 +1,6 @@
+id: m2
+order: 2
+title:
+  es: "Constructores y encapsulamiento"
+goal:
+  es: "Que los objetos nazcan válidos y protejan su estado: las reglas reales de la UTN viven dentro de la clase."

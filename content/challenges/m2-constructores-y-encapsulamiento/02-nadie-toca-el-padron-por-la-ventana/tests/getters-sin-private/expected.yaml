@@ -1,0 +1,5 @@
+outcome: incomplete
+log:
+  - check: fields-private
+    state: incomplete
+    title: "Todavía se puede entrar por la ventana: no es `private`: `nombre`, `ciudad`, `provincia`."

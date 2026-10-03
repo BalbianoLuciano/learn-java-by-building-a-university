@@ -1,0 +1,142 @@
+id: m2-05
+module: m2
+order: 5
+title:
+  es: "Integrador: el Decano de Resistencia"
+concept: constructor-overloading-and-validating-setters
+rules: [R-FR-01, R-FR-02]
+brief:
+  es: |
+    Cada FR tiene un Decano (art. 78): un profesor con al menos 3 años de antigüedad
+    docente, por 4 años (art. 86).
+
+    1. `CargoDeDecano` tiene dos constructores que repiten la validación. Dejá la regla en
+       el constructor canónico `(Persona, int)` y hacé que el otro delegue con `this(...)`.
+    2. En `FacultadRegional`, completá `asignarDecano(Persona, int)`: si la persona tiene
+       menos de 3 años de antigüedad devolvé `false` sin cambiar nada; si no, creá el cargo,
+       guardalo en `decano` y devolvé `true`.
+criteria:
+  - checks: [canonical-constructor, convenience-delegates]
+    es: "El constructor de conveniencia delega en el canónico con `this(...)`"
+  - checks: [dean-assigned, valid-accepted]
+    es: "La FR Resistencia tiene como decana a la profesora que cumple"
+  - checks: [invalid-rejected]
+    es: "El candidato con 1 año de antigüedad es rechazado"
+editable: [CargoDeDecano.java, FacultadRegional.java]
+
+scene:
+  bindings:
+    - type: Persona
+      archetype: person
+      label: nombre
+    - type: CargoDeDecano
+      archetype: generic-block
+      slots: { titular: holder }
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+      slots: { decano: dean }
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+    - id: cargo-decano
+      type: CargoDeDecano
+      label: { es: "Cargo de Decano" }
+    - id: profesora
+      type: Persona
+      where: { field: nombre, equals: "Lucía Benítez" }
+      label: { es: "Lucía Benítez" }
+    - id: candidato
+      type: Persona
+      where: { field: nombre, equals: "Tomás Ríos" }
+      label: { es: "Tomás Ríos" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: canonical-constructor
+    type: constructor
+    params:
+      class: CargoDeDecano
+      parameterTypes: [Persona, int]
+    piece: cargo-decano
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`CargoDeDecano` tiene su constructor canónico, con la persona y el año de inicio." }
+        why: { es: "El constructor canónico recibe todo lo que el objeto necesita y es el único lugar donde vive la validación." }
+      fail:
+        what: { es: "Falta el constructor `CargoDeDecano(Persona, int)`." }
+        why: { es: "Es el constructor completo: los demás existen solo para llamarlo con valores por defecto." }
+        hint: { es: "Dejá el constructor que recibe `Persona titular, int desde` y validá la antigüedad ahí." }
+
+  - id: convenience-delegates
+    type: constructor
+    params:
+      class: CargoDeDecano
+      parameterTypes: [Persona]
+      delegatesTo: this
+    piece: cargo-decano
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "El constructor de conveniencia delega en el canónico: la regla está escrita una sola vez." }
+        why: { es: "`this(titular, ANIO_ACTUAL)` llama al otro constructor de la misma clase; lo que valide él vale también acá." }
+      fail:
+        what: { es: "`CargoDeDecano(Persona)` no delega en el constructor canónico." }
+        why: { es: "Si cada constructor repite la validación, el día que cambie la regla hay que tocar dos lugares, y uno se olvida." }
+        hint: { es: "La primera línea del constructor de conveniencia tiene que ser `this(titular, ANIO_ACTUAL);`." }
+
+  - id: dean-assigned
+    type: object_field
+    params:
+      where: { type: FacultadRegional }
+      expect: { field: decano, notNull: true }
+    piece: fr-resistencia
+    slot: dean
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La FR Resistencia tiene su decana." }
+        why: { es: "`asignarDecano` creó el cargo y lo guardó en el atributo privado: la facultad **tiene** un decano." }
+      fail:
+        what: { es: "La FR Resistencia está sin decano." }
+        why: { es: "Como `decano` es privado, solo `asignarDecano` puede cargarlo, y tiene que hacerlo cuando la persona cumple." }
+        hint: { es: "¿`asignarDecano` hace `decano = new CargoDeDecano(persona, desde)` cuando la antigüedad alcanza?" }
+
+  - id: valid-accepted
+    type: stdout_contains
+    params:
+      text: "Decana: Lucía Benítez"
+    piece: fr-resistencia
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "`asignarDecano` devolvió `true` para Lucía Benítez, con 12 años de antigüedad." }
+        why: { es: "Un setter que devuelve `boolean` le dice a quien llama si el cambio se hizo." }
+      fail:
+        what: { es: "El programa no confirmó a Lucía Benítez como decana." }
+        why: { es: "Cuando la persona cumple, `asignarDecano` tiene que devolver `true` además de guardar el cargo." }
+        hint: { es: "Revisá qué devuelve `asignarDecano` en el camino en que la antigüedad es suficiente." }
+
+  - id: invalid-rejected
+    type: stdout_contains
+    params:
+      text: "Rechazado: Tomás Ríos"
+    piece: fr-resistencia
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "Tomás Ríos, con 1 año de antigüedad, fue rechazado y la decana sigue siendo Lucía Benítez." }
+        why: { es: "El setter verificó la regla antes de cambiar el estado y devolvió `false` sin tocar nada." }
+      fail:
+        what: { es: "La facultad aceptó a Tomás Ríos, que tiene 1 año de antigüedad docente." }
+        why: { es: "Un setter que valida comprueba la regla **antes** de cambiar el atributo y devuelve `false` si no se cumple." }
+        hint: { es: "¿Qué pasa en `asignarDecano` cuando `persona.getAntiguedadDocente()` es menor que 3?" }
+
+hints:
+  - es: "Cuando una clase tiene varios constructores, uno es el completo y los demás lo llaman con `this(...)` para no repetir reglas."
+  - es: "Un setter que valida pregunta primero y cambia después: si la regla no se cumple, devuelve `false` y no toca el atributo."
+  - es: "En `asignarDecano`: `if (persona.getAntiguedadDocente() < 3) return false;` y después `decano = new CargoDeDecano(persona, desde); return true;`."
