@@ -289,7 +289,7 @@
       'work model'
       'work log';
     grid-template-columns: 45% 1fr;
-    grid-template-rows: minmax(0, 58fr) minmax(0, 42fr);
+    grid-template-rows: minmax(0, 64fr) minmax(0, 36fr);
     height: calc(100vh - 56px);
     min-height: 0;
   }

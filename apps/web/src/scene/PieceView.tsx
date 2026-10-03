@@ -166,7 +166,7 @@ export function PieceView({
           <ChipAnchor
             id={`${piece.id}:plate`}
             position={[0, (height + 0.9) * scale, 0]}
-            offset={[0, 20]}
+            offset={[0, 24]}
             chip={{
               shape: 'plate',
               text: texts.serial(piece.type, serial),

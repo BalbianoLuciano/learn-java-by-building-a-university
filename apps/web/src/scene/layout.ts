@@ -22,19 +22,41 @@ export interface Bridge {
   to: [number, number, number];
 }
 
+/** Where the blueprint of a class stands: on the drafting board, over the column of its instances. */
+export interface BlueprintPlacement {
+  name: string;
+  position: [number, number, number];
+  height: number;
+  /** Footprint, so the camera frames the board too. */
+  island: { width: number; depth: number };
+}
+
+/** The long table at the back every blueprint stands on. */
+export interface Board {
+  x: number;
+  z: number;
+  width: number;
+  depth: number;
+}
+
 export interface SceneLayout {
   placements: Map<string, Placement>;
   bridges: Bridge[];
+  blueprints: Map<string, BlueprintPlacement>;
+  board: Board | null;
 }
 
-const RING_SPACING_GAP = 1.6;
-const MIN_RING_RADIUS = 3.6;
-const RING_GAP = 1.4;
+export const BLUEPRINT_WIDTH = 2.4;
+export const BLUEPRINT_HEIGHT = 2.2;
+const BOARD_DEPTH = 1.6;
+/** Between the board and the first row of instances. */
+const BOARD_GAP = 1.6;
+const COLUMN_GAP = 1.6;
+const ROW_GAP = 1.4;
 const ATTACHED_GAP = 0.5;
 const ATTACHED_ISLAND = { width: 1.3, depth: 1.3 };
-const NULL_TAG_SPACING = 1.6;
-const ROW_LIMIT = 4;
-const ROW_GAP = 1.2;
+const NULL_TAG_SPACING = 1.8;
+const FRONT_GAP = 1.8;
 
 function footprint(piece: Piece): { width: number; depth: number } {
   switch (piece.archetype) {
@@ -89,120 +111,108 @@ export function containedBy(pieces: Piece[]): Map<string, string[]> {
   return result;
 }
 
-/** Concentric rings from the inside out, each holding as many pieces as fit with the spacing. */
-function ringsFor(
-  count: number,
-  innermost: number,
-  spacing: number,
-): { radius: number; size: number }[] {
-  const rings: { radius: number; size: number }[] = [];
-  let radius = innermost;
-  for (let placed = 0; placed < count; radius += spacing + RING_GAP) {
-    const capacity = Math.max(1, Math.floor((2 * Math.PI * radius) / spacing));
-    const size = Math.min(capacity, count - placed);
-    rings.push({ radius, size });
-    placed += size;
-  }
-  return rings;
-}
-
 /**
- * The Rectorado in the middle, Facultades Regionales and other free-standing pieces in rings
- * around it, what a piece holds on islands attached to its own, and the variables hanging as
- * tags from the pieces they point to (DESIGN.md §B4) or lying at the front when they are null.
+ * A grid (DESIGN.md §B2): one column per class, its blueprint on the drafting board at the
+ * back and its instances in a row in front of it, oldest first. What an instance holds stands
+ * on small islands attached to its right. Variables hang as tags from the pieces they point
+ * to; null ones lie on the ground along the front.
  */
-export function layoutScene(pieces: Piece[]): SceneLayout {
+export function layoutScene(pieces: Piece[], classes: ClassInfo[] = []): SceneLayout {
   const placements = new Map<string, Placement>();
   const bridges: Bridge[] = [];
+  const blueprints = new Map<string, BlueprintPlacement>();
   const contained = containedBy(pieces);
-  const owners = new Map<string, string>();
-  for (const [owner, held] of contained) {
-    for (const id of held) {
-      owners.set(id, owner);
-    }
-  }
+  const held = new Set([...contained.values()].flat());
   const byId = new Map(pieces.map((piece) => [piece.id, piece]));
 
+  const descendants = (id: string): number =>
+    (contained.get(id) ?? []).reduce((count, child) => count + 1 + descendants(child), 0);
   /** Width of a piece with everything attached to its right. */
-  const extentOf = (piece: Piece): number => footprint(piece).width;
+  const extentOf = (piece: Piece): number =>
+    footprint(piece).width + descendants(piece.id) * (ATTACHED_ISLAND.width + ATTACHED_GAP);
 
   const signs = pieces.filter((piece) => piece.archetype === 'variable-sign');
-  const centers = pieces.filter(
-    (piece) => piece.archetype === 'rectorate' && !owners.has(piece.id),
-  );
-  const ring = pieces.filter(
-    (piece) =>
-      piece.archetype !== 'variable-sign' && !centers.includes(piece) && !owners.has(piece.id),
+  const freeStanding = pieces.filter(
+    (piece) => piece.archetype !== 'variable-sign' && !held.has(piece.id),
   );
 
-  /** Places what a piece holds on small islands behind its own, one after the other. */
-  const attach = (owner: Piece, x: number, edge: number): number => {
+  // Columns: the classes of the program in order, plus one for anything of another type.
+  const named = classes.filter((info) => info.kind !== 'interface').map((info) => info.name);
+  const seals = classes.filter((info) => info.kind === 'interface').map((info) => info.name);
+  const columns: { name: string; instances: Piece[] }[] = named.map((name) => ({
+    name,
+    instances: freeStanding.filter((piece) => piece.type === name),
+  }));
+  const orphans = freeStanding.filter((piece) => !piece.type || !named.includes(piece.type));
+  if (orphans.length > 0) {
+    columns.push({ name: '', instances: orphans });
+  }
+  for (const name of seals) {
+    columns.push({ name, instances: [] });
+  }
+
+  const widths = columns.map((column) =>
+    Math.max(BLUEPRINT_WIDTH, ...column.instances.map(extentOf)),
+  );
+  const total = widths.reduce((sum, width) => sum + width, 0) + (columns.length - 1) * COLUMN_GAP;
+  const boardZ = -(BOARD_DEPTH / 2 + BOARD_GAP);
+
+  /** Places what a piece holds on small islands in a row to its right, recursively. */
+  const attach = (owner: Piece, edge: number, z: number): number => {
     for (const id of contained.get(owner.id) ?? []) {
       const child = byId.get(id);
       if (!child) {
         continue;
       }
-      const cz = edge - ATTACHED_GAP - ATTACHED_ISLAND.depth / 2;
+      const cx = edge + ATTACHED_GAP + ATTACHED_ISLAND.width / 2;
       placements.set(id, {
         id,
-        position: [x, 0, cz],
+        position: [cx, 0, z],
         island: ATTACHED_ISLAND,
         owner: owner.id,
         phase: phaseOf(id),
       });
-      bridges.push({ from: [x, 0, edge], to: [x, 0, cz + ATTACHED_ISLAND.depth / 2] });
-      edge = attach(child, x, cz - ATTACHED_ISLAND.depth / 2);
+      bridges.push({ from: [edge, 0, z], to: [cx - ATTACHED_ISLAND.width / 2, 0, z] });
+      edge = attach(child, cx + ATTACHED_ISLAND.width / 2, z);
     }
     return edge;
   };
 
-  const placeWithAttachments = (piece: Piece, x: number, z: number) => {
-    const own = footprint(piece);
-    placements.set(piece.id, {
-      id: piece.id,
-      position: [x, 0, z],
-      island: own,
-      phase: phaseOf(piece.id),
-    });
-    attach(piece, x, z - own.depth / 2);
-  };
-
-  centers.forEach((piece, index) => {
-    const x = (index - (centers.length - 1) / 2) * 5.5;
-    placeWithAttachments(piece, x, 0);
+  let x = -total / 2;
+  let front = 0;
+  columns.forEach((column, index) => {
+    const width = widths[index] ?? BLUEPRINT_WIDTH;
+    const center = x + width / 2;
+    if (column.name) {
+      blueprints.set(column.name, {
+        name: column.name,
+        position: [center, 0, boardZ],
+        height: BLUEPRINT_HEIGHT,
+        island: { width: BLUEPRINT_WIDTH, depth: BOARD_DEPTH },
+      });
+    }
+    // Instances from the board forward, each one (with what it holds) centered in the column.
+    let z = 0;
+    for (const piece of column.instances) {
+      const own = footprint(piece);
+      const px = x + (width - extentOf(piece)) / 2 + own.width / 2;
+      const pz = z + own.depth / 2;
+      placements.set(piece.id, {
+        id: piece.id,
+        position: [px, 0, pz],
+        island: own,
+        phase: phaseOf(piece.id),
+      });
+      attach(piece, px + own.width / 2, pz);
+      z += own.depth + ROW_GAP;
+      front = Math.max(front, pz + own.depth / 2);
+    }
+    x += width + COLUMN_GAP;
   });
-
-  let radius = 0;
-  if (ring.length <= ROW_LIMIT && centers.length === 0) {
-    // A few pieces read better side by side than around an empty middle.
-    const total =
-      ring.reduce((sum, piece) => sum + extentOf(piece), 0) + (ring.length - 1) * ROW_GAP;
-    let x = -total / 2;
-    for (const piece of ring) {
-      placeWithAttachments(piece, x + footprint(piece).width / 2, 0);
-      x += extentOf(piece) + ROW_GAP;
-    }
-  } else if (ring.length > 0) {
-    const spacing = Math.max(...ring.map(extentOf)) + RING_SPACING_GAP;
-    const innermost = centers.length > 0 ? MIN_RING_RADIUS + 1.8 : MIN_RING_RADIUS;
-    let next = 0;
-    for (const current of ringsFor(ring.length, innermost, spacing)) {
-      radius = current.radius;
-      for (let index = 0; index < current.size; index++) {
-        const piece = ring[next++];
-        if (!piece) {
-          break;
-        }
-        const angle = -Math.PI / 2 + (index / current.size) * Math.PI * 2;
-        placeWithAttachments(piece, Math.cos(angle) * radius, Math.sin(angle) * radius);
-      }
-    }
-  }
 
   // Variables: tags on the building they point to; null ones lie on the ground at the front.
   const tagsOf = new Map<string, number>();
   const nulls = signs.filter((sign) => !sign.target || !placements.has(sign.target));
-  const front = Math.max(radius, 1.5) + 2.2;
   for (const sign of signs) {
     const target = sign.target && placements.has(sign.target) ? sign.target : undefined;
     if (target) {
@@ -220,13 +230,15 @@ export function layoutScene(pieces: Piece[]): SceneLayout {
       const index = nulls.indexOf(sign);
       placements.set(sign.id, {
         id: sign.id,
-        position: [(index - (nulls.length - 1) / 2) * NULL_TAG_SPACING, 0, front],
+        position: [(index - (nulls.length - 1) / 2) * NULL_TAG_SPACING, 0, front + FRONT_GAP],
         phase: phaseOf(sign.id),
       });
     }
   }
 
-  return { placements, bridges };
+  const board: Board | null =
+    columns.length > 0 ? { x: 0, z: boardZ, width: total + 1.2, depth: BOARD_DEPTH } : null;
+  return { placements, bridges, blueprints, board };
 }
 
 /** Center and radius of a sphere around every placement, to frame the camera. */
@@ -254,64 +266,4 @@ export function boundsOf(placements: Iterable<Pick<Placement, 'position' | 'isla
     center: [(minX + maxX) / 2, 0.8, (minZ + maxZ) / 2],
     radius: Math.max(2.6, Math.hypot(width, depth) / 2 + 0.6),
   };
-}
-
-/** Where the blueprint of a class stands (DESIGN.md §B4): a row at the back, stacked by inheritance. */
-export interface BlueprintPlacement {
-  name: string;
-  position: [number, number, number];
-  /** Height of the panel. */
-  height: number;
-  /** Footprint, so the camera frames the row of blueprints too. */
-  island: { width: number; depth: number };
-}
-
-export const BLUEPRINT_WIDTH = 2.4;
-export const BLUEPRINT_HEIGHT = 2.2;
-const BLUEPRINT_SPACING = 3.4;
-const BLUEPRINT_GAP = 0.3;
-
-/**
- * Classes in a row behind everything else, interfaces (seals) at the right end. A subclass
- * stands on top of its superclass, in the same column.
- */
-export function layoutBlueprints(
-  classes: ClassInfo[],
-  back: number,
-): Map<string, BlueprintPlacement> {
-  const placements = new Map<string, BlueprintPlacement>();
-  const byName = new Map(classes.map((info) => [info.name, info]));
-  const roots = classes.filter(
-    (info) => info.kind !== 'interface' && (!info.superclass || !byName.has(info.superclass)),
-  );
-  const seals = classes.filter((info) => info.kind === 'interface');
-  const columns = roots.length + seals.length;
-  let column = 0;
-  const place = (info: ClassInfo, x: number, y: number) => {
-    placements.set(info.name, {
-      name: info.name,
-      position: [x, y, back],
-      height: BLUEPRINT_HEIGHT,
-      island: { width: BLUEPRINT_WIDTH, depth: 0.4 },
-    });
-    classes
-      .filter((child) => child.superclass === info.name)
-      .forEach((child, index) => {
-        place(child, x + index * BLUEPRINT_SPACING, y + BLUEPRINT_HEIGHT + BLUEPRINT_GAP);
-      });
-  };
-  for (const root of roots) {
-    place(root, (column - (columns - 1) / 2) * BLUEPRINT_SPACING, 0);
-    column++;
-  }
-  for (const seal of seals) {
-    placements.set(seal.name, {
-      name: seal.name,
-      position: [(column - (columns - 1) / 2) * BLUEPRINT_SPACING, 0, back],
-      height: BLUEPRINT_HEIGHT,
-      island: { width: BLUEPRINT_WIDTH, depth: 0.4 },
-    });
-    column++;
-  }
-  return placements;
 }

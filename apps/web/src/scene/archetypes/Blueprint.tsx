@@ -15,7 +15,8 @@ import {
   RegionalFaculty,
 } from './Buildings';
 
-const POST = 0.5;
+/** Blueprints stand on the drafting board (0.3 high). */
+const POST = 0.3 + 0.5;
 const THICKNESS = 0.08;
 /** The panel faces the camera, which looks along (1,1,1). */
 const FACING = Math.PI / 4;

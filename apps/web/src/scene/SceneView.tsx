@@ -1,5 +1,11 @@
 import type { Piece, RunResult } from '@ljbu/contracts';
-import { ContactShadows, Line, MapControls, OrthographicCamera } from '@react-three/drei';
+import {
+  ContactShadows,
+  Line,
+  MapControls,
+  OrthographicCamera,
+  RoundedBox,
+} from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +14,7 @@ import type { Selection } from '../components/result/selection';
 import { Blueprint, Seal } from './archetypes/Blueprint';
 import { useSceneColors } from './colors';
 import { heightOf, serialsOf, type BubbleTexts } from './java';
-import { layoutBlueprints, layoutScene, type BlueprintPlacement, type Placement } from './layout';
+import { layoutScene, type BlueprintPlacement, type Placement } from './layout';
 import { matte, UNIT_BOX } from './materials';
 import { useReducedMotion } from './motion';
 import { ChipAnchor, OverlayDriver, OverlayLayer } from './overlay';
@@ -109,8 +115,6 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
   const { t } = useTranslation();
   const colors = useSceneColors();
   const reducedMotion = useReducedMotion();
-  const layout = useMemo(() => layoutScene(result.pieces), [result.pieces]);
-  const { placements, bridges } = layout;
   const classes = useMemo(
     () => new Map(result.classes.map((info) => [info.name, info])),
     [result.classes],
@@ -120,14 +124,11 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
     () => result.classes.filter((info) => info.name !== 'Main'),
     [result.classes],
   );
-  const blueprints = useMemo(() => {
-    // Just behind the farthest island: depth is what the isometric view can least afford.
-    let back = 0;
-    for (const placement of placements.values()) {
-      back = Math.min(back, placement.position[2] - (placement.island?.depth ?? 1) / 2);
-    }
-    return layoutBlueprints(modelClasses, back - 2.4);
-  }, [placements, modelClasses]);
+  const layout = useMemo(
+    () => layoutScene(result.pieces, modelClasses),
+    [result.pieces, modelClasses],
+  );
+  const { placements, bridges, blueprints, board } = layout;
   const placed = useMemo(
     () => [...placements.values(), ...blueprints.values()],
     [placements, blueprints],
@@ -286,35 +287,45 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
           />
         );
       })}
-      {/* The selected object hangs from its blueprint: a dotted line, class to instance. */}
+      {/* The drafting board: the table at the back every blueprint stands on. */}
+      {board && (
+        <RoundedBox
+          args={[board.width, 0.3, board.depth]}
+          radius={0.06}
+          smoothness={2}
+          position={[board.x, 0.15, board.z]}
+          material={matte(colors.island)}
+          receiveShadow
+        />
+      )}
+      {/* Every object hangs from its blueprint: a dotted line, class to instance. */}
       {result.pieces.map((piece) => {
         const placement = placements.get(piece.id);
         const blueprint = piece.type ? blueprints.get(piece.type) : undefined;
-        if (
-          !placement ||
-          !blueprint ||
-          selection.pieceId !== piece.id ||
-          !state.visible.has(piece.id)
-        ) {
+        if (!placement || !blueprint || !state.visible.has(piece.id)) {
           return null;
         }
         const island = placement.island ?? { width: 1.8, depth: 1.8 };
+        const chosen = selection.pieceId === piece.id;
+        const scale = placement.owner ? 0.62 : 1;
         return (
           <Line
             key={`${piece.id}<${blueprint.name}`}
             points={[
               [
                 placement.position[0],
-                0.32 + heightOf(piece) + 0.1,
-                placement.position[2] - island.depth / 2 + 0.3,
+                0.32 + heightOf(piece) * scale + 0.1,
+                placement.position[2] - (island.depth / 2) * 0.5,
               ],
-              [blueprint.position[0], blueprint.position[1] + 0.5, blueprint.position[2] + 0.1],
+              [blueprint.position[0], blueprint.position[1] + 0.9, blueprint.position[2] + 0.3],
             ]}
-            color={colors.accent}
-            lineWidth={1.5}
+            color={chosen ? colors.accent : colors.link}
+            lineWidth={chosen ? 1.5 : 1}
             dashed
-            dashSize={0.25}
-            gapSize={0.18}
+            dashSize={0.2}
+            gapSize={0.16}
+            transparent
+            opacity={chosen ? 1 : 0.55}
           />
         );
       })}
