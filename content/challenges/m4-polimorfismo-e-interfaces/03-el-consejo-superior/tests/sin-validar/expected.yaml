@@ -1,0 +1,5 @@
+outcome: incomplete
+log:
+  - check: invalid-rejected
+    state: incomplete
+    title: "Se construyó un Consejo Superior con 14 docentes."

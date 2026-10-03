@@ -1,0 +1,102 @@
+id: m4-01
+module: m4
+order: 1
+title:
+  es: "Los órganos de gobierno"
+concept: abstract-classes
+rules: [R-GOB-01]
+brief:
+  es: |
+    El art. 45 del Estatuto enumera los órganos de gobierno: Asamblea Universitaria,
+    Consejo Superior, Rector, Consejos Directivos, Decanos… Todos tienen nombre y mandato, y
+    todos pueden describir cómo se componen. Pero "un órgano de gobierno" a secas no existe:
+    no se puede construir uno.
+
+    Hacé `OrganoDeGobierno` **abstracta**, con `describirComposicion()` abstracto, y
+    arreglá `main`: en vez del órgano genérico, creá un `ConsejoSuperior`.
+criteria:
+  - checks: [class-abstract, method-abstract]
+    es: "`OrganoDeGobierno` y `describirComposicion()` son abstractos"
+  - checks: [concrete-created, described]
+    es: "`main` construye un Consejo Superior y lo describe"
+editable: [OrganoDeGobierno.java, Main.java]
+
+scene:
+  bindings:
+    - type: OrganoDeGobierno
+      archetype: generic-block
+      label: nombre
+    - type: ConsejoSuperior
+      archetype: inheritance-floors
+      label: nombre
+  pieces:
+    - id: consejo-superior
+      type: ConsejoSuperior
+      label: { es: "Consejo Superior" }
+  showVariables: true
+
+checks:
+  - id: class-abstract
+    type: is_abstract
+    params:
+      class: OrganoDeGobierno
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`OrganoDeGobierno` es abstracta: es un plano, no un edificio." }
+        why: { es: "Una clase abstracta junta lo común de sus subclases, pero no se puede instanciar con `new`." }
+      fail:
+        what: { es: "`OrganoDeGobierno` todavía se puede instanciar." }
+        why: { es: "Si la clase representa una idea general que solo existe a través de sus subclases, se declara `abstract`." }
+        hint: { es: "`public abstract class OrganoDeGobierno { … }`." }
+
+  - id: method-abstract
+    type: is_abstract
+    params:
+      class: OrganoDeGobierno
+      method: describirComposicion
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`describirComposicion()` es abstracto: cada órgano tiene que escribir el suyo." }
+        why: { es: "Un método abstracto declara **qué** se puede pedir; el **cómo** lo pone cada subclase, obligatoriamente." }
+      fail:
+        what: { es: "`describirComposicion()` todavía tiene cuerpo en `OrganoDeGobierno`." }
+        why: { es: "No hay una composición genérica válida para todos los órganos: dejar el método abstracto obliga a cada subclase a definirlo." }
+        hint: { es: "`abstract String describirComposicion();` sin llaves ni cuerpo." }
+
+  - id: concrete-created
+    type: object_count
+    params:
+      type: ConsejoSuperior
+      equals: 1
+    piece: consejo-superior
+    highlight: object_creation
+    feedback:
+      pass:
+        what: { es: "`main` construyó un Consejo Superior, un órgano concreto." }
+        why: { es: "Las subclases concretas sí se instancian: heredan lo común y completan lo abstracto." }
+      fail:
+        what: { es: "`main` no creó ningún `ConsejoSuperior`." }
+        why: { es: "Con la superclase abstracta, lo que se construye es siempre una subclase concreta." }
+        hint: { es: "Reemplazá `new OrganoDeGobierno(…)` por `new ConsejoSuperior()`." }
+
+  - id: described
+    type: stdout_contains
+    params:
+      text: "Consejo Superior"
+    piece: consejo-superior
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El programa describió al Consejo Superior." }
+        why: { es: "La variable puede ser de tipo `OrganoDeGobierno` y el objeto, un `ConsejoSuperior`: el método que corre es el de la subclase." }
+      fail:
+        what: { es: "El programa no imprimió la descripción del Consejo Superior." }
+        why: { es: "El objeto concreto responde con su propia implementación de `describirComposicion()`." }
+        hint: { es: "`System.out.println(organo.nombre + \": \" + organo.describirComposicion());`." }
+
+hints:
+  - es: "Una clase abstracta describe lo común de una familia de clases, pero no representa nada concreto: no se puede hacer `new` de ella."
+  - es: "`abstract` va en la clase y en el método; el método abstracto no tiene cuerpo y las subclases concretas están obligadas a implementarlo."
+  - es: "Marcá la clase y el método como `abstract`, borrá el cuerpo del método y en `main` creá `new ConsejoSuperior()`."

@@ -1,0 +1,164 @@
+id: m4-05
+module: m4
+order: 5
+title:
+  es: "Integrador: el gobierno de una FR"
+concept: polymorphism-with-collections
+rules: [R-GOB-01, R-FR-01]
+brief:
+  es: |
+    Una FR se gobierna con su Asamblea, su Consejo Directivo y su Decano (art. 45): dos
+    órganos colegiados y uno unipersonal. `FacultadRegional` hoy los guarda en tres
+    atributos y `describirGobierno()` pregunta con `instanceof` qué es cada uno.
+
+    Reemplazá los tres atributos por una `List<OrganoDeGobierno> organos` con
+    `agregarOrgano`, y hacé que `describirGobierno()` recorra la lista pidiéndole a cada
+    órgano su `describirComposicion()`, sin `instanceof`.
+criteria:
+  - checks: [organs-list, add-method]
+    es: "La facultad tiene una lista de órganos de gobierno"
+  - checks: [collegiate-dispatched, unipersonal-dispatched]
+    es: "Cada órgano responde con su propia descripción"
+  - checks: [assembly-printed, dean-printed]
+    es: "El programa describe los tres órganos de la FR Resistencia"
+editable: [FacultadRegional.java]
+
+scene:
+  bindings:
+    - type: FacultadRegional
+      archetype: regional-faculty
+      label: nombre
+      slots: { organos: governing-bodies }
+    - type: OrganoDeGobierno
+      archetype: generic-block
+      label: nombre
+    - type: OrganoColegiado
+      archetype: inheritance-floors
+      label: nombre
+    - type: OrganoUnipersonal
+      archetype: inheritance-floors
+      label: nombre
+  pieces:
+    - id: fr-resistencia
+      type: FacultadRegional
+      label: { es: "FR Resistencia" }
+    - id: asamblea
+      type: OrganoColegiado
+      where: { field: nombre, equals: "Asamblea de la Facultad Regional" }
+      label: { es: "Asamblea de la FR" }
+    - id: consejo-directivo
+      type: OrganoColegiado
+      where: { field: nombre, equals: "Consejo Directivo" }
+      label: { es: "Consejo Directivo" }
+    - id: decanato
+      type: OrganoUnipersonal
+      label: { es: "Decanato" }
+  showVariables: true
+  realReference:
+    regionalFaculties: [resistencia]
+
+checks:
+  - id: organs-list
+    type: field
+    params:
+      class: FacultadRegional
+      name: organos
+      type: List<OrganoDeGobierno>
+    piece: fr-resistencia
+    slot: governing-bodies
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "La facultad guarda sus órganos en una lista del tipo general." }
+        why: { es: "Una `List<OrganoDeGobierno>` acepta cualquier subclase: colegiados y unipersonales mezclados." }
+      fail:
+        what: { es: "`FacultadRegional` todavía no tiene un atributo `organos` de tipo `List<OrganoDeGobierno>`." }
+        why: { es: "Declarar la lista con el tipo de la superclase es lo que permite tratar a todos los órganos por igual." }
+        hint: { es: "`List<OrganoDeGobierno> organos = new ArrayList<>();`." }
+
+  - id: add-method
+    type: method
+    params:
+      class: FacultadRegional
+      name: agregarOrgano
+      parameterTypes: [OrganoDeGobierno]
+    piece: fr-resistencia
+    slot: governing-bodies
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "`agregarOrgano` recibe cualquier órgano de gobierno." }
+        why: { es: "Un parámetro del tipo general acepta un `OrganoColegiado` o un `OrganoUnipersonal` sin métodos separados." }
+      fail:
+        what: { es: "Falta el método `agregarOrgano(OrganoDeGobierno)`." }
+        why: { es: "Un solo método con el tipo de la superclase reemplaza a uno por cada clase de órgano." }
+        hint: { es: "`void agregarOrgano(OrganoDeGobierno organo) { organos.add(organo); }`." }
+
+  - id: collegiate-dispatched
+    type: call_dispatch
+    params:
+      method: describirComposicion
+      receiverType: OrganoColegiado
+      implementation: OrganoColegiado
+    piece: consejo-directivo
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "A los órganos colegiados les corrió su propia descripción." }
+        why: { es: "Java eligió la versión según la clase del objeto: el `for` no tuvo que preguntar qué era." }
+      fail:
+        what: { es: "`describirGobierno()` no le pidió a ningún órgano colegiado su `describirComposicion()`." }
+        why: { es: "Preguntar con `instanceof` y describir desde afuera repite lo que cada clase ya sabe hacer." }
+        hint: { es: "En el `for`, llamá `organo.describirComposicion()` directamente, sin `instanceof`." }
+
+  - id: unipersonal-dispatched
+    type: call_dispatch
+    params:
+      method: describirComposicion
+      receiverType: OrganoUnipersonal
+      implementation: OrganoUnipersonal
+    piece: decanato
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Al Decanato le corrió su propia descripción, en el mismo `for`." }
+        why: { es: "La misma línea de código ejecutó dos implementaciones distintas: despacho dinámico." }
+      fail:
+        what: { es: "`describirGobierno()` no le pidió al órgano unipersonal su `describirComposicion()`." }
+        why: { es: "Con polimorfismo, agregar un tipo de órgano nuevo no obliga a tocar el `for`." }
+        hint: { es: "Una sola llamada, `organo.describirComposicion()`, sirve para todos." }
+
+  - id: assembly-printed
+    type: stdout_contains
+    params:
+      text: "Asamblea de la Facultad Regional: Órgano colegiado de"
+    piece: asamblea
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "La Asamblea de la FR se describió como colegiado." }
+        why: { es: "El texto sale de la implementación de `OrganoColegiado`, elegida en tiempo de ejecución." }
+      fail:
+        what: { es: "El programa no imprimió la descripción de la Asamblea de la Facultad Regional." }
+        why: { es: "Cada vuelta del `for` imprime `nombre` y lo que devuelve `describirComposicion()`." }
+        hint: { es: "`System.out.println(organo.nombre + \": \" + organo.describirComposicion());`." }
+
+  - id: dean-printed
+    type: stdout_contains
+    params:
+      text: "Decanato: Órgano unipersonal a cargo de Ana Lema"
+    piece: decanato
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El Decanato se describió como unipersonal, a cargo de Ana Lema." }
+        why: { es: "El mismo `for`, otra clase de objeto, otra respuesta." }
+      fail:
+        what: { es: "El programa no imprimió la descripción del Decanato." }
+        why: { es: "Si el Decanato no está en la lista o el `for` no llega a él, no se describe." }
+        hint: { es: "¿`agregarOrgano` guarda todos los órganos en la lista, y el `for` la recorre entera?" }
+
+hints:
+  - es: "Si tenés un `if (x instanceof A) … else if (x instanceof B) …`, casi siempre hay un método polimórfico esperando a ser llamado."
+  - es: "Guardá los órganos en `List<OrganoDeGobierno>` y recorrela con `for (OrganoDeGobierno organo : organos)`."
+  - es: "El cuerpo del `for` es una sola línea: imprimir `organo.nombre + \": \" + organo.describirComposicion()`."

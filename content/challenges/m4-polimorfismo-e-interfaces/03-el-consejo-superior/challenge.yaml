@@ -1,0 +1,111 @@
+id: m4-03
+module: m4
+order: 3
+title:
+  es: "El Consejo Superior"
+concept: polymorphism-with-invariants
+rules: [R-CS-01]
+brief:
+  es: |
+    El Consejo Superior (art. 105) lo integran el Rector, los Decanos de todas las FR,
+    15 docentes, 5 graduados, 5 estudiantes y 5 no docentes. Es un órgano colegiado con
+    una composición fija.
+
+    Completá `ConsejoSuperior`: el constructor **rechaza** con `IllegalArgumentException`
+    cualquier cantidad que no sea la del Estatuto, y `describirComposicion()` se
+    sobrescribe para listar la composición completa.
+criteria:
+  - checks: [extends-collegiate]
+    es: "`ConsejoSuperior` es un órgano colegiado"
+  - checks: [overrides, described]
+    es: "Describe su composición completa"
+  - checks: [invalid-rejected]
+    es: "Un consejo con 14 docentes es rechazado"
+editable: [ConsejoSuperior.java]
+
+scene:
+  bindings:
+    - type: OrganoDeGobierno
+      archetype: generic-block
+      label: nombre
+    - type: OrganoColegiado
+      archetype: inheritance-floors
+      label: nombre
+    - type: ConsejoSuperior
+      archetype: inheritance-floors
+      label: nombre
+  pieces:
+    - id: consejo-superior
+      type: ConsejoSuperior
+      label: { es: "Consejo Superior" }
+  showVariables: true
+
+checks:
+  - id: extends-collegiate
+    type: extends
+    params:
+      class: ConsejoSuperior
+      superclass: OrganoColegiado
+    piece: consejo-superior
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "El Consejo Superior es un órgano colegiado, que es un órgano de gobierno." }
+        why: { es: "La herencia puede tener varios niveles: cada uno agrega lo suyo sobre el anterior." }
+      fail:
+        what: { es: "`ConsejoSuperior` no extiende `OrganoColegiado`." }
+        why: { es: "El Consejo Superior es un órgano colegiado concreto: hereda de la clase intermedia, no directamente de la abstracta." }
+        hint: { es: "`public class ConsejoSuperior extends OrganoColegiado`." }
+
+  - id: overrides
+    type: call_dispatch
+    params:
+      method: describirComposicion
+      receiverType: ConsejoSuperior
+      implementation: ConsejoSuperior
+    piece: consejo-superior
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "Al Consejo Superior le corrió su propia descripción." }
+        why: { es: "Con tres niveles de herencia, Java sigue eligiendo la versión más específica: la de la clase del objeto." }
+      fail:
+        what: { es: "Al Consejo Superior le corrió la descripción genérica de `OrganoColegiado`." }
+        why: { es: "La versión heredada cuenta la lista `integrantes`; el Consejo Superior tiene su composición fija y la describe él." }
+        hint: { es: "Sobrescribí `describirComposicion()` en `ConsejoSuperior` con `@Override`." }
+
+  - id: described
+    type: stdout_contains
+    params:
+      text: "15 docentes, 5 graduados, 5 estudiantes y 5 no docentes"
+    piece: consejo-superior
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El Consejo Superior se describió con la composición del art. 105." }
+        why: { es: "La descripción usa los atributos que validó el constructor: lo que se imprime es siempre una composición válida." }
+      fail:
+        what: { es: "El programa no imprimió la composición completa del Consejo Superior." }
+        why: { es: "La descripción tiene que nombrar a los docentes, graduados, estudiantes y no docentes con sus cantidades." }
+        hint: { es: "Armá el texto con los atributos: `… + docentes + \" docentes, \" + graduados + \" graduados, …`." }
+
+  - id: invalid-rejected
+    type: throws
+    params:
+      type: IllegalArgumentException
+      caught: true
+    piece: consejo-superior
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "El consejo con 14 docentes fue rechazado." }
+        why: { es: "Una invariante (la composición fija) se defiende en el constructor, como los requisitos del Rector." }
+      fail:
+        what: { es: "Se construyó un Consejo Superior con 14 docentes." }
+        why: { es: "Si el constructor no verifica las cantidades, pueden existir consejos que el Estatuto no permite." }
+        hint: { es: "Un `if` por cantidad: si no coincide con el art. 105, `throw new IllegalArgumentException(…)`." }
+
+hints:
+  - es: "Las reglas que siempre tienen que cumplirse (invariantes) se verifican donde nace el objeto: el constructor."
+  - es: "Compará cada cantidad con la del Estatuto (15, 5, 5, 5) y rechazá si alguna difiere; después sobrescribí la descripción."
+  - es: "`if (docentes != 15) throw new IllegalArgumentException(\"…\");` (y lo mismo para las otras tres), y `@Override String describirComposicion()`."

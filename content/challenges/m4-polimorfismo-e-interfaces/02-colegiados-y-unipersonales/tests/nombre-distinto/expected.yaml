@@ -1,0 +1,7 @@
+outcome: incomplete
+log:
+  - check: collegiate-overrides
+    state: incomplete
+  - check: collegiate-dispatched
+    state: incomplete
+    title: "Al Consejo Directivo le corrió el `describirComposicion()` de la superclase, no el suyo."

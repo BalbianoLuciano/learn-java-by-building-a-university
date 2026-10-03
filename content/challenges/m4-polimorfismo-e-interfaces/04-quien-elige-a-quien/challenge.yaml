@@ -1,0 +1,128 @@
+id: m4-04
+module: m4
+order: 4
+title:
+  es: "¿Quién elige a quién?"
+concept: interfaces
+rules: [R-RECT-02, R-FR-02, R-DEP-01]
+brief:
+  es: |
+    Rector, Decano y Director de Departamento son cargos distintos, sin una superclase en
+    común, pero comparten una capacidad: son **electivos**. Cada uno sabe qué órgano lo
+    elige y cuánto dura su mandato.
+
+    `CargoDeRector` ya implementa la interfaz `CargoElectivo`. Hacé lo mismo con
+    `CargoDeDecano` y `CargoDeDirectorDeDepartamento`, y reemplazá las tres impresiones
+    repetidas de `main` por un arreglo `CargoElectivo[]` recorrido con un `for`.
+criteria:
+  - checks: [dean-implements, director-implements]
+    es: "Los tres cargos implementan `CargoElectivo`"
+  - checks: [rector-printed, dean-printed, director-printed]
+    es: "El programa informa quién elige cada cargo"
+editable: [CargoDeDecano.java, CargoDeDirectorDeDepartamento.java, Main.java]
+
+scene:
+  bindings:
+    - type: CargoDeRector
+      archetype: generic-block
+      label: nombre
+    - type: CargoDeDecano
+      archetype: generic-block
+      label: nombre
+    - type: CargoDeDirectorDeDepartamento
+      archetype: generic-block
+      label: nombre
+  pieces:
+    - id: rector
+      type: CargoDeRector
+      label: { es: "Rector" }
+    - id: decano
+      type: CargoDeDecano
+      label: { es: "Decano" }
+    - id: director
+      type: CargoDeDirectorDeDepartamento
+      label: { es: "Director de Departamento" }
+  showVariables: true
+
+checks:
+  - id: dean-implements
+    type: implements
+    params:
+      class: CargoDeDecano
+      interface: CargoElectivo
+    piece: decano
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "El Decano es un cargo electivo." }
+        why: { es: "Implementar una interfaz es prometer que la clase tiene esos métodos; a cambio, se la puede tratar como `CargoElectivo`." }
+      fail:
+        what: { es: "`CargoDeDecano` tiene los métodos, pero no declara `implements CargoElectivo`." }
+        why: { es: "Tener los métodos no alcanza: sin `implements`, un `CargoDeDecano` no se puede guardar en una variable de tipo `CargoElectivo`." }
+        hint: { es: "`public class CargoDeDecano implements CargoElectivo`." }
+
+  - id: director-implements
+    type: implements
+    params:
+      class: CargoDeDirectorDeDepartamento
+      interface: CargoElectivo
+    piece: director
+    highlight: declaration
+    feedback:
+      pass:
+        what: { es: "El Director de Departamento también es un cargo electivo." }
+        why: { es: "Tres clases sin superclase común comparten una interfaz: eso no se puede hacer con herencia." }
+      fail:
+        what: { es: "`CargoDeDirectorDeDepartamento` tiene los métodos, pero no declara `implements CargoElectivo`." }
+        why: { es: "La interfaz es un contrato explícito: la clase lo firma con `implements`." }
+        hint: { es: "`public class CargoDeDirectorDeDepartamento implements CargoElectivo`." }
+
+  - id: rector-printed
+    type: stdout_contains
+    params:
+      text: "Rector: lo elige la Asamblea Universitaria por 4 años"
+    piece: rector
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El Rector es elegido por la Asamblea Universitaria por 4 años (arts. 46 y 67)." }
+        why: { es: "El `for` sobre `CargoElectivo[]` le pide a cada cargo lo mismo; cada uno responde con sus datos." }
+      fail:
+        what: { es: "El programa no imprimió quién elige al Rector." }
+        why: { es: "El texto se arma con `nombre`, `organoQueElige()` y `mandatoEnAnios()` del cargo." }
+        hint: { es: "`cargo.nombre + \": lo elige \" + cargo.organoQueElige() + \" por \" + cargo.mandatoEnAnios() + \" años\"`." }
+
+  - id: dean-printed
+    type: stdout_contains
+    params:
+      text: "Decano: lo elige la Asamblea de la Facultad Regional por 4 años"
+    piece: decano
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El Decano es elegido por la Asamblea de la FR por 4 años (arts. 78 y 86)." }
+        why: { es: "A través de la interfaz, el `for` no necesita saber que este cargo es un `CargoDeDecano`." }
+      fail:
+        what: { es: "El programa no imprimió quién elige al Decano." }
+        why: { es: "Si el Decano no está en el arreglo `CargoElectivo[]`, el `for` no lo recorre." }
+        hint: { es: "¿El arreglo tiene los tres cargos?" }
+
+  - id: director-printed
+    type: stdout_contains
+    params:
+      text: "Director de Departamento: lo elige el Consejo Departamental por 4 años"
+    piece: director
+    highlight: last_write
+    feedback:
+      pass:
+        what: { es: "El Director de Departamento es elegido por el Consejo Departamental por 4 años (arts. 95 y 126)." }
+        why: { es: "Un mismo recorrido sirve para cualquier clase que implemente la interfaz, incluso una que todavía no existe." }
+      fail:
+        what: { es: "El programa no imprimió quién elige al Director de Departamento." }
+        why: { es: "Si el Director no está en el arreglo `CargoElectivo[]`, el `for` no lo recorre." }
+        hint: { es: "¿El arreglo tiene los tres cargos?" }
+
+hints:
+  - es: "Una interfaz es un contrato: una lista de métodos que la clase promete tener. Clases sin parentesco pueden firmar el mismo contrato."
+  - es: "Con `implements CargoElectivo`, un objeto de esa clase se puede guardar en una variable o un arreglo de tipo `CargoElectivo`."
+  - es: "`CargoElectivo[] cargos = {rector, decano, director};` y un `for` que imprima `nombre`, `organoQueElige()` y `mandatoEnAnios()` de cada uno."
