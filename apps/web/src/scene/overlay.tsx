@@ -1,11 +1,17 @@
 import type { State } from '@ljbu/contracts';
 import { useFrame, useThree } from '@react-three/fiber';
-import { CircleCheck, CircleX, Construction, Flag, Lock, Pin, Plug } from 'lucide-react';
+import { CircleCheck, CircleX, Construction, Flag, Lock, Pin, Plug, Tag } from 'lucide-react';
 import { useContext, useLayoutEffect, useRef, type RefObject } from 'react';
 import * as THREE from 'three';
 import { useStore } from 'zustand';
 import styles from './overlay.module.css';
-import { OverlayContext, type AnchorContent, type Chip, type OverlayStore } from './overlayStore';
+import {
+  OverlayContext,
+  type AnchorContent,
+  type Bubble,
+  type Chip,
+  type OverlayStore,
+} from './overlayStore';
 
 function useOverlayStore(): OverlayStore {
   const store = useContext(OverlayContext);
@@ -57,6 +63,20 @@ export function ChipAnchor({
   return <group ref={ref} position={position} />;
 }
 
+/** The detail bubble of a building or a blueprint, with its tail on the anchor. */
+export function BubbleAnchor({
+  id,
+  bubble,
+  position,
+}: {
+  id: string;
+  bubble: Bubble;
+  position: [number, number, number];
+}) {
+  const ref = useAnchor(id, { kind: 'bubble', bubble });
+  return <group ref={ref} position={position} />;
+}
+
 /** A text sign anchored this high above the current group. */
 export function Label({
   id,
@@ -99,9 +119,18 @@ export function OverlayDriver() {
       // and the layout can space pieces for them; zooming in makes them legible.
       const zoom = camera instanceof THREE.OrthographicCamera ? camera.zoom : BASE_ZOOM;
       const scale = Math.min(1.3, Math.max(0.55, zoom / BASE_ZOOM));
-      const x = ((projected.x + 1) / 2) * size.width + anchor.offset[0] * scale;
-      const y = ((1 - projected.y) / 2) * size.height + anchor.offset[1] * scale;
-      const transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%) scale(${scale.toFixed(3)})`;
+      let x = ((projected.x + 1) / 2) * size.width + anchor.offset[0] * scale;
+      let y = ((1 - projected.y) / 2) * size.height + anchor.offset[1] * scale;
+      if (anchor.content.kind === 'bubble') {
+        // A bubble stays inside the canvas: it slides rather than getting cut.
+        const halfWidth = (element.offsetWidth * scale) / 2;
+        x = Math.min(size.width - halfWidth - 4, Math.max(halfWidth + 4, x));
+        y = Math.max(element.offsetHeight * scale + 4, y);
+      }
+      // A bubble sits on its anchor; everything else is centered on it.
+      const origin =
+        anchor.content.kind === 'bubble' ? 'translate(-50%, -100%)' : 'translate(-50%, -50%)';
+      const transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) ${origin} scale(${scale.toFixed(3)})`;
       if (element.style.transform !== transform) {
         element.style.transform = transform;
       }
@@ -142,6 +171,7 @@ export function OverlayLayer({ store }: { store: OverlayStore }) {
           )}
           {anchor.content.kind === 'badge' && <Badge state={anchor.content.state} />}
           {anchor.content.kind === 'chip' && <ChipView chip={anchor.content.chip} />}
+          {anchor.content.kind === 'bubble' && <BubbleView bubble={anchor.content.bubble} />}
         </div>
       ))}
     </div>
@@ -168,12 +198,37 @@ function ChipView({ chip }: { chip: Chip }) {
       data-private={flags.has('private')}
       data-abstract={flags.has('abstract')}
       data-missing={flags.has('missing')}
+      data-null={flags.has('null')}
     >
+      {chip.shape === 'tag' && <Tag size={12} strokeWidth={2} aria-hidden />}
       {flags.has('private') && <Lock size={12} strokeWidth={2} aria-hidden />}
       {flags.has('static') && <Flag size={12} strokeWidth={2} aria-hidden />}
       {flags.has('final') && <Pin size={12} strokeWidth={2} aria-hidden />}
       <span className={styles.chipText}>{chip.text}</span>
       {flags.has('ref') && <Plug size={12} strokeWidth={2} aria-hidden />}
     </span>
+  );
+}
+
+function BubbleView({ bubble }: { bubble: Bubble }) {
+  return (
+    <div className={styles.bubble}>
+      <div className={styles.bubbleHead}>
+        <span className={styles.bubbleTitle}>{bubble.title}</span>
+        {bubble.subtitle && <span className={styles.bubbleSubtitle}>{bubble.subtitle}</span>}
+      </div>
+      {bubble.note && <p className={styles.bubbleNote}>{bubble.note}</p>}
+      {bubble.sections.map((section) => (
+        <div key={section.title} className={styles.bubbleSection}>
+          <span className={styles.bubbleSectionTitle}>{section.title}</span>
+          <div className={styles.bubbleRows}>
+            {section.rows.map((row) => (
+              <ChipView key={row.text} chip={row} />
+            ))}
+          </div>
+        </div>
+      ))}
+      <span className={styles.bubbleTail} aria-hidden />
+    </div>
   );
 }

@@ -6,9 +6,9 @@ import styles from './Legend.module.css';
 const ITEMS = [
   'blueprint',
   'object',
-  'plaque',
-  'window',
-  'sign',
+  'tag',
+  'bubble',
+  'attached',
   'floors',
   'seal',
   'ghost',

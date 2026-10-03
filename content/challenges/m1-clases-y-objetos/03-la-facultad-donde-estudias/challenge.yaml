@@ -42,7 +42,7 @@ checks:
     feedback:
       pass:
         what: { es: "`miFacultad` y `resistencia` apuntan a la misma facultad." }
-        why: { es: "Asignar una referencia no copia el objeto: ahora hay dos cables al mismo edificio." }
+        why: { es: "Asignar una referencia no copia el objeto: ahora el mismo edificio tiene dos etiquetas." }
       fail:
         what: { es: "`miFacultad` no apunta a la FR Resistencia." }
         why: { es: "Para compartir el objeto, `miFacultad` tiene que recibir la referencia que guarda `resistencia`." }

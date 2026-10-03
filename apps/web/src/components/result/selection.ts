@@ -4,6 +4,8 @@ import type { SourceRef } from '@ljbu/contracts';
 export interface Selection {
   sourceRef?: SourceRef;
   pieceId?: string;
+  /** A blueprint of the model: the class with that name. */
+  className?: string;
   entry?: number;
   step?: number;
 }

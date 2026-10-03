@@ -12,9 +12,9 @@ mendoza.rectorado = rectorado;
 ```
 
 Hay un solo `new Rectorado()`, así que hay un solo edificio. Las tres asignaciones no lo
-copian: guardan en cada facultad una **referencia** al mismo objeto. En la maqueta son tres
-cables que llegan al mismo Rectorado, igual que en la UTN real, donde las 30 facultades
-dependen de una sola sede central (Estatuto, art. 5).
+copian: guardan en cada facultad una **referencia** al mismo objeto. En la maqueta, el
+globo de cada facultad dice `rectorado → #1`: el mismo número en las tres, igual que en la
+UTN real, donde las 30 facultades dependen de una sola sede central (Estatuto, art. 5).
 
 Si en cambio escribieras `new Rectorado()` tres veces, tendrías tres edificios con la misma
 dirección pero independientes: cambiar uno no cambiaría los otros.

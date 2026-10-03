@@ -17,6 +17,8 @@ export interface SceneState {
   fields: Map<string, Map<string, FieldState>>;
   /** The method running on each object at this step (its simple name; <init> for a constructor). */
   running: Map<string, string>;
+  /** The object the chosen step touches, and the attribute it wrote, if any: its bubble opens. */
+  focus?: { pieceId: string; field?: string };
 }
 
 export interface FieldState {
@@ -160,5 +162,12 @@ export function sceneStateAt(pieces: Piece[], timeline: TimelineStep[], step?: n
       }
     }
   }
-  return { visible, targets, filled, floors, fields, running };
+  const current = timeline[step];
+  const focusId =
+    current?.pieceId ?? (current?.event === 'local_set' ? current.targetPieceId : undefined);
+  const focus =
+    focusId && visible.has(focusId)
+      ? { pieceId: focusId, field: current?.event === 'field_set' ? current.name : undefined }
+      : undefined;
+  return { visible, targets, filled, floors, fields, running, focus };
 }

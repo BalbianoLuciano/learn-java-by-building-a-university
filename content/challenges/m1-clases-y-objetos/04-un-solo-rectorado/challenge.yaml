@@ -98,10 +98,10 @@ checks:
     feedback:
       pass:
         what: { es: "Las tres facultades apuntan al mismo Rectorado." }
-        why: { es: "Asignar una referencia a tres atributos no copia el objeto: son tres cables al mismo edificio." }
+        why: { es: "Asignar una referencia a tres atributos no copia el objeto: las tres facultades comparten el mismo Rectorado." }
       fail:
         what: { es: "No todas las facultades apuntan al mismo Rectorado." }
-        why: { es: "Un atributo de tipo objeto guarda una referencia; si es `null` o apunta a otro objeto, el cable va a otro lado." }
+        why: { es: "Un atributo de tipo objeto guarda una referencia; si es `null` o apunta a otro objeto, esa facultad no comparte el Rectorado." }
         hint: { es: "Las tres líneas `….rectorado = …` tienen que tener la misma variable a la derecha del `=`." }
     traps:
       - when:

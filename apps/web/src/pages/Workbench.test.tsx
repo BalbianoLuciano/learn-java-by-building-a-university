@@ -103,7 +103,7 @@ describe('Workbench with a result', () => {
 
     const legend = screen.getByRole('dialog', { name: 'Cómo se ve Java en la maqueta' });
     expect(within(legend).getByText('Plano')).toBeInTheDocument();
-    expect(within(legend).getByText('Ventanilla')).toBeInTheDocument();
+    expect(within(legend).getByText('Etiqueta')).toBeInTheDocument();
   });
 
   it('has no accessibility violations', async () => {

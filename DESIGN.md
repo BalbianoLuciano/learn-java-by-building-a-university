@@ -173,6 +173,7 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
 | **Línea de tiempo** | Pista de 4px, cursor de 14px, botones paso anterior/siguiente, texto `Paso n / N · Archivo:línea`. |
 | **Pista** | Panel desplegable dentro del pedido; nivel 1, 2, 3 y "Ver solución" (este último con confirmación). |
 | **Leyenda** | Panel sobre la maqueta con una fila por forma de B4 (miniatura + nombre + una oración). |
+| **Globo** | Cuadro de diálogo HTML anclado sobre un edificio o un plano: cabecera `Clase #n`, lista de atributos (ícono por modificador) y de métodos. Uno solo abierto; se cierra al tocar afuera. |
 
 Íconos: **Lucide** (licencia ISC), trazo 1.75px, 18px. Estados:
 `circle-check` ✅ · `construction` 🚧 · `circle-x` ❌.
@@ -253,27 +254,27 @@ La escena no tiene fondo propio: es transparente sobre `--color-bg`.
 ## B4. Lenguaje visual: cómo se ve Java
 
 La maqueta muestra **dos cosas a la vez**: la UTN (qué construyó el alumno) y **Java** (con
-qué lo construyó). Cada concepto del lenguaje tiene **una** forma, siempre la misma en los
-20 desafíos, y la leyenda de la interfaz las lista. Regla: si dos cosas son distintas en
-Java, se ven distintas; si se ven distintas, son distintas en Java.
+qué lo construyó). Cada concepto del lenguaje tiene **una** forma que **se parece a lo que
+significa** (como en Flexbox Froggy: la hoja contiene, la rana se mueve), siempre la misma
+en los 20 desafíos, y la leyenda de la interfaz las lista.
+
+Regla de jerarquía: **en reposo, lo mínimo; al tocar, el detalle.** Un edificio en reposo
+muestra su letrero, su chapa de serie y sus etiquetas. Todo lo demás vive en un **globo**
+que se abre al tocarlo (o cuando la reproducción lo toca). Nunca hay más de un globo
+abierto.
 
 | Concepto de Java | Forma | Detalle |
 |---|---|---|
-| **Clase** | **Plano** (`blueprint`): panel de obra parado al fondo de la escena, uno por clase, en una fila | Cabecera con el nombre; debajo, una placa por atributo (`nombre: String`) y una ventanilla por método. Datos de `result.classes` |
-| **Objeto / instancia** | **Edificio sobre su isla**, con un **cable fino punteado** hasta su plano | El `new` lo construye a partir del plano (B6). `piece.type` dice cuál |
-| **Atributo** (de instancia) | **Placa en la fachada**: `nombre = "Resistencia"` | Una por atributo, en el orden de la clase (heredados primero). El valor sale de `piece.fields` al final y de los `field_set` de la línea de tiempo durante la reproducción; sin valor todavía: `nombre = ?` |
-| `private` | Placa **detrás de una reja** (ícono `lock`) | Se lee, no se toca desde afuera |
-| `public` | Placa a la vista (sin ícono) | Package-private se dibuja como `public` con ícono `lock-open` atenuado |
-| **Método** | **Ventanilla** en la fachada con su nombre: `getNombre()` | `public` al frente; `private` al costado. Se **ilumina** (`--color-accent`) mientras corre en el paso actual de la línea de tiempo (`call` con `pieceId`) |
-| `static` | Placa o ventanilla con **bandera** (ícono `flag`), **en el plano**, no en los edificios | Pertenece a la clase: un solo valor compartido |
-| `final` | Placa **remachada** (ícono `pin`) | No cambia después de asignarse |
-| **Variable / referencia** | **Cartel en un poste** fuera de las islas + **cable** al edificio (`variable-sign`, `reference-link`) | `null`: cable que termina suelto |
-| **Atributo que es una referencia** (composición) | Placa con **enchufe** del que sale un cable al edificio referenciado | Es un atributo más; el cable va de la placa, no del techo |
-| **Colección** | Placa con enchufe múltiple: un cable por elemento dibujado | `List<Departamento>` con tres cables |
-| **Herencia** | Edificio de **pisos** (`inheritance-floors`: planta baja = superclase) **y planos apilados** (el plano de la subclase sobre el de la superclase) | Las placas heredadas van en la planta baja |
-| `abstract` | Plano con **borde punteado** y sello "ABSTRACTA"; método abstracto: ventanilla tapiada | No genera edificios |
-| **Interfaz** | **Sello** (`interface-seal`): un panel redondo aparte, con sus ventanillas vacías; cada plano que la implementa lleva una **insignia** con su nombre, y sus edificios también (`interface-badge`) | No tiene atributos ni objetos: es un contrato |
-| **Constructor** | **Grúa** sobre la isla mientras corre (`call` de `Clase.<init>`) | Con `super()`, construye primero la planta baja |
+| **Clase** | **Plano** (`blueprint`): panel al fondo, uno por clase, con la **miniatura en silueta** del edificio que produce y su nombre | Al tocarlo, su globo lista atributos (`nombre: String`) y métodos. Datos de `result.classes` |
+| **Objeto / instancia** | **Edificio sobre su isla**, con una **chapa de serie** `FacultadRegional #1` | El número distingue instancias de la misma clase: mismo número, mismo objeto (`==`). Al reproducir, el `new` lo construye saliendo de su plano; seleccionado, una línea punteada lo une al plano |
+| **Variable / referencia** | **Etiqueta colgada** del edificio (`tag`), como la de una valija: `resistencia` | Dos etiquetas en el mismo edificio = dos nombres, un objeto (aliasing). `null` = etiqueta en el suelo, al frente. Reasignar = la etiqueta salta de edificio |
+| **Atributo** | Línea del **globo**: `nombre = "Resistencia"` | Valor final de `piece.fields`; durante la reproducción, de los `field_set`; sin valor todavía: `nombre = ?`. `private`: candado; `static`: bandera, y solo en el globo del plano; `final`: chinche |
+| **Método** | Línea del globo con forma de **ventanilla**: `getNombre()` | Se **ilumina** mientras corre en el paso actual (`call` con `pieceId`); el globo se abre solo sobre ese objeto |
+| **Composición** (atributo que es un objeto) | El edificio contenido vive en una **isla adosada** a la del dueño, unida por un **puentecito** | En el globo del dueño, `decano → #3`. Una lista es una **hilera** de edificios chicos adosados, con baranda: `departamentos [3]` |
+| **Herencia** | Edificio de **pisos** (`inheritance-floors`: planta baja = superclase) y planos apilados | En el globo, los atributos agrupados por piso |
+| `abstract` | Plano translúcido con la leyenda "abstracta"; no produce edificios | — |
+| **Interfaz** | **Sello** aparte (`interface-seal`); los planos que la firman llevan el sello y sus edificios la **insignia** | Su globo lista el contrato |
+| **Constructor** | **Grúa** sobre la isla mientras corre | Con `super()`, construye primero la planta baja |
 
 ### Arquetipos de la UTN (la forma del edificio)
 
@@ -288,8 +289,8 @@ ventanillas, cable al plano) se dibuja **sobre cualquier arquetipo**.
 | `career` | Carrera | bloque con banderín |
 | `person` | Persona y subtipos | figura low-poly (cilindro + cabeza) |
 | `inheritance-floors` | Objeto con herencia | pisos apilados, uno por clase de la jerarquía |
-| `slot` | Atributo de composición | pedestal junto a la pieza dueña (ocupado / vacío) |
-| `variable-sign`, `reference-link` | Variable, referencia | cartel en poste, cable curvo |
+| `slot` | Atributo de composición | isla adosada a la del dueño, vacía (andamio) o con su ocupante |
+| `variable-sign` | Variable | etiqueta colgada del edificio al que apunta; en el suelo si es `null` |
 | `interface-badge` | Interfaz implementada | insignia sobre el techo, una por interfaz; la agrega la pieza, no es binding |
 | `generic-block` | Tipo sin binding | cubo |
 
@@ -320,8 +321,8 @@ Una referencia `null` se dibuja como cable que termina suelto en el aire.
 |---|---|
 | Flotación | Cada isla sube y baja 0.05 unidades, período 6 s, con desfase aleatorio estable |
 | Construcción | Al reproducir un paso, la pieza crece desde la isla (escala Y 0→1) en `--duration-slow` con `--ease-out`; mientras corre el constructor hay una grúa sobre la isla |
-| Placas | Cada `field_set` hace aparecer o cambiar la placa del atributo en la fachada |
-| Ventanillas | La ventanilla del método que corre en el paso actual se ilumina |
+| Globo | Cada paso abre el globo del objeto que toca y resalta el atributo escrito o el método que corre |
+| Etiqueta | Un `local_set` cuelga la etiqueta del edificio (o la deja en el suelo si es `null`); si ya existía, salta |
 | Herencia | Los pisos se construyen **de abajo hacia arriba**, en el orden real de los constructores (`super()` primero) |
 | Referencia | El cable se "dibuja" del cartel a la pieza en `--duration-base` |
 | Selección | Elevación suave en `--duration-fast` |

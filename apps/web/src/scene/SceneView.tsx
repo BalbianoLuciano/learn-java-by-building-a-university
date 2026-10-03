@@ -2,21 +2,16 @@ import type { Piece, RunResult } from '@ljbu/contracts';
 import { ContactShadows, Line, MapControls, OrthographicCamera } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import type { Selection } from '../components/result/selection';
 import { Blueprint, Seal } from './archetypes/Blueprint';
-import { declaredFields, plaquePosition } from './java';
-import { Cable, VariableSign } from './archetypes/Links';
 import { useSceneColors } from './colors';
-import {
-  layoutBlueprints,
-  layoutScene,
-  SIGN_TOP,
-  type BlueprintPlacement,
-  type Placement,
-} from './layout';
+import { heightOf, serialsOf, type BubbleTexts } from './java';
+import { layoutBlueprints, layoutScene, type BlueprintPlacement, type Placement } from './layout';
+import { matte, UNIT_BOX } from './materials';
 import { useReducedMotion } from './motion';
-import { OverlayDriver, OverlayLayer } from './overlay';
+import { ChipAnchor, OverlayDriver, OverlayLayer } from './overlay';
 import { createOverlayStore, OverlayContext } from './overlayStore';
 import { PieceView } from './PieceView';
 import { sceneStateAt } from './replay';
@@ -110,19 +105,12 @@ function FitCamera({ placements }: { placements: (Placement | BlueprintPlacement
   return null;
 }
 
-/** The height of the building of a piece: the same rule PieceView uses. */
-function heightOf(piece: Piece): number {
-  return piece.archetype === 'rectorate'
-    ? 1.9
-    : piece.archetype === 'inheritance-floors'
-      ? 0.7 * (piece.floors?.length ?? 1)
-      : 1.1;
-}
-
 function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
+  const { t } = useTranslation();
   const colors = useSceneColors();
   const reducedMotion = useReducedMotion();
-  const placements = useMemo(() => layoutScene(result.pieces), [result.pieces]);
+  const layout = useMemo(() => layoutScene(result.pieces), [result.pieces]);
+  const { placements, bridges } = layout;
   const classes = useMemo(
     () => new Map(result.classes.map((info) => [info.name, info])),
     [result.classes],
@@ -138,7 +126,7 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
     for (const placement of placements.values()) {
       back = Math.min(back, placement.position[2] - (placement.island?.depth ?? 1) / 2);
     }
-    return layoutBlueprints(modelClasses, back - 2.0);
+    return layoutBlueprints(modelClasses, back - 2.4);
   }, [placements, modelClasses]);
   const placed = useMemo(
     () => [...placements.values(), ...blueprints.values()],
@@ -148,22 +136,38 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
     () => sceneStateAt(result.pieces, result.timeline, selection.step),
     [result, selection.step],
   );
-  const byId = useMemo(
-    () => new Map(result.pieces.map((piece) => [piece.id, piece])),
-    [result.pieces],
+  const serials = useMemo(() => serialsOf(result.pieces), [result.pieces]);
+  const archetypeOf = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const piece of result.pieces) {
+      if (piece.type && !map.has(piece.type)) {
+        map.set(piece.type, piece.archetype);
+      }
+    }
+    return map;
+  }, [result.pieces]);
+  const texts: BubbleTexts = useMemo(
+    () => ({
+      attributes: t('scene.attributes'),
+      methods: t('scene.methods'),
+      constructors: t('scene.constructors'),
+      serial: (type, number) => t('scene.serial', { type, number }),
+      abstract: t('scene.abstract'),
+      ghost: t('scene.ghostBubble'),
+    }),
+    [t],
   );
 
   const select = (piece: Piece) => {
     onSelect({ pieceId: piece.id, sourceRef: piece.sourceRef });
   };
-
-  /** Where a cable to a piece ends: the center of its island, just above the slab. */
-  const anchorOf = (pieceId: string | null | undefined): THREE.Vector3 | undefined => {
-    const placement = pieceId ? placements.get(pieceId) : undefined;
-    return placement
-      ? new THREE.Vector3(placement.position[0], 0.4, placement.position[2])
-      : undefined;
+  const selectClass = (name: string) => {
+    onSelect({ className: name });
   };
+
+  /** A bubble is open on the selected piece or, failing that, on the one the step touches. */
+  const openOn = selection.pieceId ?? state.focus?.pieceId;
+  const signs = result.pieces.filter((piece) => piece.archetype === 'variable-sign');
 
   return (
     <>
@@ -202,35 +206,12 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
       </group>
       {result.pieces.map((piece) => {
         const placement = placements.get(piece.id);
-        if (!placement) {
+        if (!placement || piece.archetype === 'variable-sign') {
           return null;
         }
-        if (piece.archetype === 'variable-sign') {
-          if (!state.visible.has(piece.id)) {
-            return null;
-          }
-          const target = state.targets.get(piece.id) ?? null;
-          const from = new THREE.Vector3(...placement.position).add(
-            new THREE.Vector3(0, SIGN_TOP, 0),
-          );
-          return (
-            <group
-              key={piece.id}
-              position={placement.position}
-              onClick={(event) => {
-                event.stopPropagation();
-                select(piece);
-              }}
-            >
-              <VariableSign piece={piece} colors={colors} ghost={false} />
-              <group
-                position={[-placement.position[0], -placement.position[1], -placement.position[2]]}
-              >
-                <Cable from={from} to={anchorOf(target)} colors={colors} />
-              </group>
-            </group>
-          );
-        }
+        const tags = signs.filter(
+          (sign) => state.visible.has(sign.id) && (state.targets.get(sign.id) ?? null) === piece.id,
+        );
         return (
           <PieceView
             key={piece.id}
@@ -239,50 +220,82 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
             colors={colors}
             visible={state.visible.has(piece.id)}
             classes={classes}
+            serials={serials}
             fields={state.fields.get(piece.id)}
             running={state.running.get(piece.id)}
-            builtFloors={state.floors.get(piece.id)}
+            lastWritten={state.focus?.pieceId === piece.id ? state.focus.field : undefined}
+            tags={tags}
             selected={selection.pieceId === piece.id}
+            open={openOn === piece.id}
             float={!reducedMotion}
             animate={!reducedMotion}
+            builtFloors={state.floors.get(piece.id)}
+            texts={texts}
             onSelect={select}
           />
         );
       })}
-      {/* Composition: a cable from the plaque of the attribute to the piece it refers to. */}
-      {result.pieces.flatMap((piece) => {
-        const placement = placements.get(piece.id);
-        const fields = state.fields.get(piece.id);
-        if (!placement || !fields || !state.visible.has(piece.id)) {
-          return [];
-        }
-        const island = placement.island ?? { width: 1.8, depth: 1.8 };
-        return declaredFields(piece.type, classes).flatMap((field) => {
-          const current = fields.get(field.name);
-          const targets = current?.pieceId ? [current.pieceId] : (current?.pieceIds ?? []);
-          const [x, y, z] = plaquePosition(heightOf(piece), island.depth - 0.6);
-          const from = new THREE.Vector3(
-            placement.position[0] + x,
-            placement.position[1] + 0.32 + y,
-            placement.position[2] + z,
-          );
-          return targets
-            .filter((target) => byId.has(target) && state.visible.has(target))
-            .map((target) => (
-              <Cable
-                key={`${piece.id}.${field.name}>${target}`}
-                from={from}
-                to={anchorOf(target)}
-                colors={colors}
+      {/* Variables pointing to nothing: tags lying on the ground at the front. */}
+      {signs
+        .filter(
+          (sign) =>
+            state.visible.has(sign.id) &&
+            !placements.has(state.targets.get(sign.id) ?? '') &&
+            placements.get(sign.id)?.hangsFrom === undefined,
+        )
+        .map((sign) => {
+          const placement = placements.get(sign.id);
+          if (!placement) {
+            return null;
+          }
+          return (
+            <group
+              key={sign.id}
+              position={placement.position}
+              onClick={(event) => {
+                event.stopPropagation();
+                select(sign);
+              }}
+            >
+              <ChipAnchor
+                id={`${sign.id}:tag`}
+                position={[0, 0.1, 0]}
+                chip={{
+                  shape: 'tag',
+                  text: t('scene.nullTag', { name: sign.label }),
+                  flags: ['null'],
+                  lit: false,
+                  ghost: false,
+                }}
               />
-            ));
-        });
+            </group>
+          );
+        })}
+      {/* Walkways between an owner and what it holds. */}
+      {bridges.map((bridge, index) => {
+        const [x1, , z1] = bridge.from;
+        const [x2, , z2] = bridge.to;
+        return (
+          <mesh
+            key={index}
+            geometry={UNIT_BOX}
+            material={matte(colors.island)}
+            position={[(x1 + x2) / 2, 0.2, (z1 + z2) / 2]}
+            scale={[Math.max(0.5, Math.abs(x2 - x1)), 0.1, Math.max(0.5, Math.abs(z2 - z1))]}
+            receiveShadow
+          />
+        );
       })}
-      {/* Every object hangs from its blueprint: a dotted line, class to instance. */}
+      {/* The selected object hangs from its blueprint: a dotted line, class to instance. */}
       {result.pieces.map((piece) => {
         const placement = placements.get(piece.id);
         const blueprint = piece.type ? blueprints.get(piece.type) : undefined;
-        if (!placement || !blueprint || !state.visible.has(piece.id)) {
+        if (
+          !placement ||
+          !blueprint ||
+          selection.pieceId !== piece.id ||
+          !state.visible.has(piece.id)
+        ) {
           return null;
         }
         const island = placement.island ?? { width: 1.8, depth: 1.8 };
@@ -297,13 +310,11 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
               ],
               [blueprint.position[0], blueprint.position[1] + 0.5, blueprint.position[2] + 0.1],
             ]}
-            color={colors.link}
-            lineWidth={1}
+            color={colors.accent}
+            lineWidth={1.5}
             dashed
             dashSize={0.25}
             gapSize={0.18}
-            transparent
-            opacity={0.7}
           />
         );
       })}
@@ -313,9 +324,26 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
           return null;
         }
         return info.kind === 'interface' ? (
-          <Seal key={info.name} info={info} placement={placement} colors={colors} />
+          <Seal
+            key={info.name}
+            info={info}
+            placement={placement}
+            colors={colors}
+            selected={selection.className === info.name}
+            texts={texts}
+            onSelect={selectClass}
+          />
         ) : (
-          <Blueprint key={info.name} info={info} placement={placement} colors={colors} />
+          <Blueprint
+            key={info.name}
+            info={info}
+            placement={placement}
+            archetype={archetypeOf.get(info.name)}
+            colors={colors}
+            selected={selection.className === info.name}
+            texts={texts}
+            onSelect={selectClass}
+          />
         );
       })}
     </>

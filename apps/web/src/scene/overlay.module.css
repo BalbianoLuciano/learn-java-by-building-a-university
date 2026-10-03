@@ -132,3 +132,105 @@
   border-style: dashed;
   opacity: 0.75;
 }
+
+.chip[data-shape='tag'] {
+  padding-left: 6px;
+  border-color: var(--scene-link);
+  border-radius: 3px 10px 10px 3px;
+  background: var(--scene-career);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.chip[data-shape='tag'][data-null='true'] {
+  border-style: dashed;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.chip[data-shape='plate'] {
+  padding: 0 6px;
+  border-color: var(--scene-link);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+
+.chip[data-lit='true'][data-shape='plaque'] {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+/* --- Bubble (DESIGN.md §A3) */
+
+.bubble {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 180px;
+  max-width: 300px;
+  margin-bottom: 10px;
+  padding: var(--space-3);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-float);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  text-align: left;
+  white-space: normal;
+}
+
+.bubbleTail {
+  position: absolute;
+  bottom: -7px;
+  left: calc(50% - 7px);
+  width: 12px;
+  height: 12px;
+  border-right: var(--border);
+  border-bottom: var(--border);
+  background: var(--color-surface);
+  transform: rotate(45deg);
+}
+
+.bubbleHead {
+  display: flex;
+  flex-direction: column;
+}
+
+.bubbleTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.bubbleSubtitle {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+}
+
+.bubbleNote {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.bubbleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bubbleSectionTitle {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bubbleRows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}

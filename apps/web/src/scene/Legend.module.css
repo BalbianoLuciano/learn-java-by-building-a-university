@@ -79,17 +79,19 @@
   background: var(--scene-faculty);
 }
 
-.name[data-shape='plaque'] .swatch {
+.name[data-shape='tag'] .swatch {
+  border-radius: 2px 7px 7px 2px;
+  background: var(--scene-career);
+}
+
+.name[data-shape='bubble'] .swatch {
   border: 1px solid var(--color-text-muted);
+  border-radius: 4px;
   background: var(--color-surface);
 }
 
-.name[data-shape='window'] .swatch {
-  background: var(--color-accent);
-}
-
-.name[data-shape='sign'] .swatch {
-  background: var(--scene-link);
+.name[data-shape='attached'] .swatch {
+  background: linear-gradient(to right, var(--scene-island) 60%, var(--scene-island-top) 60%);
 }
 
 .name[data-shape='floors'] .swatch {
