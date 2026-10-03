@@ -12,6 +12,7 @@ import io.github.balbianoluciano.ljbu.api.result.RunResult.Slot;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.SourceRef;
 import io.github.balbianoluciano.ljbu.api.trace.HeapObject;
 import io.github.balbianoluciano.ljbu.api.trace.Step;
+import io.github.balbianoluciano.ljbu.api.trace.Structure.ClassInfo;
 import io.github.balbianoluciano.ljbu.api.trace.Value;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -78,6 +79,7 @@ public final class Scene {
                       null,
                       null,
                       null,
+                      null,
                       null)));
     }
     for (LearnerObject extra : unmatched) {
@@ -140,6 +142,7 @@ public final class Scene {
     }
     List<String> floors =
         FLOORS_ARCHETYPE.equals(archetype(binding)) ? floors(object.type(), facts) : null;
+    List<String> interfaces = interfaces(object.type(), facts);
     return new Piece(
         id,
         archetype(binding),
@@ -149,7 +152,24 @@ public final class Scene {
         object.created(),
         slots,
         null,
-        floors);
+        floors,
+        interfaces.isEmpty() ? null : interfaces);
+  }
+
+  /** The learner interfaces of the class and of its superclasses, without repetition. */
+  private static List<String> interfaces(String type, RunFacts facts) {
+    List<String> interfaces = new ArrayList<>();
+    for (String current = type; current != null; ) {
+      Optional<ClassInfo> info = facts.structure().find(current);
+      info.ifPresent(
+          found ->
+              found.interfaces().stream()
+                  .filter(name -> facts.structure().find(name).isPresent())
+                  .filter(name -> !interfaces.contains(name))
+                  .forEach(interfaces::add));
+      current = info.map(ClassInfo::superclass).orElse(null);
+    }
+    return interfaces;
   }
 
   /** The learner classes of the object, top of the hierarchy first: one floor each. */
@@ -199,6 +219,7 @@ public final class Scene {
               new SourceRef(write.file(), write.line()),
               null,
               target,
+              null,
               null));
     }
   }

@@ -7,6 +7,7 @@ import io.github.balbianoluciano.ljbu.api.content.Domain;
 import io.github.balbianoluciano.ljbu.api.web.Views.ChallengeSummary;
 import io.github.balbianoluciano.ljbu.api.web.Views.ChallengeView;
 import io.github.balbianoluciano.ljbu.api.web.Views.Criterion;
+import io.github.balbianoluciano.ljbu.api.web.Views.GoverningBody;
 import io.github.balbianoluciano.ljbu.api.web.Views.Hint;
 import io.github.balbianoluciano.ljbu.api.web.Views.ModuleList;
 import io.github.balbianoluciano.ljbu.api.web.Views.ModuleSummary;
@@ -62,11 +63,15 @@ public class ChallengeController {
       @PathVariable String id, @RequestParam(defaultValue = "es") String lang) {
     Challenge challenge = find(id);
     ChallengeSpec spec = challenge.spec();
+    ChallengeSpec.RealReference reference = spec.scene().realReference();
     List<String> faculties =
-        spec.scene().realReference() == null
-                || spec.scene().realReference().regionalFaculties() == null
+        reference == null || reference.regionalFaculties() == null
             ? List.of()
-            : spec.scene().realReference().regionalFaculties();
+            : reference.regionalFaculties();
+    List<String> bodies =
+        reference == null || reference.governingBodies() == null
+            ? List.of()
+            : reference.governingBodies();
     return new ChallengeView(
         spec.id(),
         spec.module(),
@@ -94,6 +99,17 @@ public class ChallengeController {
                     faculty ->
                         new RegionalFaculty(
                             faculty.id(), faculty.name(), faculty.city(), faculty.province()))
+                .toList(),
+            bodies.stream()
+                .map(content.domain().governingBodies()::get)
+                .map(
+                    body ->
+                        new GoverningBody(
+                            body.id(),
+                            body.name(),
+                            body.kind(),
+                            body.composition(),
+                            body.mandateInYears()))
                 .toList()));
   }
 

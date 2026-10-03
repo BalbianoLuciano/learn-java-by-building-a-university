@@ -48,6 +48,10 @@ public final class ContentLoader {
   private static final Pattern JAVA_FILE = Pattern.compile("^[A-Z][A-Za-z0-9_]*\\.java$");
   private static final String MAIN_FILE = "Main.java";
 
+  /** An interface has no objects, so it needs no binding. */
+  private static final Pattern INTERFACE =
+      Pattern.compile("^\\s*(public\\s+)?interface\\s", Pattern.MULTILINE);
+
   /** docs/FEEDBACK.md §3: what happened and why fit in 280 characters. */
   private static final int MAX_MESSAGE_LENGTH = 280;
 
@@ -125,7 +129,25 @@ public final class ContentLoader {
       }
       faculties.put(faculty.id(), faculty);
     }
-    return new Domain(rules, faculties);
+    Map<String, Domain.GoverningBody> bodies = new LinkedHashMap<>();
+    Path bodiesFile = directory.resolve("governing-bodies.json");
+    for (Domain.GoverningBody body :
+        readJson(bodiesFile, new TypeReference<List<Domain.GoverningBody>>() {})) {
+      requireText(
+          bodiesFile,
+          "every governing body needs id, name, kind, composition, source and url",
+          body.id(),
+          body.name(),
+          body.kind(),
+          body.composition(),
+          body.source(),
+          body.url());
+      if (!Set.of("collegiate", "unipersonal").contains(body.kind())) {
+        throw invalid(bodiesFile, body.id() + " has an unknown kind " + body.kind());
+      }
+      bodies.put(body.id(), body);
+    }
+    return new Domain(rules, faculties, bodies);
   }
 
   // --- Modules and challenges
@@ -161,11 +183,15 @@ public final class ContentLoader {
         throw invalid(file, "rule " + rule + " is not in content/domain/rules.json");
       }
     }
-    if (spec.scene().realReference() != null
-        && spec.scene().realReference().regionalFaculties() != null) {
-      for (String faculty : spec.scene().realReference().regionalFaculties()) {
+    if (spec.scene().realReference() != null) {
+      for (String faculty : orEmpty(spec.scene().realReference().regionalFaculties())) {
         if (!domain.regionalFaculties().containsKey(faculty)) {
           throw invalid(file, "regional faculty " + faculty + " is not in content/domain");
+        }
+      }
+      for (String body : orEmpty(spec.scene().realReference().governingBodies())) {
+        if (!domain.governingBodies().containsKey(body)) {
+          throw invalid(file, "governing body " + body + " is not in content/domain");
         }
       }
     }
@@ -220,7 +246,9 @@ public final class ContentLoader {
     Set<String> bound = new HashSet<>();
     spec.scene().bindings().forEach(binding -> bound.add(binding.type() + ".java"));
     for (SourceFile source : solution) {
-      if (!source.path().equals(MAIN_FILE) && !bound.contains(source.path())) {
+      if (!source.path().equals(MAIN_FILE)
+          && !bound.contains(source.path())
+          && !INTERFACE.matcher(source.content()).find()) {
         throw invalid(file, "class " + source.path() + " of the solution has no scene binding");
       }
     }
@@ -439,5 +467,9 @@ public final class ContentLoader {
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
+  }
+
+  private static List<String> orEmpty(List<String> values) {
+    return values == null ? List.of() : values;
   }
 }

@@ -122,6 +122,7 @@ export interface Scene {
    */
   realReference?: {
     regionalFaculties?: string[];
+    governingBodies?: string[];
   };
   /**
    * What the brief asks to build. Checks refer to these pieces by id.

@@ -244,7 +244,7 @@ La api las comprueba todas al arrancar y **no arranca** si alguna falla:
 - Los `params` de cada verificación y de cada trampa son los de su tipo, sin campos de más.
 - Un texto solo usa los marcadores que llena el tipo de su verificación.
 - Toda clase de `solution/` (salvo `Main`) tiene un binding; si no tiene dibujo propio, se
-  declara con `archetype: generic-block`.
+  declara con `archetype: generic-block`. Las interfaces no tienen objetos y no llevan binding.
 - Todo texto visible tiene al menos `es`.
 - `rules` solo contiene ids de `content/domain/rules.json`, y `realReference`, ids de
   `content/domain/`.

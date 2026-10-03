@@ -50,6 +50,7 @@ class ResultBuilderTest {
                 new SourceRef("Main.java", 3),
                 null,
                 null,
+                null,
                 null));
     assertThat(result.log())
         .extracting(LogEntry::checkId)
@@ -135,6 +136,7 @@ class ResultBuilderTest {
                 RunResult.INCOMPLETE,
                 false,
                 "FR Resistencia",
+                null,
                 null,
                 null,
                 null,
@@ -239,6 +241,14 @@ class ResultBuilderTest {
     assertThat(piece(result, "fr-resistencia").floors())
         .containsExactly("UnidadAcademica", "FacultadRegional");
     assertThat(piece(runSolution(content, ALIASING), "fr-resistencia").floors()).isNull();
+  }
+
+  @Test
+  void aPieceListsTheLearnerInterfacesItsClassImplements() {
+    RunResult result = runSolution(content, "m4-04");
+
+    assertThat(piece(result, "decano").interfaces()).containsExactly("CargoElectivo");
+    assertThat(piece(runSolution(content, ALIASING), "fr-resistencia").interfaces()).isNull();
   }
 
   @Test

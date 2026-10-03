@@ -110,7 +110,7 @@
       "description": "The part of the real UTN the model is compared with.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["regionalFaculties"],
+      "required": ["regionalFaculties", "governingBodies"],
       "properties": {
         "regionalFaculties": {
           "type": "array",
@@ -130,6 +130,32 @@
               },
               "province": {
                 "type": "string"
+              }
+            }
+          }
+        },
+        "governingBodies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "name", "kind", "composition"],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": ["collegiate", "unipersonal"]
+              },
+              "composition": {
+                "type": "string"
+              },
+              "mandateInYears": {
+                "type": ["integer", "null"]
               }
             }
           }

@@ -52,7 +52,7 @@ public record ChallengeSpec(
 
   public record FieldCondition(String field, @JsonProperty("equals") Object expected) {}
 
-  public record RealReference(List<String> regionalFaculties) {}
+  public record RealReference(List<String> regionalFaculties, List<String> governingBodies) {}
 
   public record CheckSpec(
       String id,

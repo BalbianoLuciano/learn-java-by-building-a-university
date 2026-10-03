@@ -48,5 +48,12 @@ export interface ChallengeView {
       city: string;
       province: string;
     }[];
+    governingBodies: {
+      id: string;
+      name: string;
+      kind: 'collegiate' | 'unipersonal';
+      composition: string;
+      mandateInYears?: number | null;
+    }[];
   };
 }
