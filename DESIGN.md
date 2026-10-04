@@ -160,6 +160,42 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
 - Márgenes laterales: `--space-5` en escritorio, `--space-4` en móvil.
 - Sin scroll horizontal de página.
 
+### Inicio (landing)
+
+- **Hero** con la maqueta **de fondo, viva**: un programa de ejemplo (Rectorado y tres
+  facultades) se reproduce en bucle con el mismo modelo de los desafíos; es decorativa
+  (`aria-hidden`, sin controles, la rueda scrollea la página; quieta con
+  `prefers-reduced-motion`). El texto va a la izquierda sobre un degradado de `--color-surface`;
+  la escena ocupa el 66 % derecho en escritorio.
+- Debajo, en secciones de ancho máximo 1080px: **Cómo funciona** (tres pasos), **Los
+  módulos** como cards con la miniatura de su desafío integrador, **Cómo se ve Java en la
+  maqueta** (las ocho formas de B4) y **La UTN real**; cierra el descargo.
+
+### Módulo
+
+Pantalla partida: a la izquierda, fija al hacer scroll, el módulo (número, título en
+`--text-2xl`, objetivo, barra de progreso, "Qué vas a aprender" con los conceptos en
+castellano); a la derecha, **la ruta**: los desafíos uno debajo del otro unidos por una
+línea con el número (tilde en `--color-success` al completarlo), cada uno con título,
+piezas, estado, "Empezar / Volver a verlo" y su **miniatura** (las piezas que pide
+construir, en un canvas chico propio, estático). El último lleva "Integrador: cierra el
+módulo".
+
+### 404
+
+La misma maqueta contando lo que pasó: una isla con una facultad en estado **falló**
+(desaturada, a media altura, con la grieta), un ladrillo caído que se balancea y un poste
+sin etiqueta: la dirección apunta a `null`. Al lado, en `--font-code` y `--color-danger`,
+`NullPointerException: la dirección apunta a null`, un título, una salida al inicio y
+otra al módulo 1.
+
+### Logo
+
+Marca isométrica: un edificio (techo `scene-faculty`, paredes `scene-wall`) con una
+etiqueta `scene-career` colgando, las dos formas del modelo. Con el nombre al lado en el
+inicio (`--font-display`, "Learn Java" en negrita); solo la marca, a la derecha junto al
+tema, en las páginas internas. También es el favicon.
+
 ## A3. Componentes
 
 | Componente | Reglas |
@@ -173,6 +209,7 @@ Con `prefers-reduced-motion: reduce`, todas las duraciones pasan a 0 y la escena
 | **Línea de tiempo** | Pista de 4px, cursor de 14px, botones paso anterior/siguiente, texto `Paso n / N · Archivo:línea`. |
 | **Pista** | Panel desplegable dentro del pedido; nivel 1, 2, 3 y "Ver solución" (este último con confirmación). |
 | **Leyenda** | Panel sobre la maqueta con una fila por forma de B4 (miniatura + nombre + una oración). |
+| **Miniatura** | Canvas chico y estático con las piezas esperadas de un desafío en fila sobre una losa (`MiniModel`); uno por card. |
 | **Globo** | Cuadro de diálogo HTML anclado sobre un edificio o un plano: cabecera `Clase #n`, lista de atributos (ícono por modificador) y de métodos. Uno solo abierto; se cierra al tocar afuera. |
 
 Íconos: **Lucide** (licencia ISC), trazo 1.75px, 18px. Estados:
