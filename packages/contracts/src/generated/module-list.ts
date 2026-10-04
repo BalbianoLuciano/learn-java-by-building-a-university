@@ -18,4 +18,11 @@ export interface ChallengeSummary {
   order: number;
   title: string;
   concept: string;
+  /**
+   * The pieces the brief asks to build, for the miniature on the card.
+   */
+  pieces: {
+    archetype: string;
+    label: string;
+  }[];
 }

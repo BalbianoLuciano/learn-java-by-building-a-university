@@ -14,6 +14,10 @@ brief:
     si la persona no cumple alguno de los tres requisitos, lanzá
     `IllegalArgumentException` con un mensaje. Si cumple, guardala en `titular`.
     El `main` ya prueba con una candidata válida y con un candidato de 29 años.
+analogy:
+  passed: { es: "El cargo es como la mesa de entradas de la Asamblea: revisa los requisitos del art. 66 antes de recibir la candidatura, y a quien no cumple le dice que no." }
+  incomplete: { es: "La mesa de entradas dejó pasar a un candidato de 29 años: falta la verificación en el constructor." }
+  failed: { es: "La verificación rechazó al candidato, pero el rechazo no está atrapado: el programa se frenó en vez de informar." }
 criteria:
   - checks: [constructor-with-person]
     es: "`CargoDeRector` se construye con una `Persona`"

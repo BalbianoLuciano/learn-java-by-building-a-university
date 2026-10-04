@@ -12,6 +12,10 @@ brief:
     métodos `getNombre()`, `getCiudad()` y `getProvincia()` para leerlos.
 
     En `main`, imprimí el nombre de la facultad usando el getter.
+analogy:
+  passed: { es: "Los atributos quedaron detrás de una ventanilla: desde afuera se puede preguntar el nombre (`getNombre()`), pero nadie puede entrar a cambiarlo." }
+  incomplete: { es: "Todavía hay una ventana abierta: algún atributo sigue público o falta la ventanilla para leerlo." }
+  failed: { es: "Cerraste los atributos pero alguien intentó entrar por la ventana: por eso no compila. Usá la ventanilla (`getNombre()`)." }
 criteria:
   - checks: [fields-private]
     es: "`nombre`, `ciudad` y `provincia` son `private`"

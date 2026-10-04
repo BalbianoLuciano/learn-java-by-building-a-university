@@ -14,6 +14,10 @@ brief:
 
     Hacé `OrganoDeGobierno` **abstracta**, con `describirComposicion()` abstracto, y
     arreglá `main`: en vez del órgano genérico, creá un `ConsejoSuperior`.
+analogy:
+  passed: { es: "\"Órgano de gobierno\" es una categoría del Estatuto, no un edificio: no se puede construir uno a secas, se construye un Consejo Superior, un Decanato… La clase abstracta es eso." }
+  incomplete: { es: "La categoría todavía se puede instanciar: falta marcarla como abstracta, o el método abstracto sigue teniendo cuerpo." }
+  failed: { es: "Intentaste construir la categoría misma: Java no deja hacer `new` de una clase abstracta." }
 criteria:
   - checks: [class-abstract, method-abstract]
     es: "`OrganoDeGobierno` y `describirComposicion()` son abstractos"

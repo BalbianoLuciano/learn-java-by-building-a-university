@@ -19,7 +19,11 @@ public record ChallengeSpec(
     Limits limits,
     Scene scene,
     List<CheckSpec> checks,
-    List<Localized> hints) {
+    List<Localized> hints,
+    Analogy analogy) {
+
+  /** What happened, said without code (docs/FEEDBACK.md §3). */
+  public record Analogy(Localized passed, Localized incomplete, Localized failed) {}
 
   public record Criterion(List<String> checks, String es, String en) {
     public Localized text() {

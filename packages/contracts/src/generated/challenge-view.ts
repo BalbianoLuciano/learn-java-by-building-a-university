@@ -56,4 +56,12 @@ export interface ChallengeView {
       mandateInYears?: number | null;
     }[];
   };
+  /**
+   * What happened, said without code: one text per outcome; null when the challenge has none.
+   */
+  analogy: {
+    passed: string;
+    incomplete: string;
+    failed: string;
+  } | null;
 }

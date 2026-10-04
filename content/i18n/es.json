@@ -89,7 +89,8 @@
     "sceneLabel": "Maqueta del resultado: {{headline}}. {{count}} piezas. La bitácora describe cada una.",
     "piecesList": "Lista de piezas",
     "sceneEmpty": "Ejecutá el código para ver la maqueta: los planos de tus clases y los objetos que construye el programa. Tocá un edificio para ver sus atributos.",
-    "logBeforeRun": "Acá va a aparecer qué pasó con cada parte del pedido."
+    "logBeforeRun": "Acá va a aparecer qué pasó con cada parte del pedido.",
+    "analogy": "Dicho sin código"
   },
   "timeline": {
     "title": "Línea de tiempo",

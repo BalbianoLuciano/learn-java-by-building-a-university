@@ -14,6 +14,10 @@ brief:
     Completá `ConsejoSuperior`: el constructor **rechaza** con `IllegalArgumentException`
     cualquier cantidad que no sea la del Estatuto, y `describirComposicion()` se
     sobrescribe para listar la composición completa.
+analogy:
+  passed: { es: "El Consejo Superior tiene la composición fija del art. 105: la mesa de entradas rechaza cualquier consejo con 14 docentes, y el consejo válido se describe solo." }
+  incomplete: { es: "Se formó un consejo que el Estatuto no permite: falta la verificación de las cantidades en el constructor." }
+  failed: { es: "El consejo inválido fue rechazado, pero el rechazo no se atrapó y frenó el programa." }
 criteria:
   - checks: [extends-collegiate]
     es: "`ConsejoSuperior` es un órgano colegiado"

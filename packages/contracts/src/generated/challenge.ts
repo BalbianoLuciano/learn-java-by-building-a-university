@@ -88,6 +88,14 @@ export interface Challenge {
    * @maxItems 3
    */
   hints: LocalizedText[];
+  /**
+   * What happened, said without code (docs/FEEDBACK.md): one text per outcome.
+   */
+  analogy?: {
+    passed: LocalizedText;
+    incomplete: LocalizedText;
+    failed: LocalizedText;
+  };
 }
 /**
  * Learner-facing text by language; es is mandatory.

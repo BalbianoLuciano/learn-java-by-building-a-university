@@ -13,6 +13,10 @@ brief:
        forma `FR Rosario (Rosario, Santa Fe)`.
     2. En `main`, guardá las cinco facultades en un arreglo `FacultadRegional[]` y
        recorrelo imprimiendo lo que devuelve `describir()` de cada una.
+analogy:
+  passed: { es: "Las cinco facultades en el arreglo son como las fichas en una carpeta: recorrés la carpeta y cada ficha se describe sola, con sus propios datos." }
+  incomplete: { es: "Si no todas las facultades están en la carpeta, o el recorrido no llega al final, algunas quedan fuera del mapa." }
+  failed: { es: "El recorrido se frenó: probablemente una posición del arreglo quedó vacía o te pasaste del final." }
 criteria:
   - checks: [describe-method]
     es: "`FacultadRegional` tiene el método `describir()`"

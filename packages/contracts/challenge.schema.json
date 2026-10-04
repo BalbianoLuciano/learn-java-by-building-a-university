@@ -113,6 +113,23 @@
       "items": {
         "$ref": "#/$defs/localizedText"
       }
+    },
+    "analogy": {
+      "description": "What happened, said without code (docs/FEEDBACK.md): one text per outcome.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "incomplete", "failed"],
+      "properties": {
+        "passed": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "incomplete": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "failed": {
+          "$ref": "#/$defs/localizedText"
+        }
+      }
     }
   },
   "$defs": {

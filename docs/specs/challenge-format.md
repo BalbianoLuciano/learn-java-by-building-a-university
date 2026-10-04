@@ -59,6 +59,10 @@ brief:
     Ya existe la FR Resistencia, pero le falta la provincia. Declará una variable
     `miFacultad` que apunte a **la misma** facultad y, usando solo `miFacultad`, cargale
     la provincia: "Chaco".
+analogy:
+  passed: { es: "`miFacultad` y `resistencia` son dos etiquetas colgadas del mismo edificio: lo que cargás por una se ve desde la otra, porque el edificio es uno." }
+  incomplete: { es: "Si creaste otra facultad, tenés dos edificios con el mismo nombre; el pedido era colgarle una segunda etiqueta al que ya existía." }
+  failed: { es: "La ejecución se cortó: probablemente una etiqueta apunta a nada (`null`) y por ahí quisiste cargar un dato." }
 criteria:
   - checks: [alias-declared]
     es: "`miFacultad` apunta a la FR Resistencia"
@@ -91,7 +95,7 @@ checks:
     feedback:
       pass:
         what: { es: "`miFacultad` y `resistencia` apuntan a la misma facultad." }
-        why: { es: "Asignar una referencia no copia el objeto: ahora hay dos cables al mismo edificio." }
+        why: { es: "Asignar una referencia no copia el objeto: ahora el mismo edificio tiene dos etiquetas." }
       fail:
         what: { es: "`miFacultad` no apunta a la FR Resistencia." }
         why: { es: "Para compartir el objeto, `miFacultad` tiene que recibir la referencia que guarda `resistencia`." }
@@ -144,6 +148,7 @@ Campos:
 | `concept` | Etiqueta del concepto principal |
 | `rules` | Reglas de [`../DOMAIN.md`](../DOMAIN.md) §4 en las que se apoya |
 | `brief` | El pedido de obra: Markdown corto, hasta 600 caracteres |
+| `analogy` | Opcional. Lo que pasó, dicho sin código, en términos de la UTN y de la vida real: un texto por resultado (`passed`, `incomplete`, `failed`). Se muestra junto al encabezado del resultado |
 | `criteria` | La lista "Lo que tenés que lograr". Cada ítem se tilda cuando pasan **todas** sus `checks` |
 | `editable` | Archivos que el alumno puede editar; el resto es solo lectura |
 | `limits` | Opcional. Solo puede **bajar** los límites de [`../SECURITY.md`](../SECURITY.md) §3 |

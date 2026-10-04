@@ -16,6 +16,10 @@ brief:
        los dos de ahora.
     3. `elegirClaustro(String)` guarda el claustro elegido solo si la persona tiene un rol
        de ese claustro; si no, lanza `IllegalArgumentException`.
+analogy:
+  passed: { es: "Juana es una persona con dos credenciales: alumna y ayudante. Las credenciales se suman o se devuelven; Juana sigue siendo Juana. Y vota con una sola." }
+  incomplete: { es: "Si Juana solo puede tener una credencial, o puede votar con una que no tiene, la regla del art. 114 no se cumple." }
+  failed: { es: "El programa se frenó al elegir el claustro: revisá el recorrido de la lista de roles." }
 criteria:
   - checks: [student-extends, assistant-extends]
     es: "`Estudiante` y `Auxiliar` son roles"

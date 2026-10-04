@@ -16,7 +16,8 @@
     "files",
     "hintCount",
     "rules",
-    "realReference"
+    "realReference",
+    "analogy"
   ],
   "properties": {
     "id": {
@@ -159,6 +160,23 @@
               }
             }
           }
+        }
+      }
+    },
+    "analogy": {
+      "description": "What happened, said without code: one text per outcome; null when the challenge has none.",
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["passed", "incomplete", "failed"],
+      "properties": {
+        "passed": {
+          "type": "string"
+        },
+        "incomplete": {
+          "type": "string"
+        },
+        "failed": {
+          "type": "string"
         }
       }
     }

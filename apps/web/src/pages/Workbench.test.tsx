@@ -64,6 +64,8 @@ describe('Workbench with a result', () => {
     );
     // The brief stays folded once there is a result; its summary still shows the progress.
     expect(screen.getByText('0/2')).toBeInTheDocument();
+    // The analogy of the outcome, for whoever did not get it from the code.
+    expect(screen.getByText(/Tenés dos edificios con el mismo nombre/)).toBeInTheDocument();
   });
 
   it('highlights the line a log entry points to in the editor when its chip is chosen', async () => {

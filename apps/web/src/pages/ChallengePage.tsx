@@ -1,5 +1,5 @@
 import type { ChallengeView } from '@ljbu/contracts';
-import { ChevronDown, Play } from 'lucide-react';
+import { ChevronDown, Lightbulb, Play } from 'lucide-react';
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -7,6 +7,7 @@ import { ApiError, api } from '../api/client';
 import { useApi } from '../api/useApi';
 import buttons from '../components/Buttons.module.css';
 import { Criteria } from '../components/Criteria';
+import { Inline } from '../components/Inline';
 import { FileTabs } from '../components/FileTabs';
 import { HintsPanel } from '../components/HintsPanel';
 import { Markdown } from '../components/Markdown';
@@ -355,6 +356,15 @@ function Workbench({ challenge }: { challenge: ChallengeView }) {
           </div>
           {result ? (
             <>
+              {challenge.analogy && (
+                <p className={styles.analogy} data-state={result.outcome}>
+                  <Lightbulb size={18} strokeWidth={1.75} aria-hidden />
+                  <span>
+                    <strong>{t('result.analogy')}:</strong>{' '}
+                    <Inline text={challenge.analogy[result.outcome]} />
+                  </span>
+                </p>
+              )}
               <LogList log={result.log} selection={selection} onSelect={select} />
               {result.stdout && (
                 <details className={styles.piecesDetails}>

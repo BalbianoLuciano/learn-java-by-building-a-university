@@ -15,6 +15,10 @@ brief:
     responden con el texto genérico de la superclase. Sobrescribí `describirComposicion()`
     en cada una: el colegiado dice cuántos integrantes tiene; el unipersonal, quién lo
     ocupa.
+analogy:
+  passed: { es: "Le preguntás \"¿cómo te componés?\" al Consejo Directivo y al Decanato, con las mismas palabras, y cada uno responde lo suyo. Eso es polimorfismo." }
+  incomplete: { es: "Alguno sigue respondiendo con el texto genérico de la categoría: su método no sobrescribe al de la superclase (fijate el nombre exacto)." }
+  failed: { es: "`@Override` avisó: el método que escribiste no coincide con ninguno de la superclase." }
 criteria:
   - checks: [collegiate-overrides, unipersonal-overrides]
     es: "Cada subclase sobrescribe `describirComposicion()` con `@Override`"

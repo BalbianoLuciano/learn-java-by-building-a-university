@@ -15,6 +15,10 @@ brief:
     `new ArrayList<>()`. `agregarDepartamento` agrega a la lista y
     `cantidadDeDepartamentos` devuelve su tamaño. El `main` carga tres departamentos de
     la FR Buenos Aires.
+analogy:
+  passed: { es: "La facultad tiene una carpeta de departamentos que crece: entran tres, cinco o los que haga falta. Tres atributos fijos eran tres cajones y nada más." }
+  incomplete: { es: "La carpeta todavía no existe, o los departamentos no se guardan en ella: revisá la lista y `agregarDepartamento`." }
+  failed: { es: "El programa se frenó al guardar un departamento: probablemente la lista no se creó (`new ArrayList<>()`)." }
 criteria:
   - checks: [list-field]
     es: "`departamentos` es una `List<Departamento>`"

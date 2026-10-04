@@ -46,9 +46,26 @@ export const modules: ModuleList = {
           order: 1,
           title: 'Abrí tu primera Facultad Regional',
           concept: 'classes-and-objects',
+          pieces: [{ archetype: 'regional-faculty', label: 'FR Resistencia' }],
         },
-        { id: 'm1-02', order: 2, title: 'Tres regionales, tres estados', concept: 'object-state' },
-        { id: 'm1-03', order: 3, title: 'La facultad donde estudiás', concept: 'aliasing' },
+        {
+          id: 'm1-02',
+          order: 2,
+          title: 'Tres regionales, tres estados',
+          concept: 'object-state',
+          pieces: [
+            { archetype: 'regional-faculty', label: 'FR Resistencia' },
+            { archetype: 'regional-faculty', label: 'FR Córdoba' },
+            { archetype: 'regional-faculty', label: 'FR Mendoza' },
+          ],
+        },
+        {
+          id: 'm1-03',
+          order: 3,
+          title: 'La facultad donde estudiás',
+          concept: 'aliasing',
+          pieces: [{ archetype: 'regional-faculty', label: 'FR Resistencia' }],
+        },
       ],
     },
   ],
@@ -88,6 +105,11 @@ export const aliasing: ChallengeView = {
       },
     ],
     governingBodies: [],
+  },
+  analogy: {
+    passed: 'Dos etiquetas colgadas del mismo edificio.',
+    incomplete: 'Tenés dos edificios con el mismo nombre; el pedido era una segunda etiqueta.',
+    failed: 'La ejecución se cortó: una etiqueta apunta a nada.',
   },
 };
 

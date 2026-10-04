@@ -16,7 +16,10 @@ public final class Views {
   public record ModuleSummary(
       String id, int order, String title, String goal, List<ChallengeSummary> challenges) {}
 
-  public record ChallengeSummary(String id, int order, String title, String concept) {}
+  public record ChallengeSummary(
+      String id, int order, String title, String concept, List<PieceSummary> pieces) {}
+
+  public record PieceSummary(String archetype, String label) {}
 
   public record ChallengeView(
       String id,
@@ -29,7 +32,10 @@ public final class Views {
       List<StarterFile> files,
       int hintCount,
       List<Rule> rules,
-      RealReference realReference) {}
+      RealReference realReference,
+      Analogy analogy) {}
+
+  public record Analogy(String passed, String incomplete, String failed) {}
 
   public record Criterion(List<String> checks, String text) {}
 

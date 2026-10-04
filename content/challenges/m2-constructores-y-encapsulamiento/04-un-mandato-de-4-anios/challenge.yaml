@@ -13,6 +13,10 @@ brief:
     En `CargoDeRector`, reemplazá el atributo `mandatoEnAnios` por una constante
     `MANDATO_EN_ANIOS` (`static final int`, con valor 4) y completá `anioDeFin()` para que
     devuelva el año en que termina el mandato: `desde` más la constante.
+analogy:
+  passed: { es: "Los 4 años de mandato no se anotan en cada cargo: están en el Estatuto, una sola vez, y valen para todos. Eso es `static final`." }
+  incomplete: { es: "Si cada cargo tiene su propia copia de la duración, es como si cada rector trajera su propio estatuto." }
+  failed: { es: "El cálculo del fin de mandato se frenó: revisá que la constante exista y que `anioDeFin()` la use." }
 criteria:
   - checks: [constant-declared]
     es: "`MANDATO_EN_ANIOS` es una constante `static final` que vale para toda la clase"

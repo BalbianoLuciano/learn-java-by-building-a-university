@@ -37,6 +37,11 @@ Todo mensaje de la bitácora tiene **cuatro partes**:
 
 Los aciertos (✅) llevan solo "qué pasó" y "por qué": reforzar el concepto también enseña.
 
+Además de las entradas, cada desafío tiene una **analogía** por resultado (`analogy` en
+`challenge.yaml`): la misma idea contada sin código, con la UTN o la vida diaria ("dos
+etiquetas colgadas del mismo edificio"). Va junto al encabezado del resultado, para quien no
+llegó a entenderlo por el código.
+
 ### Reglas de redacción
 
 - Voseo, segunda persona, tono amable y concreto. Nada de "Error fatal" ni "inválido".

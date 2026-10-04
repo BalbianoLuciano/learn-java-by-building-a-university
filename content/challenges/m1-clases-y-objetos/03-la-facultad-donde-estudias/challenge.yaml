@@ -10,6 +10,10 @@ brief:
     Ya existe la FR Resistencia, pero le falta la provincia. Declará una variable
     `miFacultad` que apunte a **la misma** facultad y, usando solo `miFacultad`, cargale
     la provincia: "Chaco".
+analogy:
+  passed: { es: "`miFacultad` y `resistencia` son dos etiquetas colgadas del mismo edificio: lo que cargás por una se ve desde la otra, porque el edificio es uno." }
+  incomplete: { es: "Si creaste otra facultad, tenés dos edificios con el mismo nombre; el pedido era colgarle una segunda etiqueta al que ya existía." }
+  failed: { es: "La ejecución se cortó: probablemente una etiqueta apunta a nada (`null`) y por ahí quisiste cargar un dato." }
 criteria:
   - checks: [alias-declared]
     es: "`miFacultad` apunta a la FR Resistencia"

@@ -12,6 +12,10 @@ brief:
     apunten a él en su atributo `rectorado`.
 
     Después imprimí "Mismo Rectorado" solo si `resistencia.rectorado == cordoba.rectorado`.
+analogy:
+  passed: { es: "Hay un solo Rectorado y las tres facultades dependen de él, como las 30 FR reales de Sarmiento 440: tres referencias, un edificio." }
+  incomplete: { es: "Si cada facultad tiene su propio Rectorado, hay tres sedes centrales: en la UTN hay una sola. Compartir el objeto es asignar la misma referencia." }
+  failed: { es: "El programa se frenó antes de terminar de conectar las facultades con el Rectorado." }
 criteria:
   - checks: [one-rectorate, rectorate-address]
     es: "Existe un único Rectorado, con su dirección"

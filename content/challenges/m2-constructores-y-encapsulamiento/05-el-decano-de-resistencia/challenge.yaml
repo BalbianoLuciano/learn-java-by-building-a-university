@@ -15,6 +15,10 @@ brief:
     2. En `FacultadRegional`, completá `asignarDecano(Persona, int)`: si la persona tiene
        menos de 3 años de antigüedad devolvé `false` sin cambiar nada; si no, creá el cargo,
        guardalo en `decano` y devolvé `true`.
+analogy:
+  passed: { es: "Nombrar un decano pasa por una sola puerta (`asignarDecano`) con la regla de los 3 años en la pared: Lucía entra, Tomás no, y los dos constructores cuentan la misma regla una sola vez." }
+  incomplete: { es: "La regla está, pero en dos lugares, o la puerta deja pasar a quien no cumple: revisá el `this(...)` y el `if` del setter." }
+  failed: { es: "Alguien que no cumplía llegó al constructor sin pasar por la puerta: la excepción frenó el programa." }
 criteria:
   - checks: [canonical-constructor, convenience-delegates]
     es: "El constructor de conveniencia delega en el canónico con `this(...)`"

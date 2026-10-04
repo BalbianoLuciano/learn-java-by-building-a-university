@@ -14,6 +14,10 @@ brief:
     Hoy `FacultadRegional` y `RegionalAcademica` repiten esos atributos y el método
     `describir()`. Hacé que las dos **extiendan** `UnidadAcademica` y borrá lo que ya
     heredan. `RegionalAcademica` conserva lo que es solo suyo: `facultadDeQueDepende`.
+analogy:
+  passed: { es: "Una FR y una Regional Académica son dos tipos de unidad académica: comparten el formulario base (`UnidadAcademica`) y cada una agrega lo suyo." }
+  incomplete: { es: "Todavía hay datos repetidos en las subclases: es como tener dos copias del mismo formulario base y que una se desactualice." }
+  failed: { es: "La jerarquía no cierra: revisá los `extends` y lo que borraste." }
 criteria:
   - checks: [faculty-extends, regional-extends]
     es: "`FacultadRegional` y `RegionalAcademica` extienden `UnidadAcademica`"
