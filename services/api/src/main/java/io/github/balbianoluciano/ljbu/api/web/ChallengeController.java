@@ -4,6 +4,7 @@ import io.github.balbianoluciano.ljbu.api.content.Challenge;
 import io.github.balbianoluciano.ljbu.api.content.ChallengeSpec;
 import io.github.balbianoluciano.ljbu.api.content.Content;
 import io.github.balbianoluciano.ljbu.api.content.Domain;
+import io.github.balbianoluciano.ljbu.api.web.Views.Analogy;
 import io.github.balbianoluciano.ljbu.api.web.Views.ChallengeSummary;
 import io.github.balbianoluciano.ljbu.api.web.Views.ChallengeView;
 import io.github.balbianoluciano.ljbu.api.web.Views.Criterion;
@@ -11,7 +12,9 @@ import io.github.balbianoluciano.ljbu.api.web.Views.GoverningBody;
 import io.github.balbianoluciano.ljbu.api.web.Views.Hint;
 import io.github.balbianoluciano.ljbu.api.web.Views.ModuleList;
 import io.github.balbianoluciano.ljbu.api.web.Views.ModuleSummary;
+import io.github.balbianoluciano.ljbu.api.web.Views.PieceSummary;
 import io.github.balbianoluciano.ljbu.api.web.Views.RealReference;
+import io.github.balbianoluciano.ljbu.api.web.Views.Reference;
 import io.github.balbianoluciano.ljbu.api.web.Views.RegionalFaculty;
 import io.github.balbianoluciano.ljbu.api.web.Views.Rule;
 import io.github.balbianoluciano.ljbu.api.web.Views.Solution;
@@ -53,7 +56,8 @@ public class ChallengeController {
                                         spec.id(),
                                         spec.order(),
                                         spec.title().in(lang),
-                                        spec.concept()))
+                                        spec.concept(),
+                                        expectedPieces(spec, lang)))
                             .toList()))
             .toList());
   }
@@ -110,7 +114,17 @@ public class ChallengeController {
                             body.kind(),
                             body.composition(),
                             body.mandateInYears()))
-                .toList()));
+                .toList()),
+        spec.analogy() == null
+            ? null
+            : new Analogy(
+                spec.analogy().passed().in(lang),
+                spec.analogy().incomplete().in(lang),
+                spec.analogy().failed().in(lang)),
+        (spec.references() == null ? List.<ChallengeSpec.Reference>of() : spec.references())
+            .stream()
+                .map(doc -> new Reference(doc.title().in(lang), doc.url(), doc.source()))
+                .toList());
   }
 
   @GetMapping("/challenges/{id}/hints/{level}")
@@ -141,5 +155,20 @@ public class ChallengeController {
 
   private static Rule view(Domain.Rule rule) {
     return new Rule(rule.id(), rule.statement(), rule.source(), rule.url());
+  }
+
+  /** The pieces the brief asks for, drawn with the archetype of their binding. */
+  private static List<PieceSummary> expectedPieces(ChallengeSpec spec, String lang) {
+    return spec.scene().pieces().stream()
+        .map(
+            piece ->
+                new PieceSummary(
+                    spec.scene().bindings().stream()
+                        .filter(binding -> binding.type().equals(piece.type()))
+                        .map(ChallengeSpec.Binding::archetype)
+                        .findFirst()
+                        .orElse("generic-block"),
+                    piece.label().in(lang)))
+        .toList();
   }
 }

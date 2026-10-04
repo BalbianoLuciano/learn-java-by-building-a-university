@@ -16,7 +16,9 @@
     "files",
     "hintCount",
     "rules",
-    "realReference"
+    "realReference",
+    "analogy",
+    "references"
   ],
   "properties": {
     "id": {
@@ -158,6 +160,43 @@
                 "type": ["integer", "null"]
               }
             }
+          }
+        }
+      }
+    },
+    "analogy": {
+      "description": "What happened, said without code: one text per outcome; null when the challenge has none.",
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["passed", "incomplete", "failed"],
+      "properties": {
+        "passed": {
+          "type": "string"
+        },
+        "incomplete": {
+          "type": "string"
+        },
+        "failed": {
+          "type": "string"
+        }
+      }
+    },
+    "references": {
+      "description": "Official Java documentation for the concept of the challenge.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "url", "source"],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
           }
         }
       }

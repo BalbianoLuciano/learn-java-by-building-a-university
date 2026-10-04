@@ -1,4 +1,4 @@
-import type { Piece } from '@ljbu/contracts';
+import type { ClassInfo, Piece } from '@ljbu/contracts';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
@@ -13,11 +13,13 @@ import {
   RegionalFaculty,
   Scaffold,
 } from './archetypes/Buildings';
+import { Crane } from './archetypes/Crane';
 import { Island } from './archetypes/Island';
-import { StateBadge } from './overlay';
-import { Pedestal } from './archetypes/Links';
 import type { SceneColors } from './colors';
+import { buildingBubble, heightOf, type BubbleTexts } from './java';
 import type { Placement } from './layout';
+import { BubbleAnchor, ChipAnchor, StateBadge } from './overlay';
+import type { FieldState } from './replay';
 
 interface Props {
   piece: Piece;
@@ -25,13 +27,24 @@ interface Props {
   colors: SceneColors;
   /** Whether the piece exists at this moment of the replay; otherwise it is a silhouette. */
   visible: boolean;
-  /** Slots of the piece that are filled at this moment. */
-  filledSlots: Set<string>;
+  classes: Map<string, ClassInfo>;
+  serials: Map<string, number>;
+  /** The value of each attribute at this moment. */
+  fields: Map<string, FieldState> | undefined;
+  /** The method running on the object at this moment. */
+  running: string | undefined;
+  /** The attribute the chosen step just wrote on this object. */
+  lastWritten: string | undefined;
+  /** The variables that hang from this piece, in tag order. */
+  tags: Piece[];
   selected: boolean;
+  /** The bubble is open: the piece is selected or the chosen step touches it. */
+  open: boolean;
   float: boolean;
   animate: boolean;
   /** For inheritance floors during the replay: how many floors are up. */
   builtFloors?: number;
+  texts: BubbleTexts;
   onSelect: (piece: Piece) => void;
 }
 
@@ -45,17 +58,30 @@ const DRAWN = [
   'person',
 ];
 
-/** One piece on its island: the archetype, its state and its slots (DESIGN.md §B4–B5). */
+/** Vertical distance between stacked chips, on screen. */
+const ROW_PX = 22;
+
+/**
+ * One piece on its island (DESIGN.md §B4–B5): the building, its serial plate, the tags of
+ * the variables that point to it, and its bubble when it is open.
+ */
 export function PieceView({
   piece,
   placement,
   colors,
   visible,
-  filledSlots,
+  classes,
+  serials,
+  fields,
+  running,
+  lastWritten,
+  tags,
   selected,
+  open,
   float,
   animate,
   builtFloors,
+  texts,
   onSelect,
 }: Props) {
   const grower = useRef<THREE.Group>(null);
@@ -81,13 +107,10 @@ export function PieceView({
     onSelect(piece);
   };
   const island = placement.island ?? { width: 1.8, depth: 1.8 };
-  const height =
-    piece.archetype === 'rectorate'
-      ? 1.9
-      : piece.archetype === 'inheritance-floors'
-        ? 0.7 * (piece.floors?.length ?? 1)
-        : 1.1;
-  const slots = Object.entries(piece.slots ?? {});
+  const height = heightOf(piece);
+  const serial = serials.get(piece.id);
+  // What lives on an attached island is drawn smaller: it belongs to its owner.
+  const scale = placement.owner ? 0.62 : 1;
 
   return (
     <group
@@ -105,57 +128,81 @@ export function PieceView({
         width={island.width}
         depth={island.depth}
         phase={placement.phase}
-        float={float && !ghost}
+        float={float && !ghost && !placement.owner}
         selected={selected}
         ghost={ghost}
         colors={colors}
       >
-        <group ref={grower} scale={[1, ghost ? 1 : 0.0001, 1]}>
-          {piece.archetype === 'regional-faculty' && <RegionalFaculty piece={piece} look={look} />}
-          {piece.archetype === 'rectorate' && <Rectorate piece={piece} look={look} />}
-          {piece.archetype === 'inheritance-floors' && (
-            <InheritanceFloors
-              piece={piece}
-              look={look}
-              builtFloors={builtFloors ?? piece.floors?.length ?? 1}
-            />
-          )}
-          {piece.archetype === 'department' && <Department piece={piece} look={look} />}
-          {piece.archetype === 'career' && <Career piece={piece} look={look} />}
-          {piece.archetype === 'person' && <Person piece={piece} look={look} />}
-          {!DRAWN.includes(piece.archetype) && <GenericBlock piece={piece} look={look} />}
-          {!ghost && <InterfaceBadges piece={piece} look={look} y={height + 1.2} />}
-          {!ghost && piece.state === 'incomplete' && slots.length === 0 && (
-            <Scaffold
-              size={[island.width - 0.3, height + 0.5, island.depth - 0.3]}
-              position={[0, (height + 0.5) / 2, 0]}
-              color={colors.warning}
-            />
-          )}
+        <group scale={[scale, scale, scale]}>
+          <group ref={grower} scale={[1, ghost ? 1 : 0.0001, 1]}>
+            {piece.archetype === 'regional-faculty' && (
+              <RegionalFaculty piece={piece} look={look} />
+            )}
+            {piece.archetype === 'rectorate' && <Rectorate piece={piece} look={look} />}
+            {piece.archetype === 'inheritance-floors' && (
+              <InheritanceFloors
+                piece={piece}
+                look={look}
+                builtFloors={builtFloors ?? piece.floors?.length ?? 1}
+              />
+            )}
+            {piece.archetype === 'department' && <Department piece={piece} look={look} />}
+            {piece.archetype === 'career' && <Career piece={piece} look={look} />}
+            {piece.archetype === 'person' && <Person piece={piece} look={look} />}
+            {!DRAWN.includes(piece.archetype) && <GenericBlock piece={piece} look={look} />}
+            {!ghost && piece.state === 'incomplete' && (
+              <Scaffold
+                size={[island.width / scale - 0.3, height + 0.5, island.depth / scale - 0.3]}
+                position={[0, (height + 0.5) / 2, 0]}
+                color={colors.warning}
+              />
+            )}
+          </group>
+          {!ghost && running === '<init>' && <Crane height={height} colors={colors} />}
         </group>
-        {!ghost && <StateBadge id={`${piece.id}:badge`} state={piece.state} y={height + 2.0} />}
+        {!ghost && <InterfaceBadges piece={piece} look={look} y={(height + 0.9) * scale} />}
+        {/* The nameplate: the name of the building and, under it, its serial. */}
+        <ChipAnchor
+          id={`${piece.id}:nameplate`}
+          position={[0, (height + 0.9) * scale, 0]}
+          offset={[0, placement.owner && placement.stagger ? -34 : 0]}
+          chip={{
+            shape: 'nameplate',
+            text: piece.label,
+            sub:
+              !ghost && serial !== undefined && piece.type
+                ? texts.serial(piece.type, serial)
+                : undefined,
+            flags: [],
+            lit: false,
+            ghost,
+          }}
+        />
+        {/* Variables hang as tags from the front-left corner, one under the other. */}
         {!ghost &&
-          slots.map(([name, slot], index) => {
-            const angle = Math.PI / 4 + (index / Math.max(slots.length, 3)) * Math.PI * 2;
-            const distance = island.width / 2 + 0.9;
-            const occupied = slot.pieceIds.some((occupant) => filledSlots.has(occupant));
-            return (
-              <group
-                key={name}
-                position={[Math.cos(angle) * distance, 0, Math.sin(angle) * distance]}
-              >
-                <Pedestal
-                  id={`${piece.id}:slot:${name}`}
-                  colors={colors}
-                  empty={!occupied}
-                  label={name}
-                />
-                {!occupied && (
-                  <Scaffold size={[0.7, 0.9, 0.7]} position={[0, 0.65, 0]} color={colors.warning} />
-                )}
-              </group>
-            );
-          })}
+          tags.map((tag, index) => (
+            <ChipAnchor
+              key={tag.id}
+              id={`${tag.id}:tag`}
+              position={[
+                (-island.width / 2) * 0.55,
+                height * 0.75 * scale,
+                (island.depth / 2) * 0.6,
+              ]}
+              offset={[0, index * ROW_PX]}
+              chip={{ shape: 'tag', text: tag.label, flags: [], lit: false, ghost: false }}
+            />
+          ))}
+        {!ghost && (
+          <StateBadge id={`${piece.id}:badge`} state={piece.state} y={(height + 2.0) * scale} />
+        )}
+        {open && (
+          <BubbleAnchor
+            id={`${piece.id}:bubble`}
+            position={[0, (height + 2.3) * scale, 0]}
+            bubble={buildingBubble(piece, classes, serials, fields, running, lastWritten, texts)}
+          />
+        )}
       </Island>
     </group>
   );

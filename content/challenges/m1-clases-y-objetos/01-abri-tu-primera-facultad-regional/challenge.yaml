@@ -13,6 +13,20 @@ brief:
     Declará la clase `FacultadRegional` con esos tres atributos y, en `main`, creá la
     Facultad Regional Resistencia: su nombre es "Resistencia" y está en la ciudad de
     Resistencia, provincia de Chaco.
+analogy:
+  passed: { es: "Es como el formulario de inscripción de una facultad: la clase es el formulario en blanco y la FR Resistencia es el primer formulario completo, con nombre, ciudad y provincia." }
+  incomplete: { es: "El formulario está, pero a la FR Resistencia le faltan datos: es como entregar la inscripción con casilleros vacíos." }
+  failed: { es: "Antes de llenar formularios hay que tener el formulario: algo en la definición de la clase o en cómo la usaste no cierra." }
+references:
+  - title: { es: "Declarar clases" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/classes.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Crear objetos" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/objectcreation.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Declaración de clases (§8.1)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.1"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [attributes-declared]
     es: "`FacultadRegional` tiene los atributos `nombre`, `ciudad` y `provincia`"

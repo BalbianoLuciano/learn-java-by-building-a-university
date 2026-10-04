@@ -52,7 +52,8 @@ public final class ResultBuilder {
               List.of(),
               compilation(error),
               List.of(),
-              "");
+              "",
+              List.of());
       case Trace.Rejected rejected ->
           new RunResult(
               runId,
@@ -61,7 +62,8 @@ public final class ResultBuilder {
               List.of(),
               rejection(rejected),
               List.of(),
-              "");
+              "",
+              List.of());
       case Trace.Executed executed -> executed(runId, challenge, executed, files, language);
     };
   }
@@ -174,7 +176,8 @@ public final class ResultBuilder {
         scene.pieces(),
         log,
         timeline(trace, scene),
-        trace.stdout());
+        trace.stdout(),
+        trace.structure().classes());
   }
 
   /** An exception is expected when a check of the challenge asks for it to end the program. */

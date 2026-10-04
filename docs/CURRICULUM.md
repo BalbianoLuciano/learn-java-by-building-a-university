@@ -26,8 +26,8 @@ propio y que una variable **apunta** a un objeto.
 |---|---|---|---|---|---|
 | 1.1 | **Abrí tu primera Facultad Regional** | Declarar `FacultadRegional` con `nombre`, `ciudad`, `provincia` y crear la FR Resistencia | clase, atributos, `new` | R-UNI-02 | Aparece la isla y el edificio con su cartel |
 | 1.2 | **Tres regionales, tres estados** | Crear Resistencia, Córdoba y Mendoza y registrar una consulta solo en una (`consultas` es un contador del programa, no un dato de la UTN) | estado propio de cada objeto | R-UNI-02 | Tres edificios; el cambio afecta a uno solo |
-| 1.3 | **La facultad donde estudiás** | Usar una segunda variable `miFacultad` que apunte a una FR existente y cargarle la provincia por ahí | referencias y **aliasing** | R-UNI-02 | Dos carteles, dos cables, **un** edificio |
-| 1.4 | **Un solo Rectorado** | Crear el `Rectorado` y que todas las FR referencien el mismo objeto | referencias compartidas, `==` vs igualdad | R-UNI-01 | Cables de cada FR al mismo Rectorado central |
+| 1.3 | **La facultad donde estudiás** | Usar una segunda variable `miFacultad` que apunte a una FR existente y cargarle la provincia por ahí | referencias y **aliasing** | R-UNI-02 | Dos etiquetas colgadas de **un** edificio |
+| 1.4 | **Un solo Rectorado** | Crear el `Rectorado` y que todas las FR referencien el mismo objeto | referencias compartidas, `==` vs igualdad | R-UNI-01 | El globo de cada FR dice `rectorado → #1`: el mismo Rectorado |
 | 1.5 | **Integrador: el mapa de la UTN** | Cargar las FR en un arreglo `FacultadRegional[]` y recorrerlo con métodos de instancia (`describir()`) | arreglos de objetos, métodos de instancia | R-UNI-02 | El anillo de FR alrededor del Rectorado |
 
 Trampas que el feedback tiene que detectar: usar la clase sin `new`; creer que
@@ -75,7 +75,7 @@ describen capacidades compartidas por clases no relacionadas.
 | 4.1 | **Los órganos de gobierno** | `OrganoDeGobierno` abstracta con `describirComposicion()` abstracto | clases y métodos abstractos | R-GOB-01 | Plano gris del órgano abstracto: no se puede construir |
 | 4.2 | **Colegiados y unipersonales** | `OrganoColegiado` y `OrganoUnipersonal` implementan la descripción de forma distinta | `@Override`, polimorfismo | R-GOB-01 | Mismo mensaje, dos animaciones distintas |
 | 4.3 | **El Consejo Superior** | `ConsejoSuperior` arma sus integrantes según el art. 105 y valida las cantidades | polimorfismo + invariantes | R-CS-01 | Una sala con bancas por claustro |
-| 4.4 | **¿Quién elige a quién?** | Interfaz `CargoElectivo` con `organoQueElige()` y `mandatoEnAnios()` implementada por Rector, Decano y Director de Departamento | interfaces | R-RECT-02, R-FR-02, R-DEP-01 | Insignia "electivo" y cable al órgano que elige |
+| 4.4 | **¿Quién elige a quién?** | Interfaz `CargoElectivo` con `organoQueElige()` y `mandatoEnAnios()` implementada por Rector, Decano y Director de Departamento | interfaces | R-RECT-02, R-FR-02, R-DEP-01 | Sello `CargoElectivo` en los tres planos y la insignia en cada cargo |
 | 4.5 | **Integrador: el gobierno de una FR** | Recorrer una `List<OrganoDeGobierno>` de una FR y pedirle a cada uno su descripción | polimorfismo con colecciones, despacho dinámico | R-GOB-01, R-FR-01 | La línea de tiempo resalta qué implementación se ejecutó en cada vuelta |
 
 Trampas: `instanceof` en cadena en lugar de polimorfismo; instanciar una clase abstracta;

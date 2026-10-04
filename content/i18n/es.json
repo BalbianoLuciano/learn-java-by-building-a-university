@@ -12,7 +12,7 @@
     "retry": "Reintentar",
     "back": "Volver",
     "line": "Línea {{line}} de {{file}}",
-    "lineChip": "L{{line}}"
+    "lineChip": "{{file}}:{{line}}"
   },
   "errors": {
     "title": "Algo no salió como esperábamos",
@@ -26,15 +26,47 @@
     "unknown": "Pasó algo inesperado. Probá de nuevo."
   },
   "home": {
+    "kicker": "Curso abierto de Java y programación orientada a objetos",
     "title": "Aprendé Java construyendo una universidad",
-    "lead": "Escribís Java de verdad, lo ejecutás y ves qué construyó tu código, qué le falta y por qué algo falló.",
-    "modulesTitle": "Módulos",
+    "lead": "Escribís Java de verdad, lo ejecutás y ves qué construyó tu código: cada clase es un plano, cada objeto un edificio y cada variable una etiqueta. El modelo es la UTN real, con sus facultades, cargos y reglas del Estatuto.",
+    "start": "Empezar por el primer desafío",
+    "seeModules": "Ver los módulos",
+    "howTitle": "Cómo funciona",
+    "steps": {
+      "write": {
+        "title": "Escribís el código",
+        "text": "Cada desafío es un pedido de obra sobre la UTN real: una facultad, un cargo, un órgano de gobierno. Lo resolvés en Java, en el editor, con las clases que hagan falta."
+      },
+      "run": {
+        "title": "Lo ejecutás",
+        "text": "Tu programa se compila y corre en un servidor, en un sandbox. No hace falta instalar nada."
+      },
+      "see": {
+        "title": "Ves qué construyó",
+        "text": "La maqueta muestra tus clases y tus objetos; la bitácora explica qué pasó, por qué y en qué línea; la línea de tiempo lo reproduce paso a paso."
+      }
+    },
+    "modulesTitle": "Los módulos",
+    "moduleOrder": "Módulo {{order}}",
     "moduleProgress": "{{done}} de {{total}} desafíos",
+    "shapesTitle": "Cómo se ve Java en la maqueta",
+    "shapesLead": "Cada idea del lenguaje tiene una sola forma, siempre la misma, y la forma se parece a lo que significa.",
+    "utnTitle": "La UTN real, no una inventada",
+    "utnText": "Las 30 Facultades Regionales, el Rectorado, los Consejos, el Decano y sus requisitos son los del Estatuto de la UTN (Res. AU 1/2011) y de sus páginas oficiales; cada desafío cita la regla que usa. Las personas, en cambio, son ficticias.",
     "disclaimer": "Proyecto independiente y de código abierto. No es un sitio oficial de la UTN."
   },
   "module": {
     "challengesTitle": "Desafíos",
-    "challenge": "Desafío {{order}}"
+    "challenge": "Desafío {{order}}",
+    "kicker": "Módulo {{order}}",
+    "pieces_one": "{{count}} pieza para construir",
+    "pieces_other": "{{count}} piezas para construir",
+    "pathTitle": "La ruta del módulo",
+    "integrator": "Integrador: cierra el módulo",
+    "start": "Empezar",
+    "again": "Volver a verlo",
+    "progress": "{{done}} de {{total}} desafíos completados",
+    "learn": "Qué vas a aprender"
   },
   "status": {
     "pending": "Pendiente",
@@ -51,11 +83,12 @@
     "running": "Ejecutando…",
     "runShortcut": "Ctrl/Cmd + Enter",
     "resetCode": "Volver al código base",
-    "lastResult": "Ver el último resultado",
     "position": "{{order}} / {{total}}",
     "realReference": "En la UTN real",
     "realFaculty": "{{name}}: {{city}}, {{province}}",
-    "mandate": "(mandato de {{years}} años)"
+    "mandate": "(mandato de {{years}} años)",
+    "criteriaProgress": "{{done}}/{{total}}",
+    "references": "Para leer más: documentación oficial de Java"
   },
   "hints": {
     "ask": "Pedir pista",
@@ -71,7 +104,6 @@
     "solutionTitle": "Solución"
   },
   "result": {
-    "backToCode": "Volver al código",
     "title": "Resultado",
     "outcome": {
       "passed": "¡Obra terminada!",
@@ -85,12 +117,14 @@
     "logEmpty": "No hay nada que explicar todavía.",
     "hint": "Pista",
     "detail": "Mensaje original",
-    "code": "Código",
-    "codeHint": "Elegí una entrada de la bitácora o un paso para ver su línea.",
     "stdout": "Salida del programa",
     "stdoutEmpty": "El programa no imprimió nada.",
     "sceneLabel": "Maqueta del resultado: {{headline}}. {{count}} piezas. La bitácora describe cada una.",
-    "piecesList": "Lista de piezas"
+    "piecesList": "Lista de piezas",
+    "sceneEmpty": "Ejecutá el código para ver la maqueta: los planos de tus clases y los objetos que construye el programa. Tocá un edificio para ver sus atributos.",
+    "logBeforeRun": "Acá va a aparecer qué pasó con cada parte del pedido.",
+    "analogy": "Dicho sin código",
+    "references": "Si querés profundizar"
   },
   "timeline": {
     "title": "Línea de tiempo",
@@ -118,5 +152,86 @@
   "dev": {
     "fps": "{{fps}} fps · {{pieces}} piezas",
     "pieces": "Piezas"
+  },
+  "legend": {
+    "open": "¿Qué es cada forma?",
+    "title": "Cómo se ve Java en la maqueta",
+    "close": "Cerrar",
+    "items": {
+      "blueprint": {
+        "name": "Plano",
+        "text": "Una clase: el molde, con la miniatura de lo que construye. Tocalo para ver sus atributos y métodos."
+      },
+      "object": {
+        "name": "Edificio",
+        "text": "Un objeto: cada `new` construye uno a partir del plano. La chapa `#1`, `#2`… lo distingue de los demás."
+      },
+      "tag": {
+        "name": "Etiqueta",
+        "text": "Una variable: cuelga del objeto al que apunta. Dos etiquetas en el mismo edificio son dos nombres para un objeto; una en el suelo es `null`."
+      },
+      "bubble": {
+        "name": "Globo",
+        "text": "Tocá un edificio: sus atributos con su valor (con candado si son `private`) y sus métodos, que se iluminan cuando corren."
+      },
+      "attached": {
+        "name": "Isla adosada",
+        "text": "Composición: lo que un objeto tiene (un decano, una lista de departamentos) vive pegado a su isla."
+      },
+      "floors": {
+        "name": "Pisos",
+        "text": "Herencia: la planta baja es la superclase; cada piso, una subclase."
+      },
+      "seal": {
+        "name": "Sello",
+        "text": "Una interfaz: un contrato que las clases firman. Los edificios que lo cumplen llevan la insignia."
+      },
+      "ghost": {
+        "name": "Silueta",
+        "text": "Lo que el pedido espera y tu código todavía no construyó."
+      }
+    }
+  },
+  "scene": {
+    "serial": "{{type}} #{{number}}",
+    "attributes": "Atributos",
+    "methods": "Métodos",
+    "constructors": "Constructores",
+    "noValue": "sin valor todavía",
+    "nullTag": "{{name}} = null",
+    "bubbleClose": "Cerrar",
+    "static": "static",
+    "abstract": "abstracta",
+    "ghostBubble": "El pedido espera este objeto y tu código todavía no lo construyó."
+  },
+  "concepts": {
+    "classes-and-objects": "Clases y objetos",
+    "object-state": "El estado de cada objeto",
+    "aliasing": "Referencias y aliasing",
+    "shared-references": "Referencias compartidas y ==",
+    "object-arrays-and-instance-methods": "Arreglos de objetos y métodos de instancia",
+    "constructors": "Constructores y this",
+    "encapsulation": "Encapsulamiento: private y getters",
+    "constructor-validation": "Validación en el constructor",
+    "static-final-constants": "Constantes static final",
+    "constructor-overloading-and-validating-setters": "Sobrecarga de constructores y setters que validan",
+    "inheritance": "Herencia: extends",
+    "super-constructor": "super() y el orden de construcción",
+    "composition-with-collections": "Composición con listas",
+    "composition-over-inheritance": "Composición antes que herencia",
+    "inheritance-plus-composition": "Herencia entre roles, composición en la persona",
+    "abstract-classes": "Clases y métodos abstractos",
+    "polymorphism-override": "@Override y polimorfismo",
+    "polymorphism-with-invariants": "Polimorfismo e invariantes",
+    "interfaces": "Interfaces",
+    "polymorphism-with-collections": "Despacho dinámico con colecciones"
+  },
+  "notFound": {
+    "code": "NullPointerException: la dirección apunta a null",
+    "title": "Acá no hay ninguna obra",
+    "lead": "La página que buscás no existe, o se mudó. Lo único que quedó en pie es este edificio, y no parece muy entero.",
+    "hint": "Si llegaste desde un enlace del curso, avisanos abriendo un issue en el repositorio: es un bug, no tu culpa.",
+    "home": "Volver al inicio",
+    "modules": "Ir al módulo 1"
   }
 }

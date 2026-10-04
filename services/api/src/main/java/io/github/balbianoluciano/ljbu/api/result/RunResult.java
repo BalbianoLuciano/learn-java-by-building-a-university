@@ -1,6 +1,7 @@
 package io.github.balbianoluciano.ljbu.api.result;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.github.balbianoluciano.ljbu.api.trace.Structure.ClassInfo;
 import io.github.balbianoluciano.ljbu.api.trace.Value;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,8 @@ public record RunResult(
     List<Piece> pieces,
     List<LogEntry> log,
     List<TimelineStep> timeline,
-    String stdout) {
+    String stdout,
+    List<ClassInfo> classes) {
 
   public static final String PASSED = "passed";
   public static final String INCOMPLETE = "incomplete";
@@ -33,6 +35,8 @@ public record RunResult(
    * @param target for a variable, the piece it points to
    * @param floors for inheritance-floors, the classes of the object from the top of its hierarchy
    *     down to its own class
+   * @param type the learner class of the object; null for a variable
+   * @param fields the values of the object's fields at the end of the run
    */
   @JsonInclude(JsonInclude.Include.NON_NULL)
   public record Piece(
@@ -45,13 +49,33 @@ public record RunResult(
       Map<String, Slot> slots,
       String target,
       List<String> floors,
-      List<String> interfaces) {
+      List<String> interfaces,
+      String type,
+      List<FieldValue> fields) {
 
     public Piece withState(String newState) {
       return new Piece(
-          id, archetype, newState, built, label, sourceRef, slots, target, floors, interfaces);
+          id,
+          archetype,
+          newState,
+          built,
+          label,
+          sourceRef,
+          slots,
+          target,
+          floors,
+          interfaces,
+          type,
+          fields);
     }
   }
+
+  /**
+   * @param pieceId for a reference to a drawn object, its piece
+   * @param pieceIds for a collection or an array, the pieces of its elements
+   */
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  public record FieldValue(String name, Value value, String pieceId, List<String> pieceIds) {}
 
   public record Slot(String state, List<String> pieceIds) {}
 

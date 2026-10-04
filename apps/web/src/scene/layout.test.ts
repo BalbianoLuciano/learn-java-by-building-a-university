@@ -1,82 +1,132 @@
-import type { Piece } from '@ljbu/contracts';
+import type { ClassInfo, Piece } from '@ljbu/contracts';
+import { boundsOf, containedBy, layoutScene } from './layout';
 
 type Archetype = Piece['archetype'];
-import { boundsOf, layoutScene } from './layout';
 
 function piece(id: string, archetype: Archetype, extra: Partial<Piece> = {}): Piece {
-  return { id, archetype, state: 'passed', built: true, label: id, ...extra };
+  return { id, archetype, state: 'passed', built: true, label: id, type: 'T', ...extra };
+}
+
+function clazz(name: string, extra: Partial<ClassInfo> = {}): ClassInfo {
+  return {
+    name,
+    kind: 'class',
+    abstract: false,
+    superclass: null,
+    interfaces: [],
+    file: `${name}.java`,
+    line: 1,
+    fields: [],
+    constructors: [],
+    methods: [],
+    ...extra,
+  };
 }
 
 describe('layoutScene', () => {
-  it('puts a lone piece in the middle', () => {
-    const placements = layoutScene([piece('fr', 'regional-faculty')]);
-
-    expect(placements.get('fr')?.position).toEqual([0, 0, 0]);
-  });
-
-  it('keeps the Rectorado in the middle and the faculties in a ring around it', () => {
-    const faculties = Array.from({ length: 6 }, (_, i) =>
-      piece(`fr-${String(i)}`, 'regional-faculty'),
+  it('puts the blueprint of a class on the board, with its instances in a row in front of it', () => {
+    const { placements, blueprints, board } = layoutScene(
+      [piece('a', 'regional-faculty'), piece('b', 'regional-faculty')],
+      [clazz('T')],
     );
-    const placements = layoutScene([piece('rectorado', 'rectorate'), ...faculties]);
 
-    expect(placements.get('rectorado')?.position).toEqual([0, 0, 0]);
-    for (const faculty of faculties) {
-      const [x, , z] = placements.get(faculty.id)?.position ?? [0, 0, 0];
-      expect(Math.hypot(x, z)).toBeCloseTo(4.4, 5);
-    }
+    const blueprint = blueprints.get('T');
+    expect(blueprint?.position[2]).toBeLessThan(0);
+    expect(board?.z).toBe(blueprint?.position[2]);
+    const a = placements.get('a');
+    const b = placements.get('b');
+    expect(a?.position[0]).toBe(b?.position[0]);
+    expect(a?.position[0]).toBeCloseTo(blueprint?.position[0] ?? NaN, 5);
+    expect((b?.position[2] ?? 0) - (a?.position[2] ?? 0)).toBeCloseTo(2.4 + 1.4, 5);
   });
 
-  it('adds rings when there are many pieces, so islands never touch', () => {
-    const many = Array.from({ length: 150 }, (_, i) =>
-      piece(`fr-${String(i)}`, 'regional-faculty'),
+  it('gives every class a column, left to right, in the order of the program', () => {
+    const { blueprints, placements } = layoutScene(
+      [piece('fr', 'regional-faculty', { type: 'FR' }), piece('p', 'person', { type: 'P' })],
+      [clazz('FR'), clazz('P'), clazz('Vacia')],
     );
-    const placements = layoutScene(many);
-    const positions = many.map((p) => {
-      const [x, , z] = placements.get(p.id)?.position ?? [0, 0, 0];
-      return { x, z };
-    });
 
-    const radii = new Set(positions.map(({ x, z }) => Math.round(Math.hypot(x, z) * 100) / 100));
-    expect(radii.size).toBeGreaterThan(3);
-    expect(Math.max(...radii)).toBeLessThan(30);
-    for (const a of positions) {
-      for (const b of positions) {
-        if (a !== b) {
-          expect(Math.hypot(a.x - b.x, a.z - b.z)).toBeGreaterThanOrEqual(2.4);
-        }
-      }
-    }
+    const xs = ['FR', 'P', 'Vacia'].map((name) => blueprints.get(name)?.position[0] ?? NaN);
+    expect(xs[0]).toBeLessThan(xs[1] ?? NaN);
+    expect(xs[1]).toBeLessThan(xs[2] ?? NaN);
+    expect(placements.get('p')?.position[0]).toBeCloseTo(xs[1] ?? NaN, 5);
   });
 
-  it('places what a piece holds next to that piece, not in the ring', () => {
-    const placements = layoutScene([
-      piece('fr', 'regional-faculty', {
-        slots: { dean: { state: 'filled', pieceIds: ['decano'] } },
-      }),
-      piece('decano', 'person'),
-    ]);
+  it('puts what a piece holds on small islands attached to its right, with a walkway', () => {
+    const { placements, bridges } = layoutScene(
+      [
+        piece('fr', 'regional-faculty', {
+          fields: [{ name: 'decano', value: { ref: 'o2' }, pieceId: 'decano' }],
+        }),
+        piece('decano', 'person'),
+      ],
+      [clazz('T')],
+    );
 
     const owner = placements.get('fr');
-    const occupant = placements.get('decano');
-    expect(owner?.position).toEqual([0, 0, 0]);
-    expect(occupant?.owner).toBe('fr');
-    expect(Math.hypot(occupant?.position[0] ?? 0, occupant?.position[2] ?? 0)).toBeCloseTo(2.8, 5);
+    const held = placements.get('decano');
+    expect(held?.owner).toBe('fr');
+    expect(held?.position[2]).toBe(owner?.position[2]);
+    expect((held?.position[0] ?? 0) - (owner?.position[0] ?? 0)).toBeCloseTo(
+      2.4 / 2 + 0.9 + 1.3 / 2,
+      5,
+    );
+    expect(bridges).toHaveLength(1);
   });
 
-  it('lines the variable signs up in front, with a stable phase per piece', () => {
-    const placements = layoutScene([
-      piece('fr', 'regional-faculty'),
-      piece('var-a', 'variable-sign', { target: 'fr' }),
-      piece('var-b', 'variable-sign'),
+  it('hangs a variable from the piece it points to, and lays a null one at the front', () => {
+    const { placements } = layoutScene(
+      [
+        piece('fr', 'regional-faculty'),
+        piece('var-a', 'variable-sign', { target: 'fr', type: undefined }),
+        piece('var-b', 'variable-sign', { target: 'fr', type: undefined }),
+        piece('var-nada', 'variable-sign', { type: undefined }),
+      ],
+      [clazz('T')],
+    );
+
+    expect(placements.get('var-a')).toMatchObject({ hangsFrom: 'fr', tagIndex: 0 });
+    expect(placements.get('var-b')).toMatchObject({ hangsFrom: 'fr', tagIndex: 1 });
+    const nothing = placements.get('var-nada');
+    expect(nothing?.hangsFrom).toBeUndefined();
+    expect(nothing?.position[2]).toBeGreaterThan(placements.get('fr')?.position[2] ?? 0);
+    expect(nothing?.island).toBeUndefined();
+  });
+
+  it('keeps pieces of an unknown type in a column of their own, and seals at the right end', () => {
+    const { placements, blueprints } = layoutScene(
+      [piece('x', 'generic-block', { type: undefined })],
+      [clazz('T'), clazz('I', { kind: 'interface' })],
+    );
+
+    expect(placements.get('x')?.position[0]).toBeGreaterThan(
+      blueprints.get('T')?.position[0] ?? NaN,
+    );
+    expect(blueprints.get('I')?.position[0]).toBeGreaterThan(
+      placements.get('x')?.position[0] ?? NaN,
+    );
+  });
+});
+
+describe('containedBy', () => {
+  it('reads composition from the fields, each piece held by one owner only', () => {
+    const contained = containedBy([
+      piece('fr', 'regional-faculty', {
+        fields: [
+          { name: 'decano', value: { ref: 'o2' }, pieceId: 'decano' },
+          { name: 'departamentos', value: { ref: 'o3' }, pieceIds: ['dep-1', 'dep-2'] },
+        ],
+      }),
+      piece('otra', 'regional-faculty', {
+        fields: [{ name: 'decano', value: { ref: 'o2' }, pieceId: 'decano' }],
+      }),
+      piece('decano', 'person'),
+      piece('dep-1', 'department'),
+      piece('dep-2', 'department'),
     ]);
 
-    expect(placements.get('var-a')?.position).toEqual([-1.1, 0, 3.9]);
-    expect(placements.get('var-b')?.position).toEqual([1.1, 0, 3.9]);
-    expect(placements.get('var-a')?.island).toBeUndefined();
-    expect(placements.get('fr')?.phase).toBe(
-      layoutScene([piece('fr', 'rectorate')]).get('fr')?.phase,
-    );
+    expect(contained.get('fr')).toEqual(['decano', 'dep-1', 'dep-2']);
+    expect(contained.has('otra')).toBe(false);
   });
 });
 
@@ -85,15 +135,9 @@ describe('boundsOf', () => {
     expect(boundsOf([])).toEqual({ center: [0, 0, 0], radius: 3 });
   });
 
-  it('centers on every placement and never gets smaller than the minimum', () => {
-    const placements = layoutScene([
-      piece('rectorado', 'rectorate'),
-      piece('var-a', 'variable-sign'),
-    ]);
+  it('never gets smaller than the minimum', () => {
+    const { placements } = layoutScene([piece('rectorado', 'rectorate')], [clazz('T')]);
 
-    const { center, radius } = boundsOf(placements.values());
-    expect(center[0]).toBe(0);
-    expect(center[2]).toBeGreaterThan(0);
-    expect(radius).toBeGreaterThanOrEqual(3);
+    expect(boundsOf(placements.values()).radius).toBeGreaterThanOrEqual(2.6);
   });
 });

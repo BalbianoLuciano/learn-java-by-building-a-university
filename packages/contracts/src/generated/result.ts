@@ -44,6 +44,7 @@ export type Value =
   | {
       null: true;
     };
+export type Visibility = 'public' | 'protected' | 'package' | 'private';
 
 /**
  * Result of a run, returned by the api to the web (docs/ARCHITECTURE.md §5.4).
@@ -62,6 +63,10 @@ export interface RunResult {
   log: LogEntry[];
   timeline: TimelineStep[];
   stdout: string;
+  /**
+   * The learner classes and interfaces of the program, in source order; empty when it did not compile.
+   */
+  classes: ClassInfo[];
 }
 /**
  * A visual element of the model: an object the brief asks for, another object the code created, or a variable.
@@ -96,6 +101,25 @@ export interface Piece {
    * The learner interfaces the class of the object implements, directly or through its superclasses: one badge each.
    */
   interfaces?: string[];
+  /**
+   * The learner class of the object (the blueprint it was built from); absent for variable signs.
+   */
+  type?: string;
+  /**
+   * The values of the object's fields at the end of the run, in declaration order (inherited fields first).
+   */
+  fields?: {
+    name: string;
+    value: Value;
+    /**
+     * For a reference to a drawn object, its piece.
+     */
+    pieceId?: string;
+    /**
+     * For a collection or an array, the pieces of its elements, in order.
+     */
+    pieceIds?: string[];
+  }[];
 }
 /**
  * Where the code created it.
@@ -168,4 +192,51 @@ export interface TimelineStep {
    * For an exception: whether the code catches it.
    */
   caught?: boolean;
+}
+/**
+ * A learner class, as the runner extracted it: the blueprint the model draws. Types are written with simple names and their type arguments, e.g. List<Departamento>.
+ */
+export interface ClassInfo {
+  name: string;
+  kind: 'class' | 'interface' | 'enum' | 'record';
+  abstract: boolean;
+  /**
+   * Null when the class has no explicit superclass.
+   */
+  superclass: string | null;
+  interfaces: string[];
+  file: string;
+  line: number;
+  fields: FieldInfo[];
+  constructors: ConstructorInfo[];
+  methods: MethodInfo[];
+}
+export interface FieldInfo {
+  name: string;
+  type: string;
+  visibility: Visibility;
+  final: boolean;
+  static: boolean;
+  line: number;
+}
+export interface ConstructorInfo {
+  parameterTypes: string[];
+  visibility: Visibility;
+  /**
+   * Line of the declaration; the line of the class for an implicit constructor.
+   */
+  line: number;
+}
+export interface MethodInfo {
+  name: string;
+  returnType: string;
+  parameterTypes: string[];
+  visibility: Visibility;
+  static: boolean;
+  abstract: boolean;
+  /**
+   * True when the method is annotated with @Override in the source.
+   */
+  override: boolean;
+  line: number;
 }

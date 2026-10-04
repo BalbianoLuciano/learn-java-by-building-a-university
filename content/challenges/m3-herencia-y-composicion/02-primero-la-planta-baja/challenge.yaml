@@ -14,6 +14,20 @@ brief:
 
     Mirá después la línea de tiempo: la planta baja (`UnidadAcademica`) se construye
     antes que el piso de la subclase.
+analogy:
+  passed: { es: "Construir una FR es construir primero la planta baja (`UnidadAcademica`) y después el piso propio: `super(...)` es la planta baja, y siempre va primero." }
+  incomplete: { es: "El piso propio se construyó, pero la planta baja quedó vacía: los datos no llegaron a `super(...)`." }
+  failed: { es: "No se puede levantar el piso sin la planta baja: sin `super(nombre, ciudad, provincia)` el edificio no compila." }
+references:
+  - title: { es: "La palabra clave super y los constructores de la subclase" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/super.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Invocar al constructor de la superclase (§8.8.7.1)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.8.7.1"
+    source: "Especificación del Lenguaje Java (JLS)"
+  - title: { es: "Cómo se crea una instancia (§12.5)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-12.html#jls-12.5"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [base-constructor]
     es: "`UnidadAcademica` tiene un constructor con nombre, ciudad y provincia"

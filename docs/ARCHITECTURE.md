@@ -337,6 +337,12 @@ frenado una excepción o un límite: lo construido hasta ahí también recibe su
 - Para `inheritance-floors` la api agrega `floors`: las clases del objeto desde la cima de
   la jerarquía hasta la propia, un piso cada una. Para toda pieza agrega `interfaces`: las
   interfaces del alumno que implementa su clase (o una superclase), una insignia cada una.
+- Para que la maqueta muestre **Java** y no solo la UTN ([`DESIGN.md`](../DESIGN.md) §B4),
+  el resultado trae además `classes` (las clases del alumno tal como las extrajo el runner:
+  atributos con visibilidad, `static` y `final`; constructores; métodos) y cada pieza
+  construida trae `type` (su clase) y `fields` (el valor final de cada atributo, con el
+  `pieceId` cuando es una referencia a otra pieza). Los valores intermedios salen de los
+  `field_set` de la línea de tiempo; qué método corre en cada paso, de los `call`.
 - La **silueta real** se arma con datos de `content/domain/`: `realReference` del desafío
   nombra FR (`regional-faculties.json`) y órganos (`governing-bodies.json`); la api los
   resuelve y la vista del desafío los muestra con ciudad, provincia, composición y mandato.
@@ -353,8 +359,8 @@ frenado una excepción o un límite: lo construido hasta ahí también recibe su
 |---|---|
 | `/` | Inicio: módulos y progreso |
 | `/modulos/:moduleId` | Lista de desafíos del módulo |
-| `/desafios/:challengeId` | Pedido de obra + editor |
-| `/desafios/:challengeId/resultado` | Vista de resultado del último intento |
+| `/desafios/:challengeId` | Pedido de obra (panel desplegable), editor, maqueta y bitácora en una sola pantalla |
+| `/desafios/:challengeId/resultado` | Redirige al desafío (la vista de resultado dejó de ser una página) |
 | `/dev/escena` | Solo en desarrollo: escena sintética de hasta 150 piezas con contador de fps (`?piezas=N`) |
 
 - **Progreso**: `localStorage`, clave versionada `ljbu.progress.v1` (estado, ejecuciones,
@@ -362,8 +368,8 @@ frenado una excepción o un límite: lo construido hasta ahí también recibe su
   `try/catch` (la app funciona sin almacenamiento).
 - El código en edición se guarda por desafío en `ljbu.code.v1` para no perderlo al
   recargar; el tema elegido, en `ljbu.theme.v1`.
-- El último resultado vive solo en memoria: al recargar la vista de resultado se vuelve al
-  editor.
+- El último resultado vive solo en memoria: al recargar, la maqueta y la bitácora
+  vuelven a estar vacías hasta la próxima ejecución.
 - Al ejecutar, la web manda solo los archivos editables; la api completa el programa con
   los de solo lectura.
 - Monaco se empaqueta con la app (solo el editor y el lenguaje Java): no se carga desde una

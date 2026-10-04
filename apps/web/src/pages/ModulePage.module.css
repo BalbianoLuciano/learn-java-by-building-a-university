@@ -1,54 +1,165 @@
 .page {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+}
+
+/* --- Left: the module */
+
+.intro {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--space-7) var(--space-4);
+  gap: var(--space-3);
+}
+
+.kicker {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
   font-weight: 600;
-  line-height: var(--leading-xl);
+  line-height: 1.1;
 }
 
 .goal {
   color: var(--color-text-muted);
+  font-size: var(--text-md);
+  line-height: var(--leading-md);
 }
 
-.sectionTitle {
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+.progressBar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--color-surface-2);
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  background: var(--color-success);
+  transition: width var(--duration-base) var(--ease-out);
+}
+
+.progressText {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+}
+
+.learnTitle {
   margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.learn {
+  margin: 0;
+  padding-left: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+}
+
+/* --- Right: the route */
+
+.routeTitle {
+  margin-bottom: var(--space-4);
   font-size: var(--text-lg);
   font-weight: 600;
   line-height: var(--leading-lg);
 }
 
-.list {
+.steps {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 44px;
   list-style: none;
 }
 
-.challenge {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: var(--space-3);
+/* The line of the route, behind the markers. */
+.steps::before {
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 15px;
+  width: 2px;
+  content: '';
+  background: var(--color-border);
+}
+
+.step {
+  position: relative;
+}
+
+.marker {
+  position: absolute;
+  top: 12px;
+  left: -44px;
+  display: inline-flex;
   align-items: center;
-  padding: var(--space-3) var(--space-4);
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.step[data-done='true'] .marker {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.stepLink {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4);
   border: var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
   color: var(--color-text);
   text-decoration: none;
+  transition: border-color var(--duration-fast) var(--ease-out);
 }
 
-.challenge:hover {
+.stepLink:hover {
   border-color: var(--color-accent);
+}
+
+.stepLink:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .order {
@@ -57,20 +168,65 @@
   font-size: var(--text-xs);
 }
 
-.name {
-  font-weight: 600;
+.integrator {
+  color: var(--color-accent);
 }
 
-.status {
-  display: inline-flex;
-  gap: var(--space-1);
-  align-items: center;
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: var(--leading-lg);
+}
+
+.pieces {
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
 
+.status {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.status[data-status='completed'],
+.status[data-status='completedWithSolution'] {
+  color: var(--color-success);
+}
+
+.cta {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  margin-top: var(--space-2);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.mini {
+  display: block;
+  height: 160px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+}
+
 @media (min-width: 960px) {
   .page {
-    padding-inline: var(--space-5);
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr);
+    gap: var(--space-8);
+    padding-top: var(--space-8);
+  }
+
+  .intro {
+    position: sticky;
+    top: calc(56px + var(--space-6));
+    align-self: start;
+  }
+
+  .stepLink {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    align-items: center;
   }
 }

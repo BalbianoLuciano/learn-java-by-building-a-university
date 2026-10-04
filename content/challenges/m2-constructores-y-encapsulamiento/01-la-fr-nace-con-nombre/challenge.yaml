@@ -13,6 +13,20 @@ brief:
 
     Después, en `main`, creá la FR Resistencia (ciudad Resistencia, provincia Chaco) en una
     sola línea, usando el constructor.
+analogy:
+  passed: { es: "La facultad nace completa, como un acta fundacional que se firma con nombre, ciudad y provincia en el mismo acto: no existe un instante en que esté a medias." }
+  incomplete: { es: "El acta está, pero quedó con casilleros vacíos: el constructor recibió los datos y no los guardó en el objeto." }
+  failed: { es: "Algo del constructor no cierra: Java no pudo fundar la facultad." }
+references:
+  - title: { es: "Constructores" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/constructors.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "La palabra clave this" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/thiskey.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Constructor por defecto (§8.8.9)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.8.9"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [constructor-declared]
     es: "`FacultadRegional` tiene un constructor con nombre, ciudad y provincia"

@@ -12,6 +12,20 @@ brief:
 
     Cada facultad lleva la cuenta de cuántas veces la consultaron en tu programa, en el
     atributo `consultas`. Registrá una consulta en la FR Córdoba, y solo en esa.
+analogy:
+  passed: { es: "Tres facultades son tres edificios con su propio libro de visitas: anotaste una consulta en Córdoba y los libros de Resistencia y Mendoza siguen en cero." }
+  incomplete: { es: "Las facultades comparten el molde, no el libro de visitas: cada una lleva la cuenta por su lado. Fijate en cuál anotaste." }
+  failed: { es: "Los edificios no llegaron a construirse: el programa se frenó antes." }
+references:
+  - title: { es: "Qué es un objeto" }
+    url: "https://docs.oracle.com/javase/tutorial/concepts/object.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Usar objetos: leer y cambiar atributos" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/usingobject.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Valores iniciales de los atributos (§4.12.5)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.12.5"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [three-faculties]
     es: "Existen las FR Resistencia, Córdoba y Mendoza"

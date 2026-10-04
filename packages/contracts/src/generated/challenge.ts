@@ -88,6 +88,24 @@ export interface Challenge {
    * @maxItems 3
    */
   hints: LocalizedText[];
+  /**
+   * What happened, said without code (docs/FEEDBACK.md): one text per outcome.
+   */
+  analogy?: {
+    passed: LocalizedText;
+    incomplete: LocalizedText;
+    failed: LocalizedText;
+  };
+  /**
+   * Official Java documentation that explains the concept: the Java Tutorials, the JLS or the API, on docs.oracle.com.
+   *
+   * @maxItems 5
+   */
+  references?: {
+    title: LocalizedText;
+    url: string;
+    source: string;
+  }[];
 }
 /**
  * Learner-facing text by language; es is mandatory.

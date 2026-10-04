@@ -1,17 +1,21 @@
 import type { Piece, RunResult } from '@ljbu/contracts';
-import { ContactShadows, MapControls, OrthographicCamera } from '@react-three/drei';
+import { ContactShadows, MapControls, OrthographicCamera, RoundedBox } from '@react-three/drei';
 import { Canvas, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import type { Selection } from '../components/result/selection';
-import { Cable, VariableSign } from './archetypes/Links';
+import { Blueprint, Seal } from './archetypes/Blueprint';
+import { Conduit } from './archetypes/Conduit';
 import { useSceneColors } from './colors';
-import { boundsOf, layoutScene, SIGN_TOP, type Placement } from './layout';
+import { serialsOf, type BubbleTexts } from './java';
+import { layoutScene, type BlueprintPlacement, type Placement } from './layout';
+import { matte, UNIT_BOX } from './materials';
 import { useReducedMotion } from './motion';
-import { OverlayDriver, OverlayLayer } from './overlay';
+import { ChipAnchor, OverlayDriver, OverlayLayer } from './overlay';
 import { createOverlayStore, OverlayContext } from './overlayStore';
 import { PieceView } from './PieceView';
-import { sceneStateAt, slotKey } from './replay';
+import { sceneStateAt } from './replay';
 
 interface Props {
   result: RunResult;
@@ -19,13 +23,15 @@ interface Props {
   onSelect: (selection: Selection) => void;
   /** Description of the scene for assistive technology; the log is its full text. */
   label: string;
+  /** False for a decorative scene: no controls, and the wheel scrolls the page. */
+  interactive?: boolean;
 }
 
 /** Isometric: azimuth 45°, elevation atan(1/√2) ≈ 35.264° (DESIGN.md §B1). */
 const CAMERA_DIRECTION = new THREE.Vector3(1, 1, 1).normalize();
 
 /** Frames every piece with a 15% margin and bounds the zoom to 0.6×–2× of that. */
-function FitCamera({ placements }: { placements: Placement[] }) {
+function FitCamera({ placements }: { placements: (Placement | BlueprintPlacement)[] }) {
   const { camera, size, controls } = useThree();
   // Three.js objects are meant to be mutated; the camera and the controls are not React state.
   /* eslint-disable react-hooks/immutability */
@@ -33,15 +39,55 @@ function FitCamera({ placements }: { placements: Placement[] }) {
     if (!(camera instanceof THREE.OrthographicCamera)) {
       return;
     }
-    const { center, radius } = boundsOf(placements);
-    const target = new THREE.Vector3(...center);
-    camera.position.copy(target).add(CAMERA_DIRECTION.clone().multiplyScalar(40));
+    // Fit the projection of every footprint and its height, not a sphere: the isometric view
+    // squashes depth, so a sphere wastes a lot of the canvas.
+    // Camera along (1,1,1): screen right is (1,0,-1)/√2 and screen up is (-1,2,-1)/√6.
+    const toScreen = (x: number, y: number, z: number): [number, number] => [
+      (x - z) / Math.SQRT2,
+      (2 * y - x - z) / Math.sqrt(6),
+    ];
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    for (const placement of placements) {
+      const half = (placement.island?.width ?? 1) / 2;
+      // Blueprints stand on posts; buildings carry a badge about two units above the roof.
+      const top = 'height' in placement ? placement.height + 0.9 : 2.6;
+      const corners: [number, number][] = [
+        [-half, -half],
+        [half, -half],
+        [-half, half],
+        [half, half],
+      ];
+      for (const [dx, dz] of corners) {
+        for (const y of [0, top]) {
+          const [sx, sy] = toScreen(
+            placement.position[0] + dx,
+            placement.position[1] + y,
+            placement.position[2] + dz,
+          );
+          minX = Math.min(minX, sx);
+          maxX = Math.max(maxX, sx);
+          minY = Math.min(minY, sy);
+          maxY = Math.max(maxY, sy);
+        }
+      }
+    }
+    if (minX === Infinity) {
+      return;
+    }
+    const width = Math.max(4, maxX - minX);
+    const height = Math.max(3, maxY - minY);
+    // The point on the ground whose projection is the middle of the fitted box.
+    const sxc = (minX + maxX) / 2;
+    const syc = (minY + maxY) / 2;
+    const a = sxc * Math.SQRT2; // x - z
+    const b = -syc * Math.sqrt(6); // x + z, on the ground (y = 0)
+    const target = new THREE.Vector3((a + b) / 2, 0, (b - a) / 2);
+    camera.position.copy(target).add(CAMERA_DIRECTION.clone().multiplyScalar(60));
     camera.lookAt(target);
-    // Seen from the isometric direction, a circle on the ground is 2r wide and 2r·sin(35°) tall,
-    // plus the height of the tallest building and its badge.
-    const width = 2 * radius;
-    const height = 2 * radius * Math.SQRT1_2 * Math.sin(Math.atan(Math.SQRT1_2)) + 4.5;
-    camera.zoom = Math.min(size.width / (width * 1.1), size.height / (height * 1.1));
+    camera.zoom = Math.min(size.width / (width * 1.06), size.height / (height * 1.1));
     camera.updateProjectionMatrix();
     const map = controls as
       | (THREE.EventDispatcher & {
@@ -62,31 +108,64 @@ function FitCamera({ placements }: { placements: Placement[] }) {
   return null;
 }
 
-function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
+function Model({ result, selection, onSelect, interactive = true }: Omit<Props, 'label'>) {
+  const { t } = useTranslation();
   const colors = useSceneColors();
   const reducedMotion = useReducedMotion();
-  const placements = useMemo(() => layoutScene(result.pieces), [result.pieces]);
-  const placed = useMemo(() => [...placements.values()], [placements]);
+  const classes = useMemo(
+    () => new Map(result.classes.map((info) => [info.name, info])),
+    [result.classes],
+  );
+  // Main only holds main(): it is the program, not part of the model.
+  const modelClasses = useMemo(
+    () => result.classes.filter((info) => info.name !== 'Main'),
+    [result.classes],
+  );
+  const layout = useMemo(
+    () => layoutScene(result.pieces, modelClasses),
+    [result.pieces, modelClasses],
+  );
+  const { placements, bridges, blueprints, board } = layout;
+  const placed = useMemo(
+    () => [...placements.values(), ...blueprints.values()],
+    [placements, blueprints],
+  );
   const state = useMemo(
     () => sceneStateAt(result.pieces, result.timeline, selection.step),
     [result, selection.step],
   );
-  const byId = useMemo(
-    () => new Map(result.pieces.map((piece) => [piece.id, piece])),
-    [result.pieces],
+  const serials = useMemo(() => serialsOf(result.pieces), [result.pieces]);
+  const archetypeOf = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const piece of result.pieces) {
+      if (piece.type && !map.has(piece.type)) {
+        map.set(piece.type, piece.archetype);
+      }
+    }
+    return map;
+  }, [result.pieces]);
+  const texts: BubbleTexts = useMemo(
+    () => ({
+      attributes: t('scene.attributes'),
+      methods: t('scene.methods'),
+      constructors: t('scene.constructors'),
+      serial: (type, number) => t('scene.serial', { type, number }),
+      abstract: t('scene.abstract'),
+      ghost: t('scene.ghostBubble'),
+    }),
+    [t],
   );
 
   const select = (piece: Piece) => {
     onSelect({ pieceId: piece.id, sourceRef: piece.sourceRef });
   };
-
-  /** Where a cable to a piece ends: the center of its island, just above the slab. */
-  const anchorOf = (pieceId: string | null | undefined): THREE.Vector3 | undefined => {
-    const placement = pieceId ? placements.get(pieceId) : undefined;
-    return placement
-      ? new THREE.Vector3(placement.position[0], 0.4, placement.position[2])
-      : undefined;
+  const selectClass = (name: string) => {
+    onSelect({ className: name });
   };
+
+  /** A bubble is open on the selected piece or, failing that, on the one the step touches. */
+  const openOn = selection.pieceId ?? state.focus?.pieceId;
+  const signs = result.pieces.filter((piece) => piece.archetype === 'variable-sign');
 
   return (
     <>
@@ -113,7 +192,9 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
         frames={reducedMotion ? 1 : 60}
       />
       <FitCamera placements={placed} />
-      <MapControls enableRotate={false} enableDamping={!reducedMotion} />
+      {interactive && (
+        <MapControls makeDefault enableRotate={false} enableDamping={!reducedMotion} />
+      )}
       <group
         onClick={() => {
           onSelect({});
@@ -125,43 +206,12 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
       </group>
       {result.pieces.map((piece) => {
         const placement = placements.get(piece.id);
-        if (!placement) {
+        if (!placement || piece.archetype === 'variable-sign') {
           return null;
         }
-        if (piece.archetype === 'variable-sign') {
-          if (!state.visible.has(piece.id)) {
-            return null;
-          }
-          const target = state.targets.get(piece.id) ?? null;
-          const from = new THREE.Vector3(...placement.position).add(
-            new THREE.Vector3(0, SIGN_TOP, 0),
-          );
-          return (
-            <group
-              key={piece.id}
-              position={placement.position}
-              onClick={(event) => {
-                event.stopPropagation();
-                select(piece);
-              }}
-            >
-              <VariableSign piece={piece} colors={colors} ghost={false} />
-              <group
-                position={[-placement.position[0], -placement.position[1], -placement.position[2]]}
-              >
-                <Cable from={from} to={anchorOf(target)} colors={colors} />
-              </group>
-            </group>
-          );
-        }
-        const filled = new Set<string>();
-        for (const slot of Object.values(piece.slots ?? {})) {
-          for (const occupant of slot.pieceIds) {
-            if (state.filled.has(slotKey(piece.id, occupant))) {
-              filled.add(occupant);
-            }
-          }
-        }
+        const tags = signs.filter(
+          (sign) => state.visible.has(sign.id) && (state.targets.get(sign.id) ?? null) === piece.id,
+        );
         return (
           <PieceView
             key={piece.id}
@@ -169,46 +219,153 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
             placement={placement}
             colors={colors}
             visible={state.visible.has(piece.id)}
-            filledSlots={filled}
-            builtFloors={state.floors.get(piece.id)}
+            classes={classes}
+            serials={serials}
+            fields={state.fields.get(piece.id)}
+            running={state.running.get(piece.id)}
+            lastWritten={state.focus?.pieceId === piece.id ? state.focus.field : undefined}
+            tags={tags}
             selected={selection.pieceId === piece.id}
+            open={openOn === piece.id}
             float={!reducedMotion}
             animate={!reducedMotion}
+            builtFloors={state.floors.get(piece.id)}
+            texts={texts}
             onSelect={select}
           />
         );
       })}
-      {/* Slot cables: from the pedestal of the owner to its occupant. Drawn here to reach both. */}
-      {result.pieces.flatMap((piece) =>
-        Object.values(piece.slots ?? {}).flatMap((slot) =>
-          slot.pieceIds
-            .filter(
-              (occupant) => state.filled.has(slotKey(piece.id, occupant)) && byId.has(occupant),
-            )
-            .map((occupant) => {
-              const from = anchorOf(piece.id);
-              const to = anchorOf(occupant);
-              return from && to ? (
-                <Cable
-                  key={`${piece.id}>${occupant}`}
-                  from={from.clone().setY(0.6)}
-                  to={to}
-                  colors={colors}
-                />
-              ) : null;
-            }),
-        ),
+      {/* Variables pointing to nothing: tags lying on the ground at the front. */}
+      {signs
+        .filter(
+          (sign) =>
+            state.visible.has(sign.id) &&
+            !placements.has(state.targets.get(sign.id) ?? '') &&
+            placements.get(sign.id)?.hangsFrom === undefined,
+        )
+        .map((sign) => {
+          const placement = placements.get(sign.id);
+          if (!placement) {
+            return null;
+          }
+          return (
+            <group
+              key={sign.id}
+              position={placement.position}
+              onClick={(event) => {
+                event.stopPropagation();
+                select(sign);
+              }}
+            >
+              <ChipAnchor
+                id={`${sign.id}:tag`}
+                position={[0, 0.1, 0]}
+                chip={{
+                  shape: 'tag',
+                  text: t('scene.nullTag', { name: sign.label }),
+                  flags: ['null'],
+                  lit: false,
+                  ghost: false,
+                }}
+              />
+            </group>
+          );
+        })}
+      {/* Walkways between an owner and what it holds. */}
+      {bridges.map((bridge, index) => {
+        const [x1, , z1] = bridge.from;
+        const [x2, , z2] = bridge.to;
+        return (
+          <mesh
+            key={index}
+            geometry={UNIT_BOX}
+            material={matte(colors.island)}
+            position={[(x1 + x2) / 2, 0.2, (z1 + z2) / 2]}
+            scale={[Math.max(0.5, Math.abs(x2 - x1)), 0.1, Math.max(0.5, Math.abs(z2 - z1))]}
+            receiveShadow
+          />
+        );
+      })}
+      {/* The drafting board: the table at the back every blueprint stands on. */}
+      {board && (
+        <RoundedBox
+          args={[board.width, 0.3, board.depth]}
+          radius={0.06}
+          smoothness={2}
+          position={[board.x, 0.15, board.z]}
+          material={matte(colors.island)}
+          receiveShadow
+        />
       )}
+      {/* Every object is plugged into its blueprint by a conduit on the ground. */}
+      {result.pieces.map((piece) => {
+        const placement = placements.get(piece.id);
+        const blueprint = piece.type ? blueprints.get(piece.type) : undefined;
+        if (!placement || !blueprint || !state.visible.has(piece.id)) {
+          return null;
+        }
+        const island = placement.island ?? { width: 1.8, depth: 1.8 };
+        const creating =
+          state.running.get(piece.id) === '<init>' ||
+          (state.focus?.pieceId === piece.id && state.focus.field === undefined);
+        return (
+          <Conduit
+            key={`${piece.id}<${blueprint.name}`}
+            from={[blueprint.position[0], 0, blueprint.position[2] + blueprint.island.depth / 2]}
+            to={[placement.position[0], 0, placement.position[2] - island.depth / 2]}
+            lit={creating || selection.pieceId === piece.id}
+            colors={colors}
+          />
+        );
+      })}
+      {modelClasses.map((info) => {
+        const placement = blueprints.get(info.name);
+        if (!placement) {
+          return null;
+        }
+        return info.kind === 'interface' ? (
+          <Seal
+            key={info.name}
+            info={info}
+            placement={placement}
+            colors={colors}
+            selected={selection.className === info.name}
+            texts={texts}
+            onSelect={selectClass}
+          />
+        ) : (
+          <Blueprint
+            key={info.name}
+            info={info}
+            placement={placement}
+            archetype={archetypeOf.get(info.name)}
+            colors={colors}
+            selected={selection.className === info.name}
+            texts={texts}
+            onSelect={selectClass}
+          />
+        );
+      })}
     </>
   );
 }
 
 /** The 3D model of the result (DESIGN.md Part B). Loaded on demand; the log is its textual equivalent. */
-export default function SceneView({ result, selection, onSelect, label }: Props) {
+export default function SceneView({
+  result,
+  selection,
+  onSelect,
+  label,
+  interactive = true,
+}: Props) {
   const reducedMotion = useReducedMotion();
   const [overlay] = useState(createOverlayStore);
   return (
-    <div role="img" aria-label={label} style={{ position: 'absolute', inset: 0 }}>
+    <div
+      role="img"
+      aria-label={label}
+      style={{ position: 'absolute', inset: 0, pointerEvents: interactive ? 'auto' : 'none' }}
+    >
       <Canvas
         orthographic
         shadows
@@ -219,7 +376,12 @@ export default function SceneView({ result, selection, onSelect, label }: Props)
       >
         <OrthographicCamera makeDefault position={[40, 40, 40]} near={0.1} far={200} zoom={40} />
         <OverlayContext value={overlay}>
-          <Model result={result} selection={selection} onSelect={onSelect} />
+          <Model
+            result={result}
+            selection={selection}
+            onSelect={onSelect}
+            interactive={interactive}
+          />
           <OverlayDriver />
         </OverlayContext>
       </Canvas>

@@ -100,6 +100,21 @@ y `person` (hoy se dibujan como `generic-block`), `interface-badge`, la silueta 
 Hecho junto con M8 (los 20 desafíos en un PR), antes del deploy de M7. Queda abierto el
 último punto de la lista de "listo": la revisión por una persona además de quien escribió.
 
+## Crítica del núcleo (entre M6/M8 y M7) ✅
+
+Pasada de revisión con Luciano sobre el producto construido, antes del deploy:
+
+- Pantalla única del desafío: código, maqueta y bitácora a la vez; pedido de obra plegable;
+  la línea elegida se resalta en el editor; chips `Archivo:línea`.
+- Lenguaje visual v2 ([`DESIGN.md`](../DESIGN.md) §B4): planos sobre una mesa, uno por clase,
+  con miniatura; grilla de columnas por clase; conductos por el suelo del plano a cada
+  instancia, encendidos al construirse; etiquetas colgadas para las variables; chapa de
+  serie; globo con atributos y métodos al tocar o al reproducir; composición en islas
+  adosadas; leyenda.
+- Analogías por resultado y referencias a documentación oficial de Java en cada desafío;
+  catálogo de `javac` con los errores de pegar código.
+- Landing con la maqueta de fondo, módulo como ruta con miniaturas, 404, logo.
+
 ## M7 · Deploy y beta cerrada
 
 - api y runner en Railway (runner solo en red privada); web en Cloudflare Pages.

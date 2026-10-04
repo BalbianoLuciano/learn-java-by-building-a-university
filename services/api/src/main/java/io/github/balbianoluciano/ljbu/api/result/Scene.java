@@ -7,6 +7,7 @@ import io.github.balbianoluciano.ljbu.api.checks.Values;
 import io.github.balbianoluciano.ljbu.api.content.ChallengeSpec;
 import io.github.balbianoluciano.ljbu.api.content.ChallengeSpec.Binding;
 import io.github.balbianoluciano.ljbu.api.content.ChallengeSpec.ExpectedPiece;
+import io.github.balbianoluciano.ljbu.api.result.RunResult.FieldValue;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.Piece;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.Slot;
 import io.github.balbianoluciano.ljbu.api.result.RunResult.SourceRef;
@@ -80,6 +81,8 @@ public final class Scene {
                       null,
                       null,
                       null,
+                      null,
+                      expected.type(),
                       null)));
     }
     for (LearnerObject extra : unmatched) {
@@ -153,7 +156,36 @@ public final class Scene {
         slots,
         null,
         floors,
-        interfaces.isEmpty() ? null : interfaces);
+        interfaces.isEmpty() ? null : interfaces,
+        object.type(),
+        fieldValues(object, facts));
+  }
+
+  /** The fields of the object in declaration order, inherited ones first, with their values. */
+  private List<FieldValue> fieldValues(LearnerObject object, RunFacts facts) {
+    List<FieldValue> values = new ArrayList<>();
+    for (String type : floors(object.type(), facts)) {
+      facts
+          .structure()
+          .find(type)
+          .ifPresent(
+              info ->
+                  info.fields().stream()
+                      .filter(field -> !field.isStatic())
+                      .forEach(
+                          field -> {
+                            Value value = object.fields().get(field.name());
+                            String piece = pieceOf(value);
+                            List<String> elements = piece == null ? elementsOf(value, facts) : null;
+                            values.add(
+                                new FieldValue(
+                                    field.name(),
+                                    value == null ? new Value.NullValue(true) : value,
+                                    piece,
+                                    elements == null || elements.isEmpty() ? null : elements));
+                          }));
+    }
+    return values;
   }
 
   /** The learner interfaces of the class and of its superclasses, without repetition. */
@@ -180,6 +212,16 @@ public final class Scene {
       current = facts.structure().find(current).map(info -> info.superclass()).orElse(null);
     }
     return floors;
+  }
+
+  /** The pieces inside an array or a collection, or null when the value is not one. */
+  private List<String> elementsOf(Value value, RunFacts facts) {
+    String reference = Values.referenceOf(value);
+    if (reference != null
+        && facts.trace().heap().get(reference) instanceof HeapObject.Sequence sequence) {
+      return sequence.elements().stream().map(this::pieceOf).filter(id -> id != null).toList();
+    }
+    return null;
   }
 
   /** The pieces a field holds: one for a reference, several for an array or a collection. */
@@ -219,6 +261,8 @@ public final class Scene {
               new SourceRef(write.file(), write.line()),
               null,
               target,
+              null,
+              null,
               null,
               null));
     }

@@ -111,3 +111,51 @@ describe('sceneStateAt', () => {
     expect(sceneStateAt(pieces, timeline).floors.get('fr')).toBe(2);
   });
 });
+
+describe('plaques and windows', () => {
+  it('reads the final value of every attribute from the piece', () => {
+    const state = sceneStateAt(passedResult.pieces, passedResult.timeline);
+
+    expect(state.fields.get('fr-resistencia')?.get('provincia')).toEqual({
+      value: { string: 'Chaco' },
+      pieceId: undefined,
+      pieceIds: undefined,
+    });
+  });
+
+  it('fills the plaques as the field writes of the timeline go by', () => {
+    const pieces = passedResult.pieces;
+    const before = sceneStateAt(pieces, passedResult.timeline, 2);
+    const after = sceneStateAt(pieces, passedResult.timeline, 3);
+
+    expect(before.fields.get('fr-resistencia')?.get('provincia')).toEqual({ value: null });
+    expect(after.fields.get('fr-resistencia')?.get('provincia')?.value).toEqual({
+      string: 'Chaco',
+    });
+  });
+
+  it('lights the window of the method running at the step, and the crane for a constructor', () => {
+    const pieces: Piece[] = [
+      { id: 'fr', archetype: 'regional-faculty', state: 'passed', built: true, label: 'FR' },
+    ];
+    const at = (line: number) => ({ file: 'Main.java', line });
+    const timeline: TimelineStep[] = [
+      { index: 0, sourceRef: at(3), event: 'object_created', pieceId: 'fr' },
+      { index: 1, sourceRef: at(3), event: 'call', pieceId: 'fr', name: 'FacultadRegional.<init>' },
+      { index: 2, sourceRef: at(4), event: 'return', name: 'FacultadRegional.<init>' },
+      {
+        index: 3,
+        sourceRef: at(5),
+        event: 'call',
+        pieceId: 'fr',
+        name: 'FacultadRegional.describir',
+      },
+      { index: 4, sourceRef: at(6), event: 'return', name: 'FacultadRegional.describir' },
+    ];
+
+    expect(sceneStateAt(pieces, timeline, 1).running.get('fr')).toBe('<init>');
+    expect(sceneStateAt(pieces, timeline, 2).running.get('fr')).toBeUndefined();
+    expect(sceneStateAt(pieces, timeline, 3).running.get('fr')).toBe('describir');
+    expect(sceneStateAt(pieces, timeline, 4).running.size).toBe(0);
+  });
+});

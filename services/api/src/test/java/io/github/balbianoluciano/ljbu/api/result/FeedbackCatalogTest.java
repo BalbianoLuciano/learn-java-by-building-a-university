@@ -68,6 +68,20 @@ class FeedbackCatalogTest {
                     "public class Concreto extends Organo { Concreto() { super(\"x\"); } }")),
             "`Concreto` no implementa `describir`."),
         arguments(
+            "text outside the class",
+            List.of(
+                file(
+                    "Main.java",
+                    "Main.java\npublic class Main {\n  public static void main(String[] args) {}\n}\n")),
+            "Hay texto fuera de cualquier clase en esta línea."),
+        arguments(
+            "pasted code fence",
+            List.of(
+                file(
+                    "Main.java",
+                    "```java\npublic class Main {\n  public static void main(String[] args) {}\n}\n```\n")),
+            "Java no reconoce el carácter '`' en esta línea."),
+        arguments(
             "override of nothing",
             List.of(
                 mainWithBody(""),

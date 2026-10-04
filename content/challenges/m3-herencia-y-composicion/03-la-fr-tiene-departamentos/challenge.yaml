@@ -15,6 +15,20 @@ brief:
     `new ArrayList<>()`. `agregarDepartamento` agrega a la lista y
     `cantidadDeDepartamentos` devuelve su tamaño. El `main` carga tres departamentos de
     la FR Buenos Aires.
+analogy:
+  passed: { es: "La facultad tiene una carpeta de departamentos que crece: entran tres, cinco o los que haga falta. Tres atributos fijos eran tres cajones y nada más." }
+  incomplete: { es: "La carpeta todavía no existe, o los departamentos no se guardan en ella: revisá la lista y `agregarDepartamento`." }
+  failed: { es: "El programa se frenó al guardar un departamento: probablemente la lista no se creó (`new ArrayList<>()`)." }
+references:
+  - title: { es: "La interfaz List" }
+    url: "https://docs.oracle.com/javase/tutorial/collections/interfaces/list.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "ArrayList" }
+    url: "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html"
+    source: "API de Java"
+  - title: { es: "Tipos genéricos: List<Departamento>" }
+    url: "https://docs.oracle.com/javase/tutorial/java/generics/types.html"
+    source: "Tutoriales de Java (Oracle)"
 criteria:
   - checks: [list-field]
     es: "`departamentos` es una `List<Departamento>`"

@@ -113,6 +113,46 @@
       "items": {
         "$ref": "#/$defs/localizedText"
       }
+    },
+    "analogy": {
+      "description": "What happened, said without code (docs/FEEDBACK.md): one text per outcome.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "incomplete", "failed"],
+      "properties": {
+        "passed": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "incomplete": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "failed": {
+          "$ref": "#/$defs/localizedText"
+        }
+      }
+    },
+    "references": {
+      "description": "Official Java documentation that explains the concept: the Java Tutorials, the JLS or the API, on docs.oracle.com.",
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "url", "source"],
+        "properties": {
+          "title": {
+            "$ref": "#/$defs/localizedText"
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://docs\\.oracle\\.com/"
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
   },
   "$defs": {

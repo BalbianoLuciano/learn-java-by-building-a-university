@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { ChevronLeft } from 'lucide-react';
+import { Logo } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
 import styles from './TopBar.module.css';
 
@@ -21,13 +22,18 @@ export function TopBar({ back, center }: Props) {
             <span>{back.label}</span>
           </Link>
         ) : (
-          <Link className={styles.name} to="/">
-            Learn Java by Building a University
+          <Link className={styles.name} to="/" aria-label="Learn Java by Building a University">
+            <Logo />
           </Link>
         )}
       </div>
       <div className={styles.center}>{center}</div>
-      <div className={styles.side}>
+      <div className={styles.side} data-align="end">
+        {back && (
+          <Link className={styles.home} to="/" aria-label="Learn Java by Building a University">
+            <Logo withName={false} />
+          </Link>
+        )}
         <ThemeToggle />
       </div>
     </header>

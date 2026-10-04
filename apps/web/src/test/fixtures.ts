@@ -46,9 +46,26 @@ export const modules: ModuleList = {
           order: 1,
           title: 'Abrí tu primera Facultad Regional',
           concept: 'classes-and-objects',
+          pieces: [{ archetype: 'regional-faculty', label: 'FR Resistencia' }],
         },
-        { id: 'm1-02', order: 2, title: 'Tres regionales, tres estados', concept: 'object-state' },
-        { id: 'm1-03', order: 3, title: 'La facultad donde estudiás', concept: 'aliasing' },
+        {
+          id: 'm1-02',
+          order: 2,
+          title: 'Tres regionales, tres estados',
+          concept: 'object-state',
+          pieces: [
+            { archetype: 'regional-faculty', label: 'FR Resistencia' },
+            { archetype: 'regional-faculty', label: 'FR Córdoba' },
+            { archetype: 'regional-faculty', label: 'FR Mendoza' },
+          ],
+        },
+        {
+          id: 'm1-03',
+          order: 3,
+          title: 'La facultad donde estudiás',
+          concept: 'aliasing',
+          pieces: [{ archetype: 'regional-faculty', label: 'FR Resistencia' }],
+        },
       ],
     },
   ],
@@ -89,6 +106,18 @@ export const aliasing: ChallengeView = {
     ],
     governingBodies: [],
   },
+  analogy: {
+    passed: 'Dos etiquetas colgadas del mismo edificio.',
+    incomplete: 'Tenés dos edificios con el mismo nombre; el pedido era una segunda etiqueta.',
+    failed: 'La ejecución se cortó: una etiqueta apunta a nada.',
+  },
+  references: [
+    {
+      title: 'Variables',
+      url: 'https://docs.oracle.com/javase/tutorial/java/nutsandbolts/variables.html',
+      source: 'Tutoriales de Java (Oracle)',
+    },
+  ],
 };
 
 export const passedResult: RunResult = {
@@ -103,6 +132,12 @@ export const passedResult: RunResult = {
       built: true,
       label: 'Resistencia',
       sourceRef: { file: 'Main.java', line: 3 },
+      type: 'FacultadRegional',
+      fields: [
+        { name: 'nombre', value: { string: 'Resistencia' } },
+        { name: 'ciudad', value: { string: 'Resistencia' } },
+        { name: 'provincia', value: { string: 'Chaco' } },
+      ],
     },
     {
       id: 'var-resistencia',
@@ -169,6 +204,45 @@ export const passedResult: RunResult = {
     },
   ],
   stdout: '',
+  classes: [
+    {
+      name: 'FacultadRegional',
+      kind: 'class',
+      abstract: false,
+      superclass: null,
+      interfaces: [],
+      file: 'FacultadRegional.java',
+      line: 1,
+      fields: [
+        {
+          name: 'nombre',
+          type: 'String',
+          visibility: 'package',
+          final: false,
+          static: false,
+          line: 2,
+        },
+        {
+          name: 'ciudad',
+          type: 'String',
+          visibility: 'package',
+          final: false,
+          static: false,
+          line: 3,
+        },
+        {
+          name: 'provincia',
+          type: 'String',
+          visibility: 'package',
+          final: false,
+          static: false,
+          line: 4,
+        },
+      ],
+      constructors: [{ parameterTypes: [], visibility: 'public', line: 1 }],
+      methods: [],
+    },
+  ],
 };
 
 export const incompleteResult: RunResult = {

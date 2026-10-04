@@ -178,6 +178,13 @@ public final class ContentLoader {
     if (!spec.id().equals("%s-%02d".formatted(module.id(), spec.order()))) {
       throw invalid(file, "id " + spec.id() + " must be <module>-<order>");
     }
+    for (ChallengeSpec.Reference reference :
+        spec.references() == null ? List.<ChallengeSpec.Reference>of() : spec.references()) {
+      if (!reference.url().startsWith("https://docs.oracle.com/")) {
+        // Only official Java documentation (docs/specs/challenge-format.md).
+        throw invalid(file, "reference " + reference.url() + " is not official Java documentation");
+      }
+    }
     for (String rule : spec.rules()) {
       if (!domain.rules().containsKey(rule)) {
         throw invalid(file, "rule " + rule + " is not in content/domain/rules.json");

@@ -9,11 +9,40 @@ import { createStore, type StoreApi } from 'zustand';
  * frame and moves its element, so the whole layer costs one DOM write per sign.
  */
 export type AnchorContent =
-  { kind: 'label'; text: string; ghost: boolean } | { kind: 'badge'; state: State };
+  | { kind: 'label'; text: string; ghost: boolean }
+  | { kind: 'badge'; state: State }
+  | { kind: 'chip'; chip: Chip }
+  | { kind: 'bubble'; bubble: Bubble };
+
+/**
+ * A small sign of DESIGN.md §B4: the header of a blueprint, a tag (a variable), a plate (the
+ * serial of an object), a seal (an interface) or, inside a bubble, a plaque (an attribute) or a
+ * window (a method). flags: private, static, final, ref, abstract, missing, null.
+ */
+export interface Chip {
+  shape: 'plaque' | 'window' | 'seal' | 'header' | 'tag' | 'plate' | 'nameplate';
+  text: string;
+  /** A second line, smaller: the serial under the name of a building. */
+  sub?: string;
+  flags: string[];
+  /** The method is running, or the attribute was just written, at the chosen step. */
+  lit: boolean;
+  ghost: boolean;
+}
+
+/** The detail of a building or a blueprint, open over it (DESIGN.md §A3, §B4). */
+export interface Bubble {
+  title: string;
+  subtitle?: string;
+  note?: string;
+  sections: { title: string; rows: Chip[] }[];
+}
 
 interface Anchor {
   object: THREE.Object3D;
   content: AnchorContent;
+  /** Screen offset in pixels, so stacked chips keep their spacing at any zoom. */
+  offset: [number, number];
 }
 
 interface OverlayState {

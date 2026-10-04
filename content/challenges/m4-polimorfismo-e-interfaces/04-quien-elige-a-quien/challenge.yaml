@@ -14,6 +14,20 @@ brief:
     `CargoDeRector` ya implementa la interfaz `CargoElectivo`. Hacé lo mismo con
     `CargoDeDecano` y `CargoDeDirectorDeDepartamento`, y reemplazá las tres impresiones
     repetidas de `main` por un arreglo `CargoElectivo[]` recorrido con un `for`.
+analogy:
+  passed: { es: "Rector, Decano y Director no son parientes, pero los tres firman el mismo contrato: \"me elige un órgano, por un mandato\". La interfaz es ese contrato firmado." }
+  incomplete: { es: "Alguno tiene los métodos pero no firmó el contrato (`implements`): sin la firma, no se lo puede tratar como cargo electivo." }
+  failed: { es: "Un cargo sin firmar entró en la lista de cargos electivos: por eso no compila." }
+references:
+  - title: { es: "Definir una interfaz" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/interfaceDef.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Implementar una interfaz" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/usinginterface.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Interfaces (§9)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-9.html"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [dean-implements, director-implements]
     es: "Los tres cargos implementan `CargoElectivo`"

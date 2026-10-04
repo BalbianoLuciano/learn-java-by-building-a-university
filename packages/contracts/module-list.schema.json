@@ -7,7 +7,12 @@
   "additionalProperties": false,
   "required": ["modules"],
   "properties": {
-    "modules": { "type": "array", "items": { "$ref": "#/$defs/moduleSummary" } }
+    "modules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/moduleSummary"
+      }
+    }
   },
   "$defs": {
     "moduleSummary": {
@@ -16,23 +21,63 @@
       "additionalProperties": false,
       "required": ["id", "order", "title", "goal", "challenges"],
       "properties": {
-        "id": { "type": "string" },
-        "order": { "type": "integer", "minimum": 1 },
-        "title": { "type": "string" },
-        "goal": { "type": "string" },
-        "challenges": { "type": "array", "items": { "$ref": "#/$defs/challengeSummary" } }
+        "id": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "challenges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/challengeSummary"
+          }
+        }
       }
     },
     "challengeSummary": {
       "title": "ChallengeSummary",
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "order", "title", "concept"],
+      "required": ["id", "order", "title", "concept", "pieces"],
       "properties": {
-        "id": { "type": "string" },
-        "order": { "type": "integer", "minimum": 1 },
-        "title": { "type": "string" },
-        "concept": { "type": "string" }
+        "id": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "concept": {
+          "type": "string"
+        },
+        "pieces": {
+          "description": "The pieces the brief asks to build, for the miniature on the card.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["archetype", "label"],
+            "properties": {
+              "archetype": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     }
   }
