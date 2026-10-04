@@ -18,6 +18,16 @@ analogy:
   passed: { es: "Una FR y una Regional Académica son dos tipos de unidad académica: comparten el formulario base (`UnidadAcademica`) y cada una agrega lo suyo." }
   incomplete: { es: "Todavía hay datos repetidos en las subclases: es como tener dos copias del mismo formulario base y que una se desactualice." }
   failed: { es: "La jerarquía no cierra: revisá los `extends` y lo que borraste." }
+references:
+  - title: { es: "Herencia" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Qué podés hacer en una subclase" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html#whatyoucando"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Subclases y herencia (§8.1.4)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.1.4"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [faculty-extends, regional-extends]
     es: "`FacultadRegional` y `RegionalAcademica` extienden `UnidadAcademica`"

@@ -20,7 +20,11 @@ public record ChallengeSpec(
     Scene scene,
     List<CheckSpec> checks,
     List<Localized> hints,
-    Analogy analogy) {
+    Analogy analogy,
+    List<Reference> references) {
+
+  /** Official Java documentation that explains the concept (docs.oracle.com only). */
+  public record Reference(Localized title, String url, String source) {}
 
   /** What happened, said without code (docs/FEEDBACK.md §3). */
   public record Analogy(Localized passed, Localized incomplete, Localized failed) {}

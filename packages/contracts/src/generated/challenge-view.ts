@@ -64,4 +64,12 @@ export interface ChallengeView {
     incomplete: string;
     failed: string;
   } | null;
+  /**
+   * Official Java documentation for the concept of the challenge.
+   */
+  references: {
+    title: string;
+    url: string;
+    source: string;
+  }[];
 }

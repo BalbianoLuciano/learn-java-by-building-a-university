@@ -17,6 +17,16 @@ analogy:
   passed: { es: "Los 4 años de mandato no se anotan en cada cargo: están en el Estatuto, una sola vez, y valen para todos. Eso es `static final`." }
   incomplete: { es: "Si cada cargo tiene su propia copia de la duración, es como si cada rector trajera su propio estatuto." }
   failed: { es: "El cálculo del fin de mandato se frenó: revisá que la constante exista y que `anioDeFin()` la use." }
+references:
+  - title: { es: "Miembros de clase: static y final" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/classvars.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Atributos static (§8.3.1.1)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.3.1.1"
+    source: "Especificación del Lenguaje Java (JLS)"
+  - title: { es: "Variables final (§4.12.4)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.12.4"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [constant-declared]
     es: "`MANDATO_EN_ANIOS` es una constante `static final` que vale para toda la clase"

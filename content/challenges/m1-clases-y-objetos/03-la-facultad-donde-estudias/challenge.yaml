@@ -14,6 +14,16 @@ analogy:
   passed: { es: "`miFacultad` y `resistencia` son dos etiquetas colgadas del mismo edificio: lo que cargás por una se ve desde la otra, porque el edificio es uno." }
   incomplete: { es: "Si creaste otra facultad, tenés dos edificios con el mismo nombre; el pedido era colgarle una segunda etiqueta al que ya existía." }
   failed: { es: "La ejecución se cortó: probablemente una etiqueta apunta a nada (`null`) y por ahí quisiste cargar un dato." }
+references:
+  - title: { es: "Variables" }
+    url: "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/variables.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Crear objetos: la variable guarda una referencia" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/objectcreation.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Tipos de referencia y sus valores (§4.3.1)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-4.html#jls-4.3.1"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [alias-declared]
     es: "`miFacultad` apunta a la FR Resistencia"

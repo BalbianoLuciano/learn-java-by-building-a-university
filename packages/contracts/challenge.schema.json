@@ -130,6 +130,29 @@
           "$ref": "#/$defs/localizedText"
         }
       }
+    },
+    "references": {
+      "description": "Official Java documentation that explains the concept: the Java Tutorials, the JLS or the API, on docs.oracle.com.",
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "url", "source"],
+        "properties": {
+          "title": {
+            "$ref": "#/$defs/localizedText"
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^https://docs\\.oracle\\.com/"
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
     }
   },
   "$defs": {

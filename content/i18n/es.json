@@ -87,7 +87,8 @@
     "realReference": "En la UTN real",
     "realFaculty": "{{name}}: {{city}}, {{province}}",
     "mandate": "(mandato de {{years}} años)",
-    "criteriaProgress": "{{done}}/{{total}}"
+    "criteriaProgress": "{{done}}/{{total}}",
+    "references": "Para leer más: documentación oficial de Java"
   },
   "hints": {
     "ask": "Pedir pista",
@@ -122,7 +123,8 @@
     "piecesList": "Lista de piezas",
     "sceneEmpty": "Ejecutá el código para ver la maqueta: los planos de tus clases y los objetos que construye el programa. Tocá un edificio para ver sus atributos.",
     "logBeforeRun": "Acá va a aparecer qué pasó con cada parte del pedido.",
-    "analogy": "Dicho sin código"
+    "analogy": "Dicho sin código",
+    "references": "Si querés profundizar"
   },
   "timeline": {
     "title": "Línea de tiempo",

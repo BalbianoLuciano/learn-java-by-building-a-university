@@ -14,6 +14,7 @@ import io.github.balbianoluciano.ljbu.api.web.Views.ModuleList;
 import io.github.balbianoluciano.ljbu.api.web.Views.ModuleSummary;
 import io.github.balbianoluciano.ljbu.api.web.Views.PieceSummary;
 import io.github.balbianoluciano.ljbu.api.web.Views.RealReference;
+import io.github.balbianoluciano.ljbu.api.web.Views.Reference;
 import io.github.balbianoluciano.ljbu.api.web.Views.RegionalFaculty;
 import io.github.balbianoluciano.ljbu.api.web.Views.Rule;
 import io.github.balbianoluciano.ljbu.api.web.Views.Solution;
@@ -119,7 +120,11 @@ public class ChallengeController {
             : new Analogy(
                 spec.analogy().passed().in(lang),
                 spec.analogy().incomplete().in(lang),
-                spec.analogy().failed().in(lang)));
+                spec.analogy().failed().in(lang)),
+        (spec.references() == null ? List.<ChallengeSpec.Reference>of() : spec.references())
+            .stream()
+                .map(doc -> new Reference(doc.title().in(lang), doc.url(), doc.source()))
+                .toList());
   }
 
   @GetMapping("/challenges/{id}/hints/{level}")

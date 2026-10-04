@@ -1,5 +1,5 @@
 import type { ChallengeView } from '@ljbu/contracts';
-import { ChevronDown, Lightbulb, Play } from 'lucide-react';
+import { BookOpen, ChevronDown, Lightbulb, Play } from 'lucide-react';
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
@@ -240,6 +240,26 @@ function Workbench({ challenge }: { challenge: ChallengeView }) {
                   </ul>
                 </>
               )}
+              {challenge.references.length > 0 && (
+                <>
+                  <h2 className={styles.subtitle}>{t('challenge.references')}</h2>
+                  <ul className={styles.rules}>
+                    {challenge.references.map((reference) => (
+                      <li key={reference.url}>
+                        <a
+                          className={styles.source}
+                          href={reference.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {reference.title}
+                        </a>{' '}
+                        · {reference.source}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
               <HintsPanel
                 challengeId={challenge.id}
                 hintCount={challenge.hintCount}
@@ -366,6 +386,22 @@ function Workbench({ challenge }: { challenge: ChallengeView }) {
                 </p>
               )}
               <LogList log={result.log} selection={selection} onSelect={select} />
+              {result.outcome === 'passed' && challenge.references.length > 0 && (
+                <p className={styles.readMore}>
+                  <BookOpen size={16} strokeWidth={1.75} aria-hidden />
+                  <span>
+                    {t('result.references')}:{' '}
+                    {challenge.references.map((reference, index) => (
+                      <span key={reference.url}>
+                        {index > 0 && ' · '}
+                        <a href={reference.url} target="_blank" rel="noreferrer">
+                          {reference.title}
+                        </a>
+                      </span>
+                    ))}
+                  </span>
+                </p>
+              )}
               {result.stdout && (
                 <details className={styles.piecesDetails}>
                   <summary className={styles.summary}>{t('result.stdout')}</summary>

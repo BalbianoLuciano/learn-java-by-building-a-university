@@ -18,6 +18,16 @@ analogy:
   passed: { es: "El decanato es una silla que ocupa un profesor por cuatro años: cambia quién se sienta, no la persona. Ana se levanta, Luis se sienta, y Ana sigue siendo profesora." }
   incomplete: { es: "Si el cargo hereda de Profesor, cada decano es una persona nueva que aparece de la nada; el cargo tiene que tener un titular, no ser uno." }
   failed: { es: "El cambio de decano se frenó: revisá cómo creás el cargo y a quién le pasás." }
+references:
+  - title: { es: "Herencia: cuándo una clase es un tipo de otra" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Object como superclase y qué significa heredar" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/objectclass.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Conversión de referencias: una instancia no cambia de clase (§5.5)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-5.html#jls-5.5"
+    source: "Especificación del Lenguaje Java (JLS)"
 criteria:
   - checks: [holder-field]
     es: "`CargoDeDecano` tiene un `titular` de tipo `Profesor`"

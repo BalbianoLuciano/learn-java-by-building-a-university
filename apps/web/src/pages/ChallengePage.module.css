@@ -232,6 +232,24 @@
 
 /* --- Right, bottom: log and timeline */
 
+.readMore {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+}
+
+.readMore svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.readMore a {
+  color: var(--color-accent);
+}
+
 .analogy {
   display: flex;
   gap: var(--space-2);

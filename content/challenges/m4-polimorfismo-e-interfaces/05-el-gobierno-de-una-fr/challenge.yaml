@@ -18,6 +18,16 @@ analogy:
   passed: { es: "La facultad le pregunta a cada órgano, en una sola ronda, cómo se compone; cada uno responde por sí mismo, sin que haya que preguntar primero qué es." }
   incomplete: { es: "Todavía se pregunta \"¿qué sos?\" antes de describir (`instanceof`): dejá que cada órgano responda solo." }
   failed: { es: "La ronda se frenó: revisá que la lista exista y que todos los órganos estén en ella." }
+references:
+  - title: { es: "Polimorfismo" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/polymorphism.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Elección del método en tiempo de ejecución (§15.12.4.4)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.12.4.4"
+    source: "Especificación del Lenguaje Java (JLS)"
+  - title: { es: "La interfaz List" }
+    url: "https://docs.oracle.com/javase/tutorial/collections/interfaces/list.html"
+    source: "Tutoriales de Java (Oracle)"
 criteria:
   - checks: [organs-list, add-method]
     es: "La facultad tiene una lista de órganos de gobierno"

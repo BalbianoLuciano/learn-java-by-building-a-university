@@ -19,6 +19,16 @@ analogy:
   passed: { es: "Nombrar un decano pasa por una sola puerta (`asignarDecano`) con la regla de los 3 años en la pared: Lucía entra, Tomás no, y los dos constructores cuentan la misma regla una sola vez." }
   incomplete: { es: "La regla está, pero en dos lugares, o la puerta deja pasar a quien no cumple: revisá el `this(...)` y el `if` del setter." }
   failed: { es: "Alguien que no cumplía llegó al constructor sin pasar por la puerta: la excepción frenó el programa." }
+references:
+  - title: { es: "Constructores: varios por clase" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/constructors.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Invocar otro constructor con this(...) (§8.8.7.1)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-8.html#jls-8.8.7.1"
+    source: "Especificación del Lenguaje Java (JLS)"
+  - title: { es: "Devolver un valor desde un método" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/returnvalue.html"
+    source: "Tutoriales de Java (Oracle)"
 criteria:
   - checks: [canonical-constructor, convenience-delegates]
     es: "El constructor de conveniencia delega en el canónico con `this(...)`"

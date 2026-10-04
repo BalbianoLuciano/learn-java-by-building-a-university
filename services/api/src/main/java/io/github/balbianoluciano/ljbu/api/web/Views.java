@@ -33,7 +33,10 @@ public final class Views {
       int hintCount,
       List<Rule> rules,
       RealReference realReference,
-      Analogy analogy) {}
+      Analogy analogy,
+      List<Reference> references) {}
+
+  public record Reference(String title, String url, String source) {}
 
   public record Analogy(String passed, String incomplete, String failed) {}
 

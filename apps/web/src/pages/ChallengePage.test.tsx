@@ -44,7 +44,12 @@ describe('ChallengePage', () => {
     ).toBeInTheDocument();
     await screen.findByLabelText('Main.java');
     expect(screen.getByText(/Declará una variable/)).toBeInTheDocument();
-    expect(screen.getAllByRole('listitem')).toHaveLength(4);
+    // Two goals, one rule, one real faculty, one reference.
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
+    expect(screen.getByRole('link', { name: 'Variables' })).toHaveAttribute(
+      'href',
+      'https://docs.oracle.com/javase/tutorial/java/nutsandbolts/variables.html',
+    );
     expect(
       screen.getByText('Facultad Regional Resistencia: Resistencia, Chaco'),
     ).toBeInTheDocument();

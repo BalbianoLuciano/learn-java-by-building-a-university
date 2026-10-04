@@ -17,7 +17,8 @@
     "hintCount",
     "rules",
     "realReference",
-    "analogy"
+    "analogy",
+    "references"
   ],
   "properties": {
     "id": {
@@ -177,6 +178,26 @@
         },
         "failed": {
           "type": "string"
+        }
+      }
+    },
+    "references": {
+      "description": "Official Java documentation for the concept of the challenge.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "url", "source"],
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
         }
       }
     }

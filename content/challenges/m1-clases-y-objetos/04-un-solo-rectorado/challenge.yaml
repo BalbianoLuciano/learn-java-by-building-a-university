@@ -16,6 +16,16 @@ analogy:
   passed: { es: "Hay un solo Rectorado y las tres facultades dependen de él, como las 30 FR reales de Sarmiento 440: tres referencias, un edificio." }
   incomplete: { es: "Si cada facultad tiene su propio Rectorado, hay tres sedes centrales: en la UTN hay una sola. Compartir el objeto es asignar la misma referencia." }
   failed: { es: "El programa se frenó antes de terminar de conectar las facultades con el Rectorado." }
+references:
+  - title: { es: "Operadores de igualdad y relacionales" }
+    url: "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/op2.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Igualdad de referencias con == (§15.21.3)" }
+    url: "https://docs.oracle.com/javase/specs/jls/se21/html/jls-15.html#jls-15.21.3"
+    source: "Especificación del Lenguaje Java (JLS)"
+  - title: { es: "Object.equals" }
+    url: "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)"
+    source: "API de Java"
 criteria:
   - checks: [one-rectorate, rectorate-address]
     es: "Existe un único Rectorado, con su dirección"

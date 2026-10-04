@@ -20,6 +20,16 @@ analogy:
   passed: { es: "Juana es una persona con dos credenciales: alumna y ayudante. Las credenciales se suman o se devuelven; Juana sigue siendo Juana. Y vota con una sola." }
   incomplete: { es: "Si Juana solo puede tener una credencial, o puede votar con una que no tiene, la regla del art. 114 no se cumple." }
   failed: { es: "El programa se frenó al elegir el claustro: revisá el recorrido de la lista de roles." }
+references:
+  - title: { es: "Herencia" }
+    url: "https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "La interfaz List" }
+    url: "https://docs.oracle.com/javase/tutorial/collections/interfaces/list.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Lanzar excepciones" }
+    url: "https://docs.oracle.com/javase/tutorial/essential/exceptions/throwing.html"
+    source: "Tutoriales de Java (Oracle)"
 criteria:
   - checks: [student-extends, assistant-extends]
     es: "`Estudiante` y `Auxiliar` son roles"

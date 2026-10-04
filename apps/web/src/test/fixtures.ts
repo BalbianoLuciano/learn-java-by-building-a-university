@@ -111,6 +111,13 @@ export const aliasing: ChallengeView = {
     incomplete: 'Tenés dos edificios con el mismo nombre; el pedido era una segunda etiqueta.',
     failed: 'La ejecución se cortó: una etiqueta apunta a nada.',
   },
+  references: [
+    {
+      title: 'Variables',
+      url: 'https://docs.oracle.com/javase/tutorial/java/nutsandbolts/variables.html',
+      source: 'Tutoriales de Java (Oracle)',
+    },
+  ],
 };
 
 export const passedResult: RunResult = {

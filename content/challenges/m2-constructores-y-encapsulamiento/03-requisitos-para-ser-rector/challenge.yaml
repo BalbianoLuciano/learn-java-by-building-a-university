@@ -18,6 +18,16 @@ analogy:
   passed: { es: "El cargo es como la mesa de entradas de la Asamblea: revisa los requisitos del art. 66 antes de recibir la candidatura, y a quien no cumple le dice que no." }
   incomplete: { es: "La mesa de entradas dejó pasar a un candidato de 29 años: falta la verificación en el constructor." }
   failed: { es: "La verificación rechazó al candidato, pero el rechazo no está atrapado: el programa se frenó en vez de informar." }
+references:
+  - title: { es: "Lanzar excepciones" }
+    url: "https://docs.oracle.com/javase/tutorial/essential/exceptions/throwing.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Atrapar excepciones: try y catch" }
+    url: "https://docs.oracle.com/javase/tutorial/essential/exceptions/catch.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "IllegalArgumentException" }
+    url: "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html"
+    source: "API de Java"
 criteria:
   - checks: [constructor-with-person]
     es: "`CargoDeRector` se construye con una `Persona`"

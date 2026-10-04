@@ -17,6 +17,16 @@ analogy:
   passed: { es: "Las cinco facultades en el arreglo son como las fichas en una carpeta: recorrés la carpeta y cada ficha se describe sola, con sus propios datos." }
   incomplete: { es: "Si no todas las facultades están en la carpeta, o el recorrido no llega al final, algunas quedan fuera del mapa." }
   failed: { es: "El recorrido se frenó: probablemente una posición del arreglo quedó vacía o te pasaste del final." }
+references:
+  - title: { es: "Arreglos" }
+    url: "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "La sentencia for mejorada" }
+    url: "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/for.html"
+    source: "Tutoriales de Java (Oracle)"
+  - title: { es: "Definir métodos" }
+    url: "https://docs.oracle.com/javase/tutorial/java/javaOO/methods.html"
+    source: "Tutoriales de Java (Oracle)"
 criteria:
   - checks: [describe-method]
     es: "`FacultadRegional` tiene el método `describir()`"
