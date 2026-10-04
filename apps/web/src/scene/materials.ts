@@ -7,9 +7,9 @@ const materials = new Map<string, THREE.MeshStandardMaterial>();
 /** A matte, flat-shaded material of the color (DESIGN.md §B3). */
 export function matte(
   cssColor: string,
-  options: { desaturate?: boolean; ghost?: boolean } = {},
+  options: { desaturate?: boolean; ghost?: boolean; lit?: boolean } = {},
 ): THREE.MeshStandardMaterial {
-  const key = `${cssColor}|${options.desaturate ? 'd' : ''}${options.ghost ? 'g' : ''}`;
+  const key = `${cssColor}|${options.desaturate ? 'd' : ''}${options.ghost ? 'g' : ''}${options.lit ? 'l' : ''}`;
   let material = materials.get(key);
   if (!material) {
     const color = new THREE.Color(cssColor);
@@ -21,6 +21,9 @@ export function matte(
     }
     material = new THREE.MeshStandardMaterial({
       color,
+      // Paper (a blueprint) glows a little, so it reads the same from any angle.
+      emissive: options.lit ? color : new THREE.Color(0x000000),
+      emissiveIntensity: options.lit ? 0.45 : 0,
       roughness: 0.9,
       metalness: 0,
       flatShading: true,

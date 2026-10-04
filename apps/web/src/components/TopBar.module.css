@@ -68,3 +68,10 @@
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+@media (max-width: 719px) {
+  /* On a phone the bar keeps the way back and the controls; the position goes. */
+  .center {
+    display: none;
+  }
+}

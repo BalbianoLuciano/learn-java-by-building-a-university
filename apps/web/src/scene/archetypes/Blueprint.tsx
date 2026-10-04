@@ -83,7 +83,7 @@ export function Blueprint({
   onSelect,
 }: Props) {
   const top = POST + BLUEPRINT_HEIGHT;
-  const paper = matte(colors.blueprint, { ghost: info.abstract });
+  const paper = matte(colors.blueprint, { ghost: info.abstract, lit: true });
   const select = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
     onSelect(info.name);
@@ -177,7 +177,7 @@ export function Seal({
       />
       <mesh
         geometry={UNIT_CYLINDER}
-        material={matte(selected ? colors.accent : colors.blueprint)}
+        material={matte(selected ? colors.accent : colors.blueprint, { lit: true })}
         position={[0, center, 0]}
         rotation={[Math.PI / 2, 0, 0]}
         scale={[radius * 2, THICKNESS, radius * 2]}
