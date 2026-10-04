@@ -23,6 +23,8 @@ interface Props {
   onSelect: (selection: Selection) => void;
   /** Description of the scene for assistive technology; the log is its full text. */
   label: string;
+  /** False for a decorative scene: no controls, and the wheel scrolls the page. */
+  interactive?: boolean;
 }
 
 /** Isometric: azimuth 45°, elevation atan(1/√2) ≈ 35.264° (DESIGN.md §B1). */
@@ -106,7 +108,7 @@ function FitCamera({ placements }: { placements: (Placement | BlueprintPlacement
   return null;
 }
 
-function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
+function Model({ result, selection, onSelect, interactive = true }: Omit<Props, 'label'>) {
   const { t } = useTranslation();
   const colors = useSceneColors();
   const reducedMotion = useReducedMotion();
@@ -190,7 +192,9 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
         frames={reducedMotion ? 1 : 60}
       />
       <FitCamera placements={placed} />
-      <MapControls makeDefault enableRotate={false} enableDamping={!reducedMotion} />
+      {interactive && (
+        <MapControls makeDefault enableRotate={false} enableDamping={!reducedMotion} />
+      )}
       <group
         onClick={() => {
           onSelect({});
@@ -347,11 +351,21 @@ function Model({ result, selection, onSelect }: Omit<Props, 'label'>) {
 }
 
 /** The 3D model of the result (DESIGN.md Part B). Loaded on demand; the log is its textual equivalent. */
-export default function SceneView({ result, selection, onSelect, label }: Props) {
+export default function SceneView({
+  result,
+  selection,
+  onSelect,
+  label,
+  interactive = true,
+}: Props) {
   const reducedMotion = useReducedMotion();
   const [overlay] = useState(createOverlayStore);
   return (
-    <div role="img" aria-label={label} style={{ position: 'absolute', inset: 0 }}>
+    <div
+      role="img"
+      aria-label={label}
+      style={{ position: 'absolute', inset: 0, pointerEvents: interactive ? 'auto' : 'none' }}
+    >
       <Canvas
         orthographic
         shadows
@@ -362,7 +376,12 @@ export default function SceneView({ result, selection, onSelect, label }: Props)
       >
         <OrthographicCamera makeDefault position={[40, 40, 40]} near={0.1} far={200} zoom={40} />
         <OverlayContext value={overlay}>
-          <Model result={result} selection={selection} onSelect={onSelect} />
+          <Model
+            result={result}
+            selection={selection}
+            onSelect={onSelect}
+            interactive={interactive}
+          />
           <OverlayDriver />
         </OverlayContext>
       </Canvas>

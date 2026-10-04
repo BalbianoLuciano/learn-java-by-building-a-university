@@ -32,6 +32,7 @@ export function DemoScene() {
           selection={{ step: current }}
           onSelect={() => undefined}
           label=""
+          interactive={false}
         />
       </Suspense>
     </div>

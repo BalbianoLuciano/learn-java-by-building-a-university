@@ -1,7 +1,6 @@
 import type { Piece } from '@ljbu/contracts';
-import { OrthographicCamera, View } from '@react-three/drei';
+import { OrthographicCamera } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { type ReactNode, type RefObject } from 'react';
 import {
   Career,
   Department,
@@ -52,62 +51,53 @@ function Building({ archetype, index }: { archetype: string; index: number }) {
 
 /**
  * A miniature of what a challenge asks to build (DESIGN.md §A2): its expected pieces in a
- * row on one slab. One View per card; all of them share the canvas of MiniModels.
+ * row on one slab, in a small static canvas of its own.
  */
 export function MiniModel({ pieces, className }: { pieces: MiniPiece[]; className?: string }) {
-  const colors = useSceneColors();
   const shown = pieces.slice(0, 5);
   const width = Math.max(1, shown.length) * SPACING;
   return (
-    <View className={className}>
-      <OrthographicCamera
-        makeDefault
-        position={[20, 20, 20]}
-        zoom={Math.min(34, 150 / width)}
-        near={0.1}
-        far={100}
-        onUpdate={(camera) => {
-          camera.lookAt(0, 0, 0);
-        }}
-      />
-      <hemisphereLight args={['#fff4e0', '#b8c4d8', 0.9]} />
-      <directionalLight position={[-6, 10, 4]} intensity={1.0} />
-      <group position={[0, -0.6, 0]}>
-        <mesh
-          geometry={UNIT_BOX}
-          material={matte(colors.island)}
-          position={[0, -0.15, 0]}
-          scale={[width + 0.6, 0.3, 2.6]}
+    <div className={className} aria-hidden>
+      <Canvas
+        orthographic
+        frameloop="demand"
+        dpr={[1, 2]}
+        gl={{ alpha: true, antialias: true, powerPreference: 'low-power' }}
+        style={{ pointerEvents: 'none' }}
+      >
+        <OrthographicCamera
+          makeDefault
+          position={[20, 20, 20]}
+          zoom={Math.min(34, 150 / width)}
+          near={0.1}
+          far={100}
+          onUpdate={(camera) => {
+            camera.lookAt(0, 0, 0);
+          }}
         />
-        {shown.map((piece, index) => (
-          <group key={index} position={[(index - (shown.length - 1) / 2) * SPACING, 0, 0]}>
-            <Building archetype={piece.archetype} index={index} />
-          </group>
-        ))}
-      </group>
-    </View>
+        <hemisphereLight args={['#fff4e0', '#b8c4d8', 0.9]} />
+        <directionalLight position={[-6, 10, 4]} intensity={1.0} />
+        <Row pieces={shown} width={width} />
+      </Canvas>
+    </div>
   );
 }
 
-/** The shared canvas behind a page of miniatures: put it inside the positioned container. */
-export function MiniModels({
-  container,
-  children,
-}: {
-  container: RefObject<HTMLElement | null>;
-  children: ReactNode;
-}) {
+function Row({ pieces, width }: { pieces: MiniPiece[]; width: number }) {
+  const colors = useSceneColors();
   return (
-    <>
-      {children}
-      <Canvas
-        eventSource={container}
-        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
-        gl={{ alpha: true, antialias: true }}
-        dpr={[1, 2]}
-      >
-        <View.Port />
-      </Canvas>
-    </>
+    <group position={[0, -0.6, 0]}>
+      <mesh
+        geometry={UNIT_BOX}
+        material={matte(colors.island)}
+        position={[0, -0.15, 0]}
+        scale={[width + 0.6, 0.3, 2.6]}
+      />
+      {pieces.map((piece, index) => (
+        <group key={index} position={[(index - (pieces.length - 1) / 2) * SPACING, 0, 0]}>
+          <Building archetype={piece.archetype} index={index} />
+        </group>
+      ))}
+    </group>
   );
 }

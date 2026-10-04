@@ -1,0 +1,52 @@
+.logo {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  color: var(--color-text);
+}
+
+.mark {
+  flex: none;
+}
+
+.roof {
+  fill: var(--scene-faculty);
+}
+
+.wallLeft {
+  fill: var(--scene-wall);
+}
+
+.wallRight {
+  fill: color-mix(in srgb, var(--scene-wall) 70%, black);
+}
+
+.tag {
+  fill: var(--scene-career);
+  stroke: var(--color-bg);
+  stroke-width: 1;
+}
+
+.hole {
+  fill: var(--color-bg);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  line-height: 1.1;
+}
+
+.nameStrong {
+  font-weight: 700;
+}
+
+.nameRest {
+  font-weight: 500;
+}
+
+@media (max-width: 599px) {
+  .nameRest {
+    display: none;
+  }
+}

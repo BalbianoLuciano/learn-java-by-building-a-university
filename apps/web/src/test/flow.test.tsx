@@ -1,4 +1,3 @@
-import type React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useProgress } from '../state/progress';
@@ -7,7 +6,6 @@ import { renderApp } from './render';
 
 // WebGL does not exist in jsdom: the miniatures are plain boxes here.
 vi.mock('../scene/MiniModel', () => ({
-  MiniModels: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   MiniModel: ({ className }: { className?: string }) => <span className={className} />,
 }));
 

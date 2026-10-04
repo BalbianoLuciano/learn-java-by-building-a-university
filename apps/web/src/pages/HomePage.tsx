@@ -1,5 +1,5 @@
 import { ArrowRight, Code2, Eye, Play } from 'lucide-react';
-import { Suspense, lazy, useRef } from 'react';
+import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import { api } from '../api/client';
@@ -12,9 +12,6 @@ import { progressOf, useProgress } from '../state/progress';
 import styles from './HomePage.module.css';
 
 const DemoScene = lazy(() => import('../scene/DemoScene').then((m) => ({ default: m.DemoScene })));
-const Miniatures = lazy(() =>
-  import('../scene/MiniModel').then((m) => ({ default: m.MiniModels })),
-);
 const Miniature = lazy(() => import('../scene/MiniModel').then((m) => ({ default: m.MiniModel })));
 
 const STEPS = [
@@ -39,7 +36,6 @@ export function HomePage() {
   const { t } = useTranslation();
   const [modules, retry] = useApi(() => api.modules(), 'modules');
   const challenges = useProgress((state) => state.challenges);
-  const cards = useRef<HTMLDivElement>(null);
   const first = modules.status === 'ready' ? modules.data.modules[0]?.challenges[0] : undefined;
 
   return (
@@ -100,33 +96,31 @@ export function HomePage() {
           {modules.status === 'loading' && <Loading />}
           {modules.status === 'error' && <ErrorNotice error={modules.error} onRetry={retry} />}
           {modules.status === 'ready' && (
-            <div ref={cards} className={styles.cardsArea}>
+            <div className={styles.cardsArea}>
               <Suspense fallback={<Loading />}>
-                <Miniatures container={cards}>
-                  <ol className={styles.modules}>
-                    {modules.data.modules.map((module) => {
-                      const done = module.challenges.filter(
-                        (challenge) => progressOf(challenges, challenge.id).status !== 'pending',
-                      ).length;
-                      const last = module.challenges[module.challenges.length - 1];
-                      return (
-                        <li key={module.id} className={styles.module}>
-                          <Link className={styles.moduleLink} to={`/modulos/${module.id}`}>
-                            <Miniature pieces={last?.pieces ?? []} className={styles.moduleMini} />
-                            <span className={styles.moduleOrder}>
-                              {t('home.moduleOrder', { order: module.order })}
-                            </span>
-                            <span className={styles.moduleTitle}>{module.title}</span>
-                            <span className={styles.moduleGoal}>{module.goal}</span>
-                            <span className={styles.moduleProgress}>
-                              {t('home.moduleProgress', { done, total: module.challenges.length })}
-                            </span>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ol>
-                </Miniatures>
+                <ol className={styles.modules}>
+                  {modules.data.modules.map((module) => {
+                    const done = module.challenges.filter(
+                      (challenge) => progressOf(challenges, challenge.id).status !== 'pending',
+                    ).length;
+                    const last = module.challenges[module.challenges.length - 1];
+                    return (
+                      <li key={module.id} className={styles.module}>
+                        <Link className={styles.moduleLink} to={`/modulos/${module.id}`}>
+                          <Miniature pieces={last?.pieces ?? []} className={styles.moduleMini} />
+                          <span className={styles.moduleOrder}>
+                            {t('home.moduleOrder', { order: module.order })}
+                          </span>
+                          <span className={styles.moduleTitle}>{module.title}</span>
+                          <span className={styles.moduleGoal}>{module.goal}</span>
+                          <span className={styles.moduleProgress}>
+                            {t('home.moduleProgress', { done, total: module.challenges.length })}
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ol>
               </Suspense>
             </div>
           )}
