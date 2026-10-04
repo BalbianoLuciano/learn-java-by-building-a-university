@@ -46,7 +46,7 @@
         "text": "La maqueta muestra tus clases y tus objetos; la bitácora explica qué pasó, por qué y en qué línea; la línea de tiempo lo reproduce paso a paso."
       }
     },
-    "modulesTitle": "Los cuatro módulos",
+    "modulesTitle": "Los módulos",
     "moduleOrder": "Módulo {{order}}",
     "moduleProgress": "{{done}} de {{total}} desafíos",
     "shapesTitle": "Cómo se ve Java en la maqueta",
@@ -60,7 +60,13 @@
     "challenge": "Desafío {{order}}",
     "kicker": "Módulo {{order}}",
     "pieces_one": "{{count}} pieza para construir",
-    "pieces_other": "{{count}} piezas para construir"
+    "pieces_other": "{{count}} piezas para construir",
+    "pathTitle": "La ruta del módulo",
+    "integrator": "Integrador: cierra el módulo",
+    "start": "Empezar",
+    "again": "Volver a verlo",
+    "progress": "{{done}} de {{total}} desafíos completados",
+    "learn": "Qué vas a aprender"
   },
   "status": {
     "pending": "Pendiente",
@@ -195,5 +201,27 @@
     "static": "static",
     "abstract": "abstracta",
     "ghostBubble": "El pedido espera este objeto y tu código todavía no lo construyó."
+  },
+  "concepts": {
+    "classes-and-objects": "Clases y objetos",
+    "object-state": "El estado de cada objeto",
+    "aliasing": "Referencias y aliasing",
+    "shared-references": "Referencias compartidas y ==",
+    "object-arrays-and-instance-methods": "Arreglos de objetos y métodos de instancia",
+    "constructors": "Constructores y this",
+    "encapsulation": "Encapsulamiento: private y getters",
+    "constructor-validation": "Validación en el constructor",
+    "static-final-constants": "Constantes static final",
+    "constructor-overloading-and-validating-setters": "Sobrecarga de constructores y setters que validan",
+    "inheritance": "Herencia: extends",
+    "super-constructor": "super() y el orden de construcción",
+    "composition-with-collections": "Composición con listas",
+    "composition-over-inheritance": "Composición antes que herencia",
+    "inheritance-plus-composition": "Herencia entre roles, composición en la persona",
+    "abstract-classes": "Clases y métodos abstractos",
+    "polymorphism-override": "@Override y polimorfismo",
+    "polymorphism-with-invariants": "Polimorfismo e invariantes",
+    "interfaces": "Interfaces",
+    "polymorphism-with-collections": "Despacho dinámico con colecciones"
   }
 }

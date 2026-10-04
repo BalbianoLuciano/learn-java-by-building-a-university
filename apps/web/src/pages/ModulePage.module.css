@@ -1,10 +1,18 @@
 .page {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+}
+
+/* --- Left: the module */
+
+.intro {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: var(--space-7) var(--space-4);
+  gap: var(--space-3);
 }
 
 .kicker {
@@ -17,106 +25,166 @@
 
 .title {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
+  font-size: var(--text-2xl);
   font-weight: 600;
-  line-height: var(--leading-xl);
+  line-height: 1.1;
 }
 
 .goal {
-  max-width: 640px;
   color: var(--color-text-muted);
+  font-size: var(--text-md);
+  line-height: var(--leading-md);
 }
 
-.sectionTitle {
-  margin-top: var(--space-4);
-  font-size: var(--text-lg);
-  font-weight: 600;
-  line-height: var(--leading-lg);
-}
-
-/* The shared canvas of the miniatures is positioned over this area. */
-.cardsArea {
-  position: relative;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: var(--space-4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.card {
+.progress {
   display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
 }
 
-.cardLink {
-  display: grid;
-  flex: 1;
-  grid-template-areas:
-    'mini mini'
-    'order status'
-    'name name'
-    'pieces pieces';
-  grid-template-columns: 1fr auto;
-  gap: var(--space-1) var(--space-3);
-  padding: var(--space-3);
-  border: var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  color: var(--color-text);
-  text-decoration: none;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
-}
-
-.cardLink:hover {
-  border-color: var(--color-accent);
-  transform: translateY(-2px);
-}
-
-.cardLink:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-.mini {
-  grid-area: mini;
-  height: 140px;
-  margin-bottom: var(--space-2);
+.progressBar {
+  height: 6px;
   overflow: hidden;
-  border-radius: var(--radius-md);
+  border-radius: 3px;
   background: var(--color-surface-2);
 }
 
-.order {
-  grid-area: order;
+.progressFill {
+  display: block;
+  height: 100%;
+  background: var(--color-success);
+  transition: width var(--duration-base) var(--ease-out);
+}
+
+.progressText {
   color: var(--color-text-muted);
   font-family: var(--font-code);
   font-size: var(--text-xs);
 }
 
-.name {
-  grid-area: name;
-  font-size: var(--text-md);
+.learnTitle {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
   font-weight: 600;
-  line-height: var(--leading-md);
 }
 
-.pieces {
-  grid-area: pieces;
+.learn {
+  margin: 0;
+  padding-left: var(--space-4);
   color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+}
+
+/* --- Right: the route */
+
+.routeTitle {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: var(--leading-lg);
+}
+
+.steps {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0 0 0 44px;
+  list-style: none;
+}
+
+/* The line of the route, behind the markers. */
+.steps::before {
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 15px;
+  width: 2px;
+  content: '';
+  background: var(--color-border);
+}
+
+.step {
+  position: relative;
+}
+
+.marker {
+  position: absolute;
+  top: 12px;
+  left: -44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.step[data-done='true'] .marker {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.stepLink {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.stepLink:hover {
+  border-color: var(--color-accent);
+}
+
+.stepLink:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.stepBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.order {
+  color: var(--color-text-muted);
+  font-family: var(--font-code);
   font-size: var(--text-xs);
 }
 
+.integrator {
+  color: var(--color-accent);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: var(--leading-lg);
+}
+
+.pieces {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
 .status {
-  display: inline-flex;
-  grid-area: status;
-  gap: var(--space-1);
-  align-items: center;
   color: var(--color-text-muted);
   font-size: var(--text-xs);
 }
@@ -124,4 +192,41 @@
 .status[data-status='completed'],
 .status[data-status='completedWithSolution'] {
   color: var(--color-success);
+}
+
+.cta {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  margin-top: var(--space-2);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.mini {
+  display: block;
+  height: 160px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+}
+
+@media (min-width: 960px) {
+  .page {
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr);
+    gap: var(--space-8);
+    padding-top: var(--space-8);
+  }
+
+  .intro {
+    position: sticky;
+    top: calc(56px + var(--space-6));
+    align-self: start;
+  }
+
+  .stepLink {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    align-items: center;
+  }
 }
