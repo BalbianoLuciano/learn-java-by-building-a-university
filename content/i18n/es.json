@@ -223,5 +223,13 @@
     "polymorphism-with-invariants": "Polimorfismo e invariantes",
     "interfaces": "Interfaces",
     "polymorphism-with-collections": "Despacho dinámico con colecciones"
+  },
+  "notFound": {
+    "code": "NullPointerException: la dirección apunta a null",
+    "title": "Acá no hay ninguna obra",
+    "lead": "La página que buscás no existe, o se mudó. Lo único que quedó en pie es este edificio, y no parece muy entero.",
+    "hint": "Si llegaste desde un enlace del curso, avisanos abriendo un issue en el repositorio: es un bug, no tu culpa.",
+    "home": "Volver al inicio",
+    "modules": "Ir al módulo 1"
   }
 }
