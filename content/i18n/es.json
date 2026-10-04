@@ -26,15 +26,41 @@
     "unknown": "Pasó algo inesperado. Probá de nuevo."
   },
   "home": {
+    "kicker": "Curso abierto de Java y programación orientada a objetos",
     "title": "Aprendé Java construyendo una universidad",
-    "lead": "Escribís Java de verdad, lo ejecutás y ves qué construyó tu código, qué le falta y por qué algo falló.",
-    "modulesTitle": "Módulos",
+    "lead": "Escribís Java de verdad, lo ejecutás y ves qué construyó tu código: cada clase es un plano, cada objeto un edificio y cada variable una etiqueta. El modelo es la UTN real, con sus facultades, cargos y reglas del Estatuto.",
+    "start": "Empezar por el primer desafío",
+    "seeModules": "Ver los módulos",
+    "howTitle": "Cómo funciona",
+    "steps": {
+      "write": {
+        "title": "Escribís el código",
+        "text": "Cada desafío es un pedido de obra sobre la UTN real: una facultad, un cargo, un órgano de gobierno. Lo resolvés en Java, en el editor, con las clases que hagan falta."
+      },
+      "run": {
+        "title": "Lo ejecutás",
+        "text": "Tu programa se compila y corre en un servidor, en un sandbox. No hace falta instalar nada."
+      },
+      "see": {
+        "title": "Ves qué construyó",
+        "text": "La maqueta muestra tus clases y tus objetos; la bitácora explica qué pasó, por qué y en qué línea; la línea de tiempo lo reproduce paso a paso."
+      }
+    },
+    "modulesTitle": "Los cuatro módulos",
+    "moduleOrder": "Módulo {{order}}",
     "moduleProgress": "{{done}} de {{total}} desafíos",
+    "shapesTitle": "Cómo se ve Java en la maqueta",
+    "shapesLead": "Cada idea del lenguaje tiene una sola forma, siempre la misma, y la forma se parece a lo que significa.",
+    "utnTitle": "La UTN real, no una inventada",
+    "utnText": "Las 30 Facultades Regionales, el Rectorado, los Consejos, el Decano y sus requisitos son los del Estatuto de la UTN (Res. AU 1/2011) y de sus páginas oficiales; cada desafío cita la regla que usa. Las personas, en cambio, son ficticias.",
     "disclaimer": "Proyecto independiente y de código abierto. No es un sitio oficial de la UTN."
   },
   "module": {
     "challengesTitle": "Desafíos",
-    "challenge": "Desafío {{order}}"
+    "challenge": "Desafío {{order}}",
+    "kicker": "Módulo {{order}}",
+    "pieces_one": "{{count}} pieza para construir",
+    "pieces_other": "{{count}} piezas para construir"
   },
   "status": {
     "pending": "Pendiente",

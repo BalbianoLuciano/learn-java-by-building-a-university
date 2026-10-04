@@ -21,19 +21,24 @@ function useOverlayStore(): OverlayStore {
   return store;
 }
 
+/** The store, or null in a scene without an overlay layer (a miniature): anchors draw nothing. */
+function useOptionalOverlayStore(): OverlayStore | null {
+  return useContext(OverlayContext);
+}
+
 function useAnchor(
   id: string,
   content: AnchorContent,
   offset: [number, number] = [0, 0],
 ): RefObject<THREE.Group | null> {
-  const store = useOverlayStore();
+  const store = useOptionalOverlayStore();
   const invalidate = useThree((state) => state.invalidate);
   const ref = useRef<THREE.Group>(null);
   // Primitive dependencies, so a re-render with equal content does not re-register.
   const key = JSON.stringify({ content, offset });
   useLayoutEffect(() => {
     const object = ref.current;
-    if (!object) {
+    if (!object || !store) {
       return;
     }
     const parsed = JSON.parse(key) as { content: AnchorContent; offset: [number, number] };
