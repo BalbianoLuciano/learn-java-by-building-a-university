@@ -1,8 +1,15 @@
+import type React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useProgress } from '../state/progress';
 import { aliasing, fakeApi, modules, passedResult, SOLVED_MAIN } from './fixtures';
 import { renderApp } from './render';
+
+// WebGL does not exist in jsdom: the miniatures are plain boxes here.
+vi.mock('../scene/MiniModel', () => ({
+  MiniModels: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  MiniModel: ({ className }: { className?: string }) => <span className={className} />,
+}));
 
 vi.mock('../scene/SceneView', () => ({ default: () => <div role="img" aria-label="maqueta" /> }));
 vi.mock('../components/CodeEditor', () => ({
