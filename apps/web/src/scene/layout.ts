@@ -9,6 +9,8 @@ export interface Placement {
   island?: { width: number; depth: number };
   /** For a piece that lives on an island attached to another piece's island. */
   owner?: string;
+  /** Every other attached island raises its nameplate, so neighbours do not overlap. */
+  stagger?: boolean;
   /** For a variable: the piece it hangs from, and its place among the tags of that piece. */
   hangsFrom?: string;
   tagIndex?: number;
@@ -53,7 +55,7 @@ const BOARD_DEPTH = 1.6;
 const BOARD_GAP = 1.6;
 const COLUMN_GAP = 1.6;
 const ROW_GAP = 1.4;
-const ATTACHED_GAP = 0.5;
+const ATTACHED_GAP = 0.9;
 const ATTACHED_ISLAND = { width: 1.3, depth: 1.3 };
 const NULL_TAG_SPACING = 1.8;
 const FRONT_GAP = 1.8;
@@ -158,7 +160,7 @@ export function layoutScene(pieces: Piece[], classes: ClassInfo[] = []): SceneLa
   const boardZ = -(BOARD_DEPTH / 2 + BOARD_GAP);
 
   /** Places what a piece holds on small islands in a row to its right, recursively. */
-  const attach = (owner: Piece, edge: number, z: number): number => {
+  const attach = (owner: Piece, edge: number, z: number, depth = 0): number => {
     for (const id of contained.get(owner.id) ?? []) {
       const child = byId.get(id);
       if (!child) {
@@ -170,10 +172,11 @@ export function layoutScene(pieces: Piece[], classes: ClassInfo[] = []): SceneLa
         position: [cx, 0, z],
         island: ATTACHED_ISLAND,
         owner: owner.id,
+        stagger: depth % 2 === 1,
         phase: phaseOf(id),
       });
       bridges.push({ from: [edge, 0, z], to: [cx - ATTACHED_ISLAND.width / 2, 0, z] });
-      edge = attach(child, cx + ATTACHED_ISLAND.width / 2, z);
+      edge = attach(child, cx + ATTACHED_ISLAND.width / 2, z, depth + 1);
     }
     return edge;
   };

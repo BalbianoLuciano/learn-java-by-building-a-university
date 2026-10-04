@@ -68,7 +68,7 @@ describe('layoutScene', () => {
     expect(held?.owner).toBe('fr');
     expect(held?.position[2]).toBe(owner?.position[2]);
     expect((held?.position[0] ?? 0) - (owner?.position[0] ?? 0)).toBeCloseTo(
-      2.4 / 2 + 0.5 + 1.3 / 2,
+      2.4 / 2 + 0.9 + 1.3 / 2,
       5,
     );
     expect(bridges).toHaveLength(1);

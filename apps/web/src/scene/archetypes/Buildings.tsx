@@ -3,7 +3,7 @@ import type { Piece } from '@ljbu/contracts';
 import * as THREE from 'three';
 import type { SceneColors } from '../colors';
 import { GABLE, matte, UNIT_BOX, UNIT_CYLINDER, UNIT_SPHERE } from '../materials';
-import { Label } from '../overlay';
+import { ChipAnchor } from '../overlay';
 
 /** How a building is painted: as built, broken, or as the silhouette of what should be there. */
 export interface Look {
@@ -206,22 +206,19 @@ export function Person({ look }: { piece: Piece; look: Look }) {
   );
 }
 
-/** The interfaces a piece implements: one badge over its roof per interface (DESIGN.md §B4). */
+/** The interfaces a piece implements: one seal under its nameplate per interface (DESIGN.md §B4). */
 export function InterfaceBadges({ piece, look, y }: { piece: Piece; look: Look; y: number }) {
   const interfaces = piece.interfaces ?? [];
   return (
     <group>
       {interfaces.map((name, index) => (
-        <group key={name} position={[(index - (interfaces.length - 1) / 2) * 0.9, y, 0]}>
-          <mesh
-            geometry={UNIT_CYLINDER}
-            material={paint(look.colors.accent, look)}
-            scale={[0.36, 0.08, 0.36]}
-            rotation={[Math.PI / 2, 0, 0]}
-            castShadow
-          />
-          <Label id={`${piece.id}:interface:${name}`} text={name} y={0.3} ghost={look.ghost} />
-        </group>
+        <ChipAnchor
+          key={name}
+          id={`${piece.id}:interface:${name}`}
+          position={[0, y, 0]}
+          offset={[0, -30 - index * 22]}
+          chip={{ shape: 'seal', text: name, flags: [], lit: false, ghost: look.ghost }}
+        />
       ))}
     </group>
   );
@@ -276,12 +273,6 @@ export function InheritanceFloors({
             scale={[1.7 - index * 0.1, floorHeight, 1.4 - index * 0.1]}
             castShadow
             receiveShadow
-          />
-          <Label
-            id={`${piece.id}:floor:${name}`}
-            text={name}
-            y={floorHeight / 2}
-            ghost={look.ghost}
           />
         </group>
       ))}

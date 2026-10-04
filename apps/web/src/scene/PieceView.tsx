@@ -157,14 +157,15 @@ export function PieceView({
                 color={colors.warning}
               />
             )}
-            {!ghost && <InterfaceBadges piece={piece} look={look} y={height + 1.2} />}
           </group>
           {!ghost && running === '<init>' && <Crane height={height} colors={colors} />}
         </group>
+        {!ghost && <InterfaceBadges piece={piece} look={look} y={(height + 0.9) * scale} />}
         {/* The nameplate: the name of the building and, under it, its serial. */}
         <ChipAnchor
           id={`${piece.id}:nameplate`}
           position={[0, (height + 0.9) * scale, 0]}
+          offset={[0, placement.owner && placement.stagger ? -34 : 0]}
           chip={{
             shape: 'nameplate',
             text: piece.label,
