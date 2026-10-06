@@ -1,0 +1,12 @@
+{
+  // The web, served as static assets by a Cloudflare Worker (docs/DEPLOY.md).
+  // Deploy from this directory after `VITE_API_URL=… pnpm build`: `npx wrangler deploy`.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ljbu",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // React Router owns the routes: every unknown path gets index.html.
+    "not_found_handling": "single-page-application",
+  },
+}

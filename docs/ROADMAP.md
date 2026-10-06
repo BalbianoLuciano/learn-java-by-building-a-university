@@ -117,8 +117,9 @@ Pasada de revisión con Luciano sobre el producto construido, antes del deploy:
 
 ## M7 · Deploy y beta cerrada
 
-- api y runner en Railway (runner solo en red privada); web en Cloudflare Pages.
-- Dominio y HTTPS.
+- api y runner en Railway (runner solo en red privada); web en Cloudflare. ✅ (2026-10-06,
+  ver [`DEPLOY.md`](DEPLOY.md): `https://ljbu.balbiano06.workers.dev`; una ejecución mide 1,1 s)
+- Dominio y HTTPS. (HTTPS ✅ con los dominios de Railway y Cloudflare; dominio propio pendiente)
 - Beta con compañeros de cursada; plantilla de issue "¿Este mensaje te confundió?".
 
 **Aceptación:** ≥ 5 estudiantes completan el módulo 1; p95 de ejecución < 4 s en producción.

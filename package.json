@@ -10,5 +10,8 @@
   "scripts": {
     "format": "pnpm -r run format",
     "check": "pnpm -r run check"
+  },
+  "devDependencies": {
+    "railway": "^3.12.0"
   }
 }

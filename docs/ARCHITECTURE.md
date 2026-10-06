@@ -73,7 +73,7 @@
 | Tests | JUnit 5 + AssertJ (Java), Vitest + Testing Library (web) |
 | Formato y lint | Spotless (google-java-format), ESLint, Prettier |
 | CI | GitHub Actions |
-| Hosting | Railway (api + runner), Cloudflare Pages (web) |
+| Hosting | Railway (api + runner), Cloudflare Workers con assets estáticos (web); ver [`DEPLOY.md`](DEPLOY.md) |
 
 Las versiones exactas se fijan en los archivos de build; este documento no las repite.
 
