@@ -7,6 +7,6 @@
   "assets": {
     "directory": "./dist",
     // React Router owns the routes: every unknown path gets index.html.
-    "not_found_handling": "single-page-application"
-  }
+    "not_found_handling": "single-page-application",
+  },
 }
