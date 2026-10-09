@@ -4,223 +4,219 @@
 
 # Learn Java by Building a University
 
-**Aprendé Java y Programación Orientada a Objetos modelando la UTN real.**<br>
-Escribís Java de verdad, lo ejecutás y ves en una maqueta 3D qué construyó tu código.
+**Learn Java and Object-Oriented Programming by modeling a real university.**<br>
+Write real Java, run it, and see what your code built in a 3D model.
 
-[**▶ Probalo en ljbu.balbiano06.workers.dev**](https://ljbu.balbiano06.workers.dev)
+[**▶ Try it at ljbu.balbiano06.workers.dev**](https://ljbu.balbiano06.workers.dev)
 
 [![CI](https://github.com/BalbianoLuciano/learn-java-by-building-a-university/actions/workflows/ci.yml/badge.svg)](https://github.com/BalbianoLuciano/learn-java-by-building-a-university/actions/workflows/ci.yml)
 ![Java 25](https://img.shields.io/badge/Java-25-E76F00?logo=openjdk&logoColor=white)
 ![Spring Boot 4](https://img.shields.io/badge/Spring_Boot-4-6DB33F?logo=springboot&logoColor=white)
 ![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![Three.js](https://img.shields.io/badge/Three.js-React_Three_Fiber-000000?logo=threedotjs&logoColor=white)
-[![Licencia: MIT](https://img.shields.io/badge/c%C3%B3digo-MIT-blue)](LICENSE)
-[![Contenido: CC BY-SA 4.0](https://img.shields.io/badge/contenido-CC_BY--SA_4.0-lightgrey)](LICENSE-CONTENT.md)
+[![Code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
+[![Content: CC BY-SA 4.0](https://img.shields.io/badge/content-CC_BY--SA_4.0-lightgrey)](LICENSE-CONTENT.md)
 
 </div>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/hero-dark.png">
-  <img src="docs/assets/readme/hero-light.png" alt="Página de inicio: el título &quot;Aprendé Java construyendo una universidad&quot; y, a la derecha, la maqueta 3D con el Rectorado y tres Facultades Regionales construyéndose, con el globo de atributos de la FR Resistencia abierto.">
+  <img src="docs/assets/readme/hero-light.png" alt="Home page: the title on the left and, on the right, the 3D model with the Rectorado and three Facultades Regionales being built, with the attribute bubble of FR Resistencia open.">
 </picture>
 
-> 🚧 **Beta.** Los 20 desafíos de los cuatro módulos están publicados y se resuelven de punta a
-> punta. Si algo no se entiende o se rompe, [abrí un issue](https://github.com/BalbianoLuciano/learn-java-by-building-a-university/issues/new).
-
-*English: an open source course to learn Java OOP by modeling the real structure of the
-Universidad Tecnológica Nacional (Argentina). Write real Java in the browser, run it, and see
-what your code built in an isometric 3D model, with feedback tied to your lines of code.
-Content is in Spanish for now.*
+> 🚧 **Beta.** All 20 challenges of the four modules are live and can be solved end to end.
+> The course content is in **Spanish**, since it is built around the Universidad Tecnológica
+> Nacional (UTN), Argentina. If something is confusing or broken,
+> [open an issue](https://github.com/BalbianoLuciano/learn-java-by-building-a-university/issues/new).
 
 ---
 
-## Cómo funciona
+## How it works
 
 <table>
 <tr>
 <td width="33%" valign="top">
 
-### 1 · Leés el pedido
-Cada desafío es un **pedido de obra** sobre la UTN real: *"Declará una variable `miFacultad`
-que apunte a la misma facultad y cargale la provincia por ahí"*.
+### 1 · Read the brief
+Each challenge is a **work order** about the real UTN: *"Declare a variable `miFacultad` that
+points to the same faculty and set its province through it"*.
 
 </td>
 <td width="33%" valign="top">
 
-### 2 · Escribís Java
-En el editor, con las clases que hagan falta. Le das a **Ejecutar**: se compila y corre en un
-servidor, en un sandbox. No hay que instalar nada.
+### 2 · Write Java
+In the editor, with as many classes as you need. Hit **Run**: the code is compiled and
+executed on a server, in a sandbox. Nothing to install.
 
 </td>
 <td width="33%" valign="top">
 
-### 3 · Ves qué construyó
-La **maqueta** muestra tus clases y tus objetos; la **bitácora** explica qué pasó, por qué y
-en qué línea; la **línea de tiempo** lo reproduce paso a paso.
+### 3 · See what it built
+The **model** shows your classes and your objects; the **log** explains what happened, why
+and on which line; the **timeline** replays it step by step.
 
 </td>
 </tr>
 </table>
 
-Todo en una sola pantalla: el código a la izquierda, la maqueta y la bitácora a la derecha.
+Everything on one screen: the code on the left, the model and the log on the right.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/workbench-dark.png">
-  <img src="docs/assets/readme/workbench-light.png" alt="Pantalla de un desafío: a la izquierda el editor con el código de Main.java; arriba a la derecha la maqueta con la FR Resistencia, sus dos etiquetas resistencia y miFacultad y el plano de FacultadRegional al fondo; abajo la bitácora con &quot;¡Obra terminada!&quot;, la analogía y los aciertos.">
+  <img src="docs/assets/readme/workbench-light.png" alt="A challenge: the editor with Main.java on the left; on the top right the model with FR Resistencia, its two tags resistencia and miFacultad, and the FacultadRegional blueprint behind it; below, the log with the passed result, the analogy and the checks.">
 </picture>
 
-### La ejecución, paso a paso
+### The run, step by step
 
-Con la línea de tiempo recorrés el programa: la línea se marca en el editor, el objeto que
-toca el paso abre su globo con los atributos y el conducto desde su plano se enciende
-mientras corre el constructor.
+The timeline walks through the program: the line is highlighted in the editor, the object the
+step touches opens its bubble with its attributes, and the conduit from its blueprint lights
+up while the constructor runs.
 
 <p align="center">
-  <img src="docs/assets/readme/replay.gif" alt="Animación: se recorre la ejecución del desafío 1.3 paso a paso; se crea la FR Resistencia, se cargan sus atributos y aparece la segunda etiqueta miFacultad colgada del mismo edificio." width="900">
+  <img src="docs/assets/readme/replay.gif" alt="Animation: the run of challenge 1.3 replayed step by step; FR Resistencia is created, its attributes are set, and a second tag, miFacultad, hangs from the same building." width="900">
 </p>
 
-## Cómo se ve Java
+## What Java looks like
 
-La idea es la de Flexbox Froggy: **cada concepto del lenguaje tiene una sola forma, siempre la
-misma, y la forma se parece a lo que significa.**
+The idea comes from Flexbox Froggy: **every concept of the language has one shape, always the
+same, and the shape looks like what it means.**
 
 <table>
 <tr>
 <td width="55%" valign="top">
 
-| En Java | En la maqueta |
+| In Java | In the model |
 |---|---|
-| Clase | **Plano** sobre la mesa del fondo, con la miniatura de lo que construye |
-| Objeto | **Edificio** enchufado a su plano, con su chapa `Clase #1`, `#2`… |
-| Variable | **Etiqueta** colgada del objeto al que apunta; en el suelo si es `null` |
-| Atributos y métodos | **Globo** al tocar el edificio; `private` con candado, `static` con bandera |
-| Composición | **Isla adosada**: lo que un objeto tiene vive pegado a él |
-| Herencia | **Pisos**: la planta baja es la superclase |
-| Interfaz | **Sello** que las clases firman |
-| Lo que falta | **Silueta** y andamio |
+| Class | **Blueprint** on the drafting table, with a miniature of what it builds |
+| Object | **Building** plugged into its blueprint, with its plate `Class #1`, `#2`… |
+| Variable | **Tag** hanging from the object it points to; on the ground if it is `null` |
+| Attributes and methods | **Bubble** when you click the building; `private` with a lock, `static` with a flag |
+| Composition | **Attached island**: what an object has lives next to it |
+| Inheritance | **Floors**: the ground floor is the superclass |
+| Interface | **Seal** that classes sign |
+| What is missing | **Silhouette** and scaffolding |
 
 </td>
 <td width="45%" valign="top">
 
-<img src="docs/assets/readme/bubble.png" alt="Detalle de la maqueta del desafío 2.5: el globo de la FR Resistencia con sus atributos privados nombre y decano (que apunta al objeto #1) y sus métodos; debajo, edificios con sus etiquetas interino, tomas, resistencia y lucia.">
+<img src="docs/assets/readme/bubble.png" alt="Detail of the model of challenge 2.5: the bubble of FR Resistencia with its private attributes nombre and decano (pointing to object #1) and its methods; below, buildings with their tags interino, tomas, resistencia and lucia.">
 
 </td>
 </tr>
 </table>
 
-Cuando algo sale mal, además del mensaje técnico hay una **analogía** ("dicho sin código") y
-enlaces a la **documentación oficial de Java** (Tutoriales de Oracle, la JLS y la API) para
-profundizar.
+When something goes wrong, besides the technical message there is an **analogy** (the same
+idea, explained without code) and links to the **official Java documentation** (Oracle's Java
+Tutorials, the JLS and the API) to dig deeper.
 
-## Qué vas a aprender
+## What you will learn
 
-<img src="docs/assets/readme/modules.png" alt="Los cuatro módulos como cards, cada uno con la miniatura de su desafío integrador: Clases, objetos y referencias; Constructores y encapsulamiento; Herencia y composición; Polimorfismo e interfaces.">
+<img src="docs/assets/readme/modules.png" alt="The four modules as cards, each with a miniature of its final challenge: classes, objects and references; constructors and encapsulation; inheritance and composition; polymorphism and interfaces.">
 
-| Módulo | Temas | Con la UTN real |
+| Module | Topics | With the real UTN |
 |---|---|---|
-| **1** · Clases, objetos y referencias | clases, `new`, estado, aliasing, `==`, arreglos | las 30 Facultades Regionales y un único Rectorado |
-| **2** · Constructores y encapsulamiento | constructores, `this`, `private`, validación, `static final`, sobrecarga | los requisitos para ser Rector o Decano, mandatos de 4 años |
-| **3** · Herencia y composición | `extends`, `super()`, listas, composición antes que herencia | unidades académicas, departamentos, por qué un Decano **no** hereda de Profesor |
-| **4** · Polimorfismo e interfaces | clases abstractas, `@Override`, despacho dinámico, interfaces | los órganos de gobierno, el Consejo Superior, quién elige a quién |
+| **1** · Classes, objects and references | classes, `new`, state, aliasing, `==`, arrays | the 30 regional faculties and a single Rectorado |
+| **2** · Constructors and encapsulation | constructors, `this`, `private`, validation, `static final`, overloading | the requirements to be Rector or Dean, 4-year terms |
+| **3** · Inheritance and composition | `extends`, `super()`, lists, composition over inheritance | academic units, departments, why a Dean does **not** extend Professor |
+| **4** · Polymorphism and interfaces | abstract classes, `@Override`, dynamic dispatch, interfaces | the governing bodies, the Consejo Superior, who elects whom |
 
-Cada módulo es una ruta de cinco desafíos que termina en un integrador.
+Each module is a path of five challenges that ends in a capstone.
 
 <p align="center">
-  <img src="docs/assets/readme/module-route.png" alt="Página del módulo 3: a la izquierda el título, el objetivo y lo que vas a aprender; a la derecha la ruta de cinco desafíos numerados, cada uno con su miniatura." width="900">
+  <img src="docs/assets/readme/module-route.png" alt="Module 3 page: the title, the goal and what you will learn on the left; on the right the path of five numbered challenges, each with its miniature." width="900">
 </p>
 
-## La UTN real, no una inventada
+## The real UTN, not a made-up one
 
-Las 30 Facultades Regionales, el Rectorado, los Consejos, los Decanos y sus requisitos salen
-del **Estatuto Universitario** (Res. AU 1/2011) y de las páginas oficiales de la UTN; cada
-desafío cita la regla que usa y cada dato tiene su fuente ([dominio](docs/DOMAIN.md)). Las
-personas de los desafíos, en cambio, son ficticias.
+The 30 regional faculties, the Rectorado, the councils, the deans and their requirements come
+from the **University Statute** (Res. AU 1/2011) and from UTN's official pages; every challenge
+cites the rule it uses and every fact has a source ([domain](docs/DOMAIN.md)). The people in
+the challenges, on the other hand, are fictional.
 
-> Proyecto independiente y de código abierto: **no es un sitio oficial de la UTN**.
+> An independent, open source project: **not an official UTN site**.
 
-## Cómo está hecho
+## How it is built
 
 ```mermaid
 flowchart LR
   web["<b>web</b><br/>React · Monaco · Three.js<br/><i>Cloudflare</i>"]
-  api["<b>api</b><br/>Spring Boot<br/>desafíos · verificaciones · feedback<br/><i>Railway</i>"]
-  runner["<b>runner</b><br/>javac en memoria · lista permitida de bytecode<br/>JVM hija observada con JDI<br/><i>Railway, solo red privada</i>"]
-  web -- "código del alumno" --> api
-  api -- "programa completo" --> runner
-  runner -- "traza de la ejecución" --> api
-  api -- "maqueta · bitácora · línea de tiempo" --> web
+  api["<b>api</b><br/>Spring Boot<br/>challenges · checks · feedback<br/><i>Railway</i>"]
+  runner["<b>runner</b><br/>in-memory javac · bytecode allowlist<br/>child JVM traced with JDI<br/><i>Railway, private network only</i>"]
+  web -- "learner code" --> api
+  api -- "full program" --> runner
+  runner -- "execution trace" --> api
+  api -- "model · log · timeline" --> web
 ```
 
-- El **runner** compila el código en memoria, revisa el bytecode contra una lista permitida y
-  lo ejecuta en una JVM aparte con límites de tiempo, memoria y pasos, registrando cada paso
-  con JDI. Desde Java 24 no existe `SecurityManager`: el aislamiento es en capas
-  ([seguridad](docs/SECURITY.md)).
-- La **api** nunca ejecuta código: evalúa **verificaciones declarativas** escritas en cada
-  `challenge.yaml` sobre la estructura y la traza, y arma la bitácora y la maqueta.
-- La **web** dibuja la maqueta con modelos generados por código, sin archivos 3D externos.
-- Los contratos entre las tres partes son JSON Schemas en `packages/contracts`.
+- The **runner** compiles the code in memory, checks the bytecode against an allowlist and runs
+  it in a separate JVM with time, memory and step limits, recording every step with JDI. Since
+  Java 24 there is no `SecurityManager`: isolation comes in layers ([security](docs/SECURITY.md)).
+- The **api** never runs code: it evaluates **declarative checks** written in each
+  `challenge.yaml` against the structure and the trace, and builds the log and the model.
+- The **web** draws the model with code-generated shapes, no external 3D files.
+- The contracts between the three parts are JSON Schemas in `packages/contracts`.
 
 **Stack:** Java 25 · Spring Boot 4 · JDI · React 19 · TypeScript · Vite · React Three Fiber ·
 Monaco · Zustand · pnpm · Docker · Railway · Cloudflare.
 
-## Desarrollo local
+## Local development
 
-Con Docker alcanza para levantar todo:
+Docker is enough to run everything:
 
 ```bash
 docker compose up --build
 ```
 
-| Qué | Dónde |
+| What | Where |
 |---|---|
 | Web | <http://localhost:5173> |
 | Api | <http://localhost:8080/api/v1/modules> |
-| Runner | sin puerto publicado, igual que en producción |
+| Runner | no published port, same as in production |
 
-Para trabajar en un componente hacen falta Node 24 con pnpm (web y contratos) y un JDK 25
-(api y runner). Los comandos están en [CONTRIBUTING.md](CONTRIBUTING.md); el deploy, en
+To work on a component you need Node 24 with pnpm (web and contracts) and a JDK 25 (api and
+runner). The commands are in [CONTRIBUTING.md](CONTRIBUTING.md); deployment, in
 [DEPLOY.md](docs/DEPLOY.md).
 
 <details>
-<summary><b>Documentación del proyecto</b></summary>
+<summary><b>Project documentation</b> (in Spanish)</summary>
 
-El proyecto sigue Spec-Driven Development: las specs mandan y el código las sigue.
+The project follows Spec-Driven Development: the specs lead and the code follows them.
 
-| Documento | Contenido |
+| Document | Contents |
 |---|---|
-| [Producto](docs/PRODUCT.md) | Visión, público, alcance |
-| [Dominio](docs/DOMAIN.md) | El modelo de la UTN real y sus fuentes |
-| [Currículo](docs/CURRICULUM.md) | Módulos y desafíos |
-| [Feedback](docs/FEEDBACK.md) | Cómo se explican los errores y aciertos |
-| [Diseño](DESIGN.md) | Contrato visual: interfaz y escena 3D |
-| [Arquitectura](docs/ARCHITECTURE.md) | Componentes, contratos, flujo |
-| [Seguridad](docs/SECURITY.md) | Cómo se ejecuta código ajeno de forma segura |
-| [Formato de desafíos](docs/specs/challenge-format.md) | Cómo se escribe un desafío |
-| [Deploy](docs/DEPLOY.md) | Railway, Cloudflare y cómo operarlo |
-| [Decisiones (ADR)](docs/adr/) | Por qué se eligió cada cosa |
-| [Roadmap](docs/ROADMAP.md) | Hitos |
-| [Guía para agentes](AGENTS.md) | Reglas para implementar siguiendo las specs |
+| [Product](docs/PRODUCT.md) | Vision, audience, scope |
+| [Domain](docs/DOMAIN.md) | The model of the real UTN and its sources |
+| [Curriculum](docs/CURRICULUM.md) | Modules and challenges |
+| [Feedback](docs/FEEDBACK.md) | How errors and successes are explained |
+| [Design](DESIGN.md) | Visual contract: interface and 3D scene |
+| [Architecture](docs/ARCHITECTURE.md) | Components, contracts, flow |
+| [Security](docs/SECURITY.md) | How untrusted code is run safely |
+| [Challenge format](docs/specs/challenge-format.md) | How a challenge is written |
+| [Deploy](docs/DEPLOY.md) | Railway, Cloudflare and how to operate them |
+| [Decisions (ADR)](docs/adr/) | Why each thing was chosen |
+| [Roadmap](docs/ROADMAP.md) | Milestones |
+| [Agent guide](AGENTS.md) | Rules to implement following the specs |
 
 </details>
 
-## Contribuir
+## Contributing
 
-Las contribuciones son bienvenidas, sobre todo **desafíos nuevos** y **correcciones de los
-mensajes de feedback**: si un mensaje te confundió, eso ya es un bug. Leé
+Contributions are welcome, especially **new challenges** and **fixes to the feedback
+messages**: if a message confused you, that is already a bug. Read
 [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <p align="center">
-  <img src="docs/assets/readme/not-found.png" alt="Página 404: una facultad rota con un ladrillo caído y un poste sin etiqueta, al lado del texto &quot;NullPointerException: la dirección apunta a null. Acá no hay ninguna obra&quot;." width="720">
-  <br><sub>Y si te perdés, hay una 404 a la altura.</sub>
+  <img src="docs/assets/readme/not-found.png" alt="404 page: a broken faculty with a fallen brick and an empty signpost, next to the text NullPointerException: the address points to null." width="720">
+  <br><sub>And if you get lost, there is a 404 to match.</sub>
 </p>
 
-## Licencia
+## License
 
-- Código: [MIT](LICENSE).
-- Contenido educativo (`content/`, `docs/`): [CC BY-SA 4.0](LICENSE-CONTENT.md).
+- Code: [MIT](LICENSE).
+- Educational content (`content/`, `docs/`): [CC BY-SA 4.0](LICENSE-CONTENT.md).
 
-## Agradecimientos
+## Acknowledgements
 
-Inspirado en la cursada de Programación II de la UTN, en
-[Flexbox Froggy](https://flexboxfroggy.com/) y en el
-[curso de Java de Facundo Uferer](https://facundouferer.ar/cursos/java/).
+Inspired by the Programación II course at UTN, by
+[Flexbox Froggy](https://flexboxfroggy.com/) and by
+[Facundo Uferer's Java course](https://facundouferer.ar/cursos/java/).
