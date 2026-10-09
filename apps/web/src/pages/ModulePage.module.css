@@ -109,6 +109,7 @@
 
 .step {
   position: relative;
+  min-width: 0;
 }
 
 .marker {
@@ -205,7 +206,9 @@
 }
 
 .mini {
+  position: relative;
   display: block;
+  min-width: 0;
   height: 160px;
   overflow: hidden;
   border-radius: var(--radius-md);

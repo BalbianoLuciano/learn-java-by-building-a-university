@@ -63,7 +63,7 @@ export function MiniModel({ pieces, className }: { pieces: MiniPiece[]; classNam
         frameloop="demand"
         dpr={[1, 2]}
         gl={{ alpha: true, antialias: true, powerPreference: 'low-power' }}
-        style={{ pointerEvents: 'none' }}
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
       >
         <OrthographicCamera
           makeDefault
