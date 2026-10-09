@@ -161,11 +161,14 @@
 
 .module {
   display: flex;
+  /* A grid item grows to its content by default; the canvas inside must not widen it. */
+  min-width: 0;
 }
 
 .moduleLink {
   display: flex;
   flex: 1;
+  min-width: 0;
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-3);
@@ -190,6 +193,7 @@
 }
 
 .moduleMini {
+  position: relative;
   height: 150px;
   margin-bottom: var(--space-2);
   overflow: hidden;
