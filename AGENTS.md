@@ -53,7 +53,7 @@ Run the checks of every component you touched; CI runs the same ones.
   `content/` — never hard-coded in components or Java classes.
 - Java written by learners in challenges (`starter/`, `solution/`): **Spanish** domain names
   (`FacultadRegional`, `Rector`).
-- Project docs: Spanish.
+- Project docs: Spanish. Exception: `README.md` is in English, as the front page of the public repository.
 
 ## Code conventions
 
