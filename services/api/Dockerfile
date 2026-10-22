@@ -16,4 +16,6 @@ COPY --from=build /repo/services/api/target/ljbu-api.jar app.jar
 COPY content content
 ENV CONTENT_DIR=/app/content
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# A small heap, the serial collector and only the C1 compiler: the service is idle most of
+# the time and Railway bills reserved memory.
+ENTRYPOINT ["java", "-Xmx128m", "-Xss512k", "-XX:+UseSerialGC", "-XX:TieredStopAtLevel=1", "-XX:ReservedCodeCacheSize=32m", "-jar", "app.jar"]

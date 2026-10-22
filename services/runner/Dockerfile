@@ -13,4 +13,7 @@ USER ljbu
 WORKDIR /app
 COPY --from=build /workspace/target/ljbu-runner.jar app.jar
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# A small heap, the serial collector and only the C1 compiler: the service is idle most of
+# the time and Railway bills reserved memory. The child JVMs
+# do not inherit these flags: they get their own.
+ENTRYPOINT ["java", "-Xmx192m", "-Xss512k", "-XX:+UseSerialGC", "-XX:TieredStopAtLevel=1", "-XX:ReservedCodeCacheSize=32m", "-jar", "app.jar"]
