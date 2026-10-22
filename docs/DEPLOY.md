@@ -66,8 +66,9 @@ el día cuestan unos 5 USD por mes sin un solo alumno. Para que un curso sin uso
 - **Los dos servicios duermen** (`sleepApplication` en `.railway/railway.ts`): sin tráfico
   durante unos 10 minutos, Railway los apaga y deja de cobrarlos. El primer pedido a la api
   la despierta; al arrancar, la api le pega a `/health` del runner para despertarlo antes de
-  que el alumno ejecute. Esa primera vez la página tarda unos segundos más; la api espera
-  hasta 20 s la conexión al runner.
+  que el alumno ejecute. Mientras arranca, el runner rechaza las conexiones: la api reintenta
+  durante hasta 20 s (un pedido rechazado nunca llegó al runner, así que no se ejecuta dos
+  veces). Esa primera vez tarda unos segundos más.
 - **JVM chicas**: los `ENTRYPOINT` de los Dockerfiles fijan `-Xmx` (128 MB la api, 192 MB el
   runner), el recolector serial y solo el compilador C1. En reposo, las dos pasaron de ~590 MB
   a ~445 MB; una ejecución del capstone 4.5 sigue tardando menos de medio segundo. Las JVM hijas del runner no heredan esos flags: tienen los

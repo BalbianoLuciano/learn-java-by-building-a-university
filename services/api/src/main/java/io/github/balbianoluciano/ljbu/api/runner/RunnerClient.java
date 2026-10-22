@@ -10,6 +10,7 @@ import io.github.balbianoluciano.ljbu.api.trace.Trace;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.ConnectException;
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -36,19 +37,30 @@ public class RunnerClient {
   private static final Duration ANSWER_TIMEOUT = Duration.ofSeconds(30);
 
   /**
-   * Railway puts an idle runner to sleep (docs/DEPLOY.md); the first connection waits while it
-   * starts again.
+   * Railway puts an idle runner to sleep (docs/DEPLOY.md): the first request wakes it, but its
+   * connections are refused until it has started, which takes a few seconds.
    */
-  private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(20);
+  private static final Duration WAKE_UP = Duration.ofSeconds(20);
+
+  private static final Duration RETRY_EVERY = Duration.ofMillis(500);
 
   private final RestClient client;
+  private final Duration wakeUp;
   private final Schema traceSchema = traceSchema();
   private final ObjectMapper mapper = JsonMapper.builder().build();
 
   public RunnerClient(String url, String token) {
+    this(url, token, WAKE_UP);
+  }
+
+  /**
+   * @param wakeUp how long refused connections are retried while the runner starts
+   */
+  RunnerClient(String url, String token, Duration wakeUp) {
+    this.wakeUp = wakeUp;
     JdkClientHttpRequestFactory factory =
         new JdkClientHttpRequestFactory(
-            HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT).build());
+            HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build());
     factory.setReadTimeout(ANSWER_TIMEOUT);
     this.client =
         RestClient.builder()
@@ -73,24 +85,7 @@ public class RunnerClient {
   public Trace execute(List<SourceFile> files, Integer timeoutMs) {
     ExecutionRequest request =
         new ExecutionRequest(files, timeoutMs == null ? null : new Limits(timeoutMs));
-    Answer answer;
-    try {
-      answer =
-          client
-              .post()
-              .uri("/internal/v1/executions")
-              .contentType(MediaType.APPLICATION_JSON)
-              .body(request)
-              .exchange(
-                  (sent, response) -> {
-                    try (InputStream body = response.getBody()) {
-                      return new Answer(
-                          response.getStatusCode().value(), body.readNBytes(MAX_ANSWER_BYTES + 1));
-                    }
-                  });
-    } catch (ResourceAccessException | UncheckedIOException e) {
-      throw new RunnerUnavailableException("The runner cannot be reached", e);
-    }
+    Answer answer = send(request);
     if (answer.status() == 503) {
       throw new RunnerBusyException();
     }
@@ -113,6 +108,42 @@ public class RunnerClient {
     } catch (RuntimeException e) {
       // Not even JSON, or JSON that the validator or the mapper cannot read.
       throw new RunnerUnavailableException("The answer of the runner cannot be read", e);
+    }
+  }
+
+  /**
+   * Sends the request, retrying while the connection is refused: a refused request never reached
+   * the runner, so sending it again cannot run the code twice.
+   */
+  private Answer send(ExecutionRequest request) {
+    long deadline = System.nanoTime() + wakeUp.toNanos();
+    while (true) {
+      try {
+        return client
+            .post()
+            .uri("/internal/v1/executions")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(request)
+            .exchange(
+                (sent, response) -> {
+                  try (InputStream body = response.getBody()) {
+                    return new Answer(
+                        response.getStatusCode().value(), body.readNBytes(MAX_ANSWER_BYTES + 1));
+                  }
+                });
+      } catch (ResourceAccessException e) {
+        if (!(e.getCause() instanceof ConnectException) || System.nanoTime() > deadline) {
+          throw new RunnerUnavailableException("The runner cannot be reached", e);
+        }
+      } catch (UncheckedIOException e) {
+        throw new RunnerUnavailableException("The runner cannot be reached", e);
+      }
+      try {
+        Thread.sleep(RETRY_EVERY);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RunnerUnavailableException("Interrupted while the runner wakes up", e);
+      }
     }
   }
 
