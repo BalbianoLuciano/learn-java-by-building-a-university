@@ -2,11 +2,14 @@
 // the Dockerfiles of the repo. Secrets stay in Railway (preserve()), never here.
 import { defineRailway, preserve, project, service } from "railway/iac";
 
+// Both services sleep when idle (no traffic for ~10 min) so an unused course costs nothing;
+// the first request after that waits a few seconds while they start again.
 export default defineRailway(() => {
   // Uploaded with `railway up services/runner --path-as-root`: its Dockerfile is at the root.
   const runner = service("runner", {
     healthcheck: "/health",
     healthcheckTimeout: 120,
+    deploy: { sleepApplication: true },
     replicas: { "us-east4-eqdc4a": 1 },
     env: { PORT: "8081", RUNNER_TOKEN: preserve() },
   });
@@ -14,6 +17,7 @@ export default defineRailway(() => {
   const api = service("api", {
     healthcheck: "/api/v1/health",
     healthcheckTimeout: 120,
+    deploy: { sleepApplication: true },
     replicas: { "us-east4-eqdc4a": 1 },
     env: {
       RAILWAY_DOCKERFILE_PATH: "services/api/Dockerfile",

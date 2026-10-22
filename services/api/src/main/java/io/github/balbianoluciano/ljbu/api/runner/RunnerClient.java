@@ -35,6 +35,12 @@ public class RunnerClient {
   /** Compilation may take 10 s and the execution 5 s; beyond that the runner is not answering. */
   private static final Duration ANSWER_TIMEOUT = Duration.ofSeconds(30);
 
+  /**
+   * Railway puts an idle runner to sleep (docs/DEPLOY.md); the first connection waits while it
+   * starts again.
+   */
+  private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(20);
+
   private final RestClient client;
   private final Schema traceSchema = traceSchema();
   private final ObjectMapper mapper = JsonMapper.builder().build();
@@ -42,7 +48,7 @@ public class RunnerClient {
   public RunnerClient(String url, String token) {
     JdkClientHttpRequestFactory factory =
         new JdkClientHttpRequestFactory(
-            HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build());
+            HttpClient.newBuilder().connectTimeout(CONNECT_TIMEOUT).build());
     factory.setReadTimeout(ANSWER_TIMEOUT);
     this.client =
         RestClient.builder()
@@ -108,6 +114,21 @@ public class RunnerClient {
       // Not even JSON, or JSON that the validator or the mapper cannot read.
       throw new RunnerUnavailableException("The answer of the runner cannot be read", e);
     }
+  }
+
+  /**
+   * Wakes a sleeping runner in the background, so it is ready by the time the learner runs code.
+   * Whatever happens is ignored: a run that finds the runner down reports it on its own.
+   */
+  public void wakeUp() {
+    Thread.startVirtualThread(
+        () -> {
+          try {
+            client.get().uri("/health").retrieve().toBodilessEntity();
+          } catch (RuntimeException e) {
+            // Not reachable yet; the next run will try again.
+          }
+        });
   }
 
   private static Schema traceSchema() {
