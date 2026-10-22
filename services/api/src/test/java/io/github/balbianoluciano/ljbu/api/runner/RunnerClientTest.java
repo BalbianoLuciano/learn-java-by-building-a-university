@@ -12,7 +12,9 @@ import io.github.balbianoluciano.ljbu.api.support.TestRunner;
 import io.github.balbianoluciano.ljbu.api.trace.Trace;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -61,10 +63,33 @@ class RunnerClientTest {
 
   @Test
   void failsWhenTheRunnerCannotBeReached() {
-    RunnerClient nobody = new RunnerClient("http://127.0.0.1:1", TestRunner.TOKEN);
+    RunnerClient nobody =
+        new RunnerClient("http://127.0.0.1:1", TestRunner.TOKEN, Duration.ofMillis(600));
 
     assertThatThrownBy(() -> nobody.execute(PROGRAM, null))
         .isInstanceOf(RunnerUnavailableException.class);
+  }
+
+  @Test
+  void waitsForARunnerThatIsWakingUp() throws IOException {
+    int port;
+    try (ServerSocket free = new ServerSocket(0)) {
+      port = free.getLocalPort();
+    }
+    // Nothing listens on the port for the first second, as with a runner that is starting.
+    Thread.startVirtualThread(
+        () -> {
+          try {
+            Thread.sleep(1000);
+            listenOn(port, 503, "{}");
+          } catch (InterruptedException | IOException e) {
+            throw new IllegalStateException(e);
+          }
+        });
+    RunnerClient client =
+        new RunnerClient("http://127.0.0.1:" + port, TestRunner.TOKEN, Duration.ofSeconds(10));
+
+    assertThatThrownBy(() -> client.execute(PROGRAM, null)).isInstanceOf(RunnerBusyException.class);
   }
 
   @Test
@@ -93,7 +118,13 @@ class RunnerClientTest {
   }
 
   private RunnerClient clientOfImpostorAnswering(int status, String body) throws IOException {
-    impostor = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+    listenOn(0, status, body);
+    return new RunnerClient(
+        "http://127.0.0.1:" + impostor.getAddress().getPort(), TestRunner.TOKEN);
+  }
+
+  private void listenOn(int port, int status, String body) throws IOException {
+    impostor = HttpServer.create(new InetSocketAddress("127.0.0.1", port), 0);
     impostor.createContext(
         "/",
         exchange -> {
@@ -104,7 +135,5 @@ class RunnerClientTest {
           exchange.close();
         });
     impostor.start();
-    return new RunnerClient(
-        "http://127.0.0.1:" + impostor.getAddress().getPort(), TestRunner.TOKEN);
   }
 }
